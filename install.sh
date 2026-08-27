@@ -107,6 +107,14 @@ $MARKER
     fetch: true
     searchTimeoutMs: 60000
     fetchTimeoutMs: 60000
+
+# The per-session `web_fetch` tool is mounted by the AGENT PRESET, not this
+# profile row (the web-app disables the host tool-web; only the preset's row
+# reaches a session, and the shipped presets force `fetch: false`). So we flip
+# the active preset from shipped `standard` to a local `standard-fetch` copy.
+- id: agent-presets
+  config:
+    default: standard-fetch
 EOF
 }
 
@@ -129,7 +137,49 @@ else
   fi
 fi
 
-# 3) reminder -----------------------------------------------------------------
+# 3) agent preset: authoritative `web_fetch` exposure --------------------------
+# The DSH installs ship `standard` (fetch:false). Author a persistent user
+# preset `standard-fetch` = a copy of shipped `standard` with fetch:true, so
+# web_fetch is exposed and survives dsh upgrades (shipped presets are copies).
+# Idempotent: skip when our preset already exists with fetch enabled.
+
+PKG_DIR="$PROFILE_DIR/node_modules/@deepseek-ai/dsh/config/agent-presets"
+USER_PRESET_DIR="$DSH_HOME/.agent-presets"
+PRESET_ID="standard-fetch"
+PRESET_DEST="$USER_PRESET_DIR/$PRESET_ID"
+
+resolve_shipped_standard() {
+  # The shipped `standard` preset lives beside the installed @deepseek-ai/dsh.
+  # Resolve that package from the profile (host base) so we copy its real tree.
+  local pkg
+  pkg="$(cd "$PROFILE_DIR" && node -e "process.stdout.write(require('path').dirname(require.resolve('@deepseek-ai/dsh/package.json')))" 2>/dev/null)" || return 1
+  [ -n "$pkg" ] || return 1
+  [ -f "$pkg/config/agent-presets/standard/agent.cordis.yml" ] || return 1
+  printf '%s/config/agent-presets/standard' "$pkg"
+}
+
+SHIPPED_STANDARD="$(resolve_shipped_standard)"
+
+if [ -z "$SHIPPED_STANDARD" ]; then
+  warn "could not resolve shipped 'standard' agent preset (install DSH and re-run); web_fetch may stay hidden in the active preset"
+else
+  if [ -f "$PRESET_DEST/agent.cordis.yml" ] && grep -qF "fetch: true" "$PRESET_DEST/agent.cordis.yml"; then
+    say "agent preset '$PRESET_ID' already present with fetch enabled (skipping)"
+  else
+    mkdir -p "$PRESET_DEST"
+    cp "$SHIPPED_STANDARD/agent.cordis.yml" "$PRESET_DEST/agent.cordis.yml"
+    # flip ONLY the tool-web fetch line (there is exactly one `fetch:` in the
+    # shipped standard composition); keep everything else identical.
+    sed -i 's/^\([[:space:]]*\)fetch: false$/\1fetch: true/' "$PRESET_DEST/agent.cordis.yml"
+    cat > "$PRESET_DEST/preset.yml" <<EOF
+name: Standard + web_fetch
+description: Localflame-enabled copy of the shipped 'standard' agent preset. Identical except the model-facing web tool exposes web_fetch (fetch: true) alongside web_search.
+EOF
+    say "authored agent preset '$PRESET_ID' (fetch: true) -> $PRESET_DEST"
+  fi
+fi
+
+# 4) reminder -----------------------------------------------------------------
 say "done."
 cat <<'EOF'
 
@@ -141,11 +191,16 @@ Next steps:
   3. Verify: ask the agent to run web_search and web_fetch.
 
 Notes:
+  - The 'standard-fetch' agent preset under $DSH_HOME/.agent-presets is what
+    exposes web_fetch in a session (shipped presets force fetch:false). It is a
+    copy of the shipped 'standard' preset with only the tool-web fetch flag on;
+    the profile patch flips agent-presets.default to it. Delete it to revert.
   - If DSH prunes the profile node_modules on a future install, add the package
     as a file: dependency instead:
         (edit $PROFILE_DIR/package.json)
           "dependencies": { "@local/dsh-web-firecrawl": "file:/absolute/path/to/dsh-web-firecrawl" }
         then run: pnpm install  (in $PROFILE_DIR)
-  - Uninstall: git checkout the .localflame.bak file to restore the patch, and
-    rm -rf "$DEST".
+  - Uninstall: git checkout the .localflame.bak file to restore the patch,
+    rm -rf "$DEST", and rm -rf "$PRESET_DEST" (then flip agent-presets.default
+    back to standard or delete the row).
 EOF
