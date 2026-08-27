@@ -12,6 +12,7 @@ cloud-only provider DSH ships with.
 │   ├── package.json
 │   └── lib/index.js
 ├── install.sh                  # one-shot, idempotent installer
+├── ATTRIBUTION.md              # MIT attribution + modification notes (ported code)
 ├── LICENSE                     # GNU AGPL v3 (canonical)
 └── README.md
 ```
@@ -98,6 +99,53 @@ If you run your own Firecrawl (`~/.config/firecrawl-cli`, a Docker container, a
 self-hosted build on `:3002`, etc.), it accepts requests with **no
 `Authorization` header**. localflame surfaces that self-hosted instance as a
 proper DSH web provider.
+
+---
+
+## Feature matrix
+
+A single plugin (`@local/dsh-web-firecrawl`) registers **both** a search and a
+fetch provider under the id `firecrawl-local`. Feature set is ported from
+`firecrawl/dsh-firecrawl` (MIT → AGPL, see [ATTRIBUTION.md](./ATTRIBUTION.md));
+cloud-only knobs are de-emphasized for the self-hosted target.
+
+### Search (`config.search`, `web_search` → `POST /v2/search`)
+
+| Option | Default | Notes |
+| --- | --- | --- |
+| `sources` | `[web]` | add `news` — the only source carrying `publishedAt` |
+| `limit` | unset | default result count when a call carries no bound |
+| `scrapeContent` | `false` | scrape each result and use markdown as the snippet |
+| `maxCharsPerResult` | unset | snippet char cap (pair with `scrapeContent`) |
+| `includeDomains` / `excludeDomains` | unset | hostname allow/deny lists |
+| `tbs` | unset | freshness filter: `qdr:h`/`d`/`w`/`m`/`y` |
+| `country` / `location` | unset | geo-targeting |
+| `timeoutMs` | `60000` | search timeout |
+
+### Fetch (`config.fetch`, `web_fetch` → `POST /v2/scrape`)
+
+| Option | Default | Notes |
+| --- | --- | --- |
+| `format` | `markdown` | `markdown` decodes as `text`; `html` as `html` |
+| `onlyMainContent` | `true` | strip nav/header/footer chrome |
+| `blockAds` | `true` | strip ads + cookie banners before content is returned |
+| `waitForMs` | `0` | delay before capture (slow client-rendered pages) |
+| `mobile` | `false` | emulate a mobile device |
+| `proxy` | unset | accepted-and-forwarded; only meaningful if your self-hosted instance supports it |
+| `timeoutMs` | `60000` | fetch timeout |
+| `maxBodyChars` | `100000` | decoded-body cap; sets the real `truncated: true` flag |
+| `maxUrlLength` | `2048` | max accepted request URL length |
+
+### Safety & typing (always on)
+
+- **`assertFetchableUrl`** — `web_fetch` rejects `file://`, non-http(s) schemes,
+  embedded credentials, and over-long URLs locally *before* any request is sent.
+- **Real page status** — fetch returns the page's `metadata.statusCode`, so a
+  404 is a *result* (with `statusCode: 404`), not a thrown error.
+- **Typed `WebError` codes** — `WEB_ABORTED`, `WEB_INVALID_URL`,
+  `WEB_PROVIDER_ERROR`; the seam's structured error metadata is preserved.
+- **Zero-auth transport** — `redirect: 'error'`, no `Authorization` header;
+  `available()` is always true (no API-key gate, unlike the cloud plugin).
 
 ---
 
@@ -343,13 +391,16 @@ curl -s -X POST http://127.0.0.1:3002/v2/search -H 'Content-Type: application/js
 - DSH (`@deepseek-ai/dsh`) installed with a `web` profile.
 - A self-hosted, network-reachable Firecrawl accepting unauthenticated requests
   (default `http://localhost:3002`).
-- AGPL-3.0 — see [`LICENSE`](./LICENSE).
+- Node.js `^22.19.0 || >=24.0.0` (the same range `dsh-web`/upstream requires).
+- AGPL-3.0 — see [`LICENSE`](./LICENSE). Ported Firecrawl code is MIT and carries
+  full attribution in [`ATTRIBUTION.md`](./ATTRIBUTION.md).
 
 ## Where the numbers come from
 
 - DSH packages read: `/home/alienl/.bun/install/global/node_modules/@deepseek-ai/`
 - Hermes plugin: `~/.hermes/hermes-agent/plugins/web/firecrawl/provider.py`
 - OMP provider: `@oh-my-pi/pi-coding-agent/src/web/search/providers/firecrawl.ts`
+- Upstream provider (ported): [`firecrawl/dsh-firecrawl`](https://github.com/firecrawl/dsh-firecrawl) (MIT)
 - Docs: [firecrawl.dev](https://firecrawl.dev)
 
 ---
@@ -357,3 +408,7 @@ curl -s -X POST http://127.0.0.1:3002/v2/search -H 'Content-Type: application/js
 ## License
 
 GNU Affero General Public License v3.0 or later. See [LICENSE](./LICENSE).
+
+Ported portions of `firecrawl/dsh-firecrawl` (MIT) retain their copyright and
+permission notice; see [ATTRIBUTION.md](./ATTRIBUTION.md) for the full MIT text
+and a list of what was ported and how it was modified.
