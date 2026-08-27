@@ -1,0 +1,8 @@
+# editor / OS cruft
+.DS_Store
+*.swp
+*~
+
+# misc build artifacts (none expected for this pure-JS plugin)
+node_modules/
+*.log
