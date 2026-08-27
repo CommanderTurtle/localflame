@@ -3,11 +3,24 @@
 #
 # localflame — one-shot installer that wires a self-hosted (zero-auth) Firecrawl
 # into the DeepSeek Harness web seam (`dsh-web`) as a local web-search/fetch
-# provider. Run it, then restart DSH. Emits exactly the two artifacts the manual
-# setup produces: the provider package in the profile's node_modules, and a
-# patch overlay on the profile's cordis.patch.yml.
+# provider. Run it, then restart DSH.
+#
+# What it does:
+#   1. Copies the provider package (@local/dsh-web-firecrawl) into the profile's
+#      node_modules.
+#   2. Appends a patch overlay to the profile's cordis.patch.yml:
+#        - selects our provider (firecrawl-local) for web.search/fetch
+#        - inserts the provider plugin entry
+#        - disables the cloud-only deepseek search provider (not needed)
+#   3. Enables the `web_fetch` tool in the agent presets you use (the shipped
+#      Standard / PTC / Creator presets: standard, code, cordis) by flipping
+#      their tool-web config from fetch:false to fetch:true. The per-session
+#      `web_fetch` tool is mounted by the agent preset, NOT by the profile patch
+#      (the web-app disables the host tool-web row), so this flip is the actual
+#      lever that surfaces web_fetch.
 #
 # Idempotent: safe to run repeatedly; it will not create duplicate entries.
+# Zero config: defaults to http://localhost:3002, no API key required.
 # AGPL-3.0-or-later. See LICENSE.
 
 set -euo pipefail
@@ -65,9 +78,14 @@ fi
 
 # 2) profile patch overlay -----------------------------------------------------
 # DSH's patch composer treats top-level rows as OVERRIDES of existing entries;
-# a brand-new plugin entry must be added under `- insert:`. We also flip the two
-# stock rows (web provider selection, and tool-web.fetch) and keep it idempotent
-# by keying on a marker comment.
+# a brand-new plugin entry must be added under `- insert:`. We keep this
+# idempotent by keying on a marker comment. The provider's richer search/fetch
+# flags (news, scrapeContent, domains, formats, ...) live as commented examples
+# inside the patch — see README's feature matrix for the full list.
+#
+# NOTE: the `tool-web` row is deliberately NOT patched here. The host tool-web
+# row is disabled by web-app and the real per-session tool is mounted by the
+# agent preset; flipping fetch happens in step 3 on the preset files instead.
 
 MARKER="# localflame: self-hosted firecrawl web provider"
 
@@ -78,6 +96,11 @@ $MARKER
   config:
     searchProvider: firecrawl-local
     fetchProvider: firecrawl-local
+
+# Disable the stock cloud-only search provider (needs DEEPSEEK_API_KEY; we use
+# the local Firecrawl instance instead).
+- id: web-search-deepseek
+  disabled: true
 
 - insert:
     - id: web-firecrawl-local
@@ -100,21 +123,6 @@ $MARKER
         #   waitForMs: 0
         #   mobile: false
         #   maxBodyChars: 100000
-
-- id: tool-web
-  config:
-    search: true
-    fetch: true
-    searchTimeoutMs: 60000
-    fetchTimeoutMs: 60000
-
-# The per-session `web_fetch` tool is mounted by the AGENT PRESET, not this
-# profile row (the web-app disables the host tool-web; only the preset's row
-# reaches a session, and the shipped presets force `fetch: false`). So we flip
-# the active preset from shipped `standard` to a local `standard-fetch` copy.
-- id: agent-presets
-  config:
-    default: standard-fetch
 EOF
 }
 
@@ -125,7 +133,7 @@ else
   # Idempotent: skip if the marker OR an existing web-firecrawl-local insert is
   # already present (covers a patch applied manually, without the marker).
   if [ -f "$PROFILE_PATCH" ] && (grep -qF "$MARKER" "$PROFILE_PATCH" || grep -qF "web-firecrawl-local" "$PROFILE_PATCH"); then
-    warn "patch already present in $PROFILE_PATCH (skipping; it is idempotent)"
+    say "patch already present in $PROFILE_PATCH (skipping; it is idempotent)"
   else
     # back up any existing user patch, then append our overlay
     if [ -f "$PROFILE_PATCH" ]; then
@@ -137,45 +145,45 @@ else
   fi
 fi
 
-# 3) agent preset: authoritative `web_fetch` exposure --------------------------
-# The DSH installs ship `standard` (fetch:false). Author a persistent user
-# preset `standard-fetch` = a copy of shipped `standard` with fetch:true, so
-# web_fetch is exposed and survives dsh upgrades (shipped presets are copies).
-# Idempotent: skip when our preset already exists with fetch enabled.
+# 3) enable `web_fetch` in the agent presets you use --------------------------
+# Per-session tools come from the AGENT PRESET, not the profile patch. The
+# shipped presets you use — Standard (`standard`), PTC (`code`), Creator
+# (`cordis`) — each mount tool-web with `fetch: false`. Flip that one flag in
+# each so `web_fetch` is exposed. Editing the shipped presets in place keeps it
+# dependency-free (no clones); re-running after a dsh upgrade re-applies it.
+#
+# Resolve the shipped preset root from the profile's @deepseek-ai/dsh package.
 
-PKG_DIR="$PROFILE_DIR/node_modules/@deepseek-ai/dsh/config/agent-presets"
-USER_PRESET_DIR="$DSH_HOME/.agent-presets"
-PRESET_ID="standard-fetch"
-PRESET_DEST="$USER_PRESET_DIR/$PRESET_ID"
-
-resolve_shipped_standard() {
-  # The shipped `standard` preset lives beside the installed @deepseek-ai/dsh.
-  # Resolve that package from the profile (host base) so we copy its real tree.
+resolve_shipped_presets_root() {
   local pkg
   pkg="$(cd "$PROFILE_DIR" && node -e "process.stdout.write(require('path').dirname(require.resolve('@deepseek-ai/dsh/package.json')))" 2>/dev/null)" || return 1
   [ -n "$pkg" ] || return 1
-  [ -f "$pkg/config/agent-presets/standard/agent.cordis.yml" ] || return 1
-  printf '%s/config/agent-presets/standard' "$pkg"
+  [ -d "$pkg/config/agent-presets" ] || return 1
+  printf '%s/config/agent-presets' "$pkg"
 }
 
-SHIPPED_STANDARD="$(resolve_shipped_standard)"
+PRESETS=("standard" "code" "cordis")
 
-if [ -z "$SHIPPED_STANDARD" ]; then
-  warn "could not resolve shipped 'standard' agent preset (install DSH and re-run); web_fetch may stay hidden in the active preset"
+if [ "$DRY_RUN" = 1 ]; then
+  say "would enable web_fetch (fetch:true) in agent presets: ${PRESETS[*]}"
 else
-  if [ -f "$PRESET_DEST/agent.cordis.yml" ] && grep -qF "fetch: true" "$PRESET_DEST/agent.cordis.yml"; then
-    say "agent preset '$PRESET_ID' already present with fetch enabled (skipping)"
+  PRESET_ROOT="$(resolve_shipped_presets_root)" || PRESET_ROOT=""
+  if [ -z "$PRESET_ROOT" ]; then
+    warn "could not locate shipped agent presets (install DSH and re-run); web_fetch may stay hidden in the active preset"
   else
-    mkdir -p "$PRESET_DEST"
-    cp "$SHIPPED_STANDARD/agent.cordis.yml" "$PRESET_DEST/agent.cordis.yml"
-    # flip ONLY the tool-web fetch line (there is exactly one `fetch:` in the
-    # shipped standard composition); keep everything else identical.
-    sed -i 's/^\([[:space:]]*\)fetch: false$/\1fetch: true/' "$PRESET_DEST/agent.cordis.yml"
-    cat > "$PRESET_DEST/preset.yml" <<EOF
-name: Standard + web_fetch
-description: Localflame-enabled copy of the shipped 'standard' agent preset. Identical except the model-facing web tool exposes web_fetch (fetch: true) alongside web_search.
-EOF
-    say "authored agent preset '$PRESET_ID' (fetch: true) -> $PRESET_DEST"
+    for pre in "${PRESETS[@]}"; do
+      f="$PRESET_ROOT/$pre/agent.cordis.yml"
+      [ -f "$f" ] || { warn "preset '$pre' not found (skipping)"; continue; }
+      if grep -qE '^[[:space:]]*fetch: true' "$f"; then
+        say "preset '$pre' already exposes web_fetch (skipping)"
+      elif grep -qE '^[[:space:]]*fetch: false' "$f"; then
+        cp "$f" "$f.localflame.bak"
+        sed -i 's/^\([[:space:]]*\)fetch: false$/\1fetch: true/' "$f"
+        say "enabled web_fetch in agent preset '$pre'"
+      else
+        warn "preset '$pre' has no tool-web fetch flag to flip (skipping)"
+      fi
+    done
   fi
 fi
 
@@ -186,21 +194,24 @@ cat <<'EOF'
 Next steps:
   1. Ensure your self-hosted Firecrawl is running and reachable (default
      http://localhost:3002):  curl -s $FIRE_BASE_URL/   ->  {"message":"Firecrawl API",...}
-  2. Restart DeepSeek Harness so it reloads the profile patch + plugin:
-        dsh --profile web                 (stop it first if already running)
+  2. Restart DeepSeek Harness so it reloads the profile patch, plugin, and the
+     agent-preset fetch flips:
+         dsh --profile web                 (stop it first if already running)
   3. Verify: ask the agent to run web_search and web_fetch.
 
 Notes:
-  - The 'standard-fetch' agent preset under $DSH_HOME/.agent-presets is what
-    exposes web_fetch in a session (shipped presets force fetch:false). It is a
-    copy of the shipped 'standard' preset with only the tool-web fetch flag on;
-    the profile patch flips agent-presets.default to it. Delete it to revert.
+  - Zero auth: no API key or Authorization header is used. Override the
+    endpoint with $LOCALFLAME_BASE_URL at install time, or FIRECRAWL_API_URL at
+    runtime (see .env.example).
+  - web_fetch is exposed by flipping the agent preset's tool-web fetch:false to
+    fetch:true (Standard/PTC/Creator). Backups are written as
+    *.localflame.bak beside each preset file; a future dsh upgrade will restore
+    fetch:false, so re-run ./install.sh after upgrading.
   - If DSH prunes the profile node_modules on a future install, add the package
     as a file: dependency instead:
         (edit $PROFILE_DIR/package.json)
           "dependencies": { "@local/dsh-web-firecrawl": "file:/absolute/path/to/dsh-web-firecrawl" }
         then run: pnpm install  (in $PROFILE_DIR)
-  - Uninstall: git checkout the .localflame.bak file to restore the patch,
-    rm -rf "$DEST", and rm -rf "$PRESET_DEST" (then flip agent-presets.default
-    back to standard or delete the row).
+  - Uninstall: rm -rf "$DEST", remove the $MARKER block from $PROFILE_PATCH,
+    and restore each agent preset from its .localflame.bak.
 EOF
