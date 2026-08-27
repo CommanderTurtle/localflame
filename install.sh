@@ -84,11 +84,29 @@ $MARKER
       name: '@local/dsh-web-firecrawl'
       config:
         baseURL: '$FIRE_BASE_URL'
+        # Optional search flags (uncomment to use):
+        # search:
+        #   sources: [web, news]         # add news; the only source with publishedAt
+        #   scrapeContent: true          # scrape each result for a richer snippet
+        #   includeDomains: [example.com]
+        #   excludeDomains: [ads.com]
+        #   tbs: qdr:w                   # day/week/month/year freshness
+        #   country: "US"
+        # Optional fetch flags (uncomment to use):
+        # fetch:
+        #   format: markdown             # markdown | html
+        #   onlyMainContent: true        # strip nav/header/footer chrome
+        #   blockAds: true               # strip ads + cookie banners before return
+        #   waitForMs: 0
+        #   mobile: false
+        #   maxBodyChars: 100000
 
 - id: tool-web
   config:
+    search: true
     fetch: true
     searchTimeoutMs: 60000
+    fetchTimeoutMs: 60000
 EOF
 }
 
