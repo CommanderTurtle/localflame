@@ -12,6 +12,8 @@ cloud-only provider DSH ships with.
 │   ├── package.json
 │   └── lib/index.js
 ├── install.sh                  # one-shot, idempotent installer
+├── .env.example                # zero-auth env (no API key; optional overrides)
+├── ATTRIBUTION.md              # MIT attribution + modification notes (ported code)
 ├── LICENSE                     # GNU AGPL v3 (canonical)
 └── README.md
 ```
@@ -40,13 +42,28 @@ dsh --profile web                 # (stop the old one first)
 # 4. Verify with the agent: run web_search and web_fetch
 ```
 
-The installer does exactly two things:
+The installer does three things:
 
 1. Copies `dsh-web-firecrawl/` → `$DSH_HOME/profiles/web/node_modules/@local/dsh-web-firecrawl/`.
 2. Appends a patch overlay to `$DSH_HOME/profiles/web/cordis.patch.yml` that:
    - sets `web.searchProvider` / `web.fetchProvider` to `firecrawl-local`,
    - inserts the `@local/dsh-web-firecrawl` plugin row (under `- insert:`),
-   - turns on `tool-web.fetch: true`.
+   - disables the stock cloud-only `web-search-deepseek` (id `deepseek-official`)
+     — it needs `DEEPSEEK_API_KEY` and you don't need it with a local instance.
+3. Enables the `web_fetch` **tool** by flipping `tool-web.fetch` to `true` in the
+   agent presets you use. The per-session model-facing tools (`web_search` /
+   `web_fetch`) are mounted by the **agent preset**, not the profile patch: the
+   web-app ships the host `tool-web` row `disabled: true`, and each shipped
+   preset (`standard`/`code`/`cordis` = Standard / PTC / Creator) forces
+   `fetch: false`. So localflame edits those three preset files in place (a
+   `fetch: false` → `true` flip, backed up to `*.localflame.bak`). No preset
+   clone is created; re-run `./install.sh` after a `dsh` upgrade to re-apply.
+
+> **Why is `tool-web` listed twice in the Plugin list?** One is the host row the
+> web-app ships `disabled: true` (dormant); the other is the *active* per-session
+> `tool-web` mounted by the agent preset you're running. Only the preset's row
+> reaches your session, and localflame's fetch flip is what makes its `web_fetch`
+> tool appear.
 
 ## Installer detail
 
@@ -73,11 +90,20 @@ touching it.
 ## Uninstall
 
 ```bash
-# restore the pre-localflame patch
+# 1. restore the pre-localflame patch (remove the provider overlay + deepseek disable)
 cd "$HOME/.dsh/profiles/web"        # or $DSH_PROFILE
 git checkout cordis.patch.yml       # if the profile is itself versioned
 # otherwise: cp cordis.patch.yml.localflame.bak cordis.patch.yml
+
+# 2. remove the provider package
 rm -rf "$HOME/.dsh/profiles/web/node_modules/@local/dsh-web-firecrawl"
+
+# 3. restore the agent presets' tool-web.fetch back to false (Standard/PTC/Creator)
+for pre in standard code cordis; do
+  f="/home/alienl/.bun/install/global/node_modules/@deepseek-ai/dsh/config/agent-presets/$pre/agent.cordis.yml"
+  [ -f "$f.localflame.bak" ] && cp "$f.localflame.bak" "$f"
+done
+
 dsh --profile web                    # restart
 ```
 
@@ -98,6 +124,53 @@ If you run your own Firecrawl (`~/.config/firecrawl-cli`, a Docker container, a
 self-hosted build on `:3002`, etc.), it accepts requests with **no
 `Authorization` header**. localflame surfaces that self-hosted instance as a
 proper DSH web provider.
+
+---
+
+## Feature matrix
+
+A single plugin (`@local/dsh-web-firecrawl`) registers **both** a search and a
+fetch provider under the id `firecrawl-local`. Feature set is ported from
+`firecrawl/dsh-firecrawl` (MIT → AGPL, see [ATTRIBUTION.md](./ATTRIBUTION.md));
+cloud-only knobs are de-emphasized for the self-hosted target.
+
+### Search (`config.search`, `web_search` → `POST /v2/search`)
+
+| Option | Default | Notes |
+| --- | --- | --- |
+| `sources` | `[web]` | add `news` — the only source carrying `publishedAt` |
+| `limit` | unset | default result count when a call carries no bound |
+| `scrapeContent` | `false` | scrape each result and use markdown as the snippet |
+| `maxCharsPerResult` | unset | snippet char cap (pair with `scrapeContent`) |
+| `includeDomains` / `excludeDomains` | unset | hostname allow/deny lists |
+| `tbs` | unset | freshness filter: `qdr:h`/`d`/`w`/`m`/`y` |
+| `country` / `location` | unset | geo-targeting |
+| `timeoutMs` | `60000` | search timeout |
+
+### Fetch (`config.fetch`, `web_fetch` → `POST /v2/scrape`)
+
+| Option | Default | Notes |
+| --- | --- | --- |
+| `format` | `markdown` | `markdown` decodes as `text`; `html` as `html` |
+| `onlyMainContent` | `true` | strip nav/header/footer chrome |
+| `blockAds` | `true` | strip ads + cookie banners before content is returned |
+| `waitForMs` | `0` | delay before capture (slow client-rendered pages) |
+| `mobile` | `false` | emulate a mobile device |
+| `proxy` | unset | accepted-and-forwarded; only meaningful if your self-hosted instance supports it |
+| `timeoutMs` | `60000` | fetch timeout |
+| `maxBodyChars` | `100000` | decoded-body cap; sets the real `truncated: true` flag |
+| `maxUrlLength` | `2048` | max accepted request URL length |
+
+### Safety & typing (always on)
+
+- **`assertFetchableUrl`** — `web_fetch` rejects `file://`, non-http(s) schemes,
+  embedded credentials, and over-long URLs locally *before* any request is sent.
+- **Real page status** — fetch returns the page's `metadata.statusCode`, so a
+  404 is a *result* (with `statusCode: 404`), not a thrown error.
+- **Typed `WebError` codes** — `WEB_ABORTED`, `WEB_INVALID_URL`,
+  `WEB_PROVIDER_ERROR`; the seam's structured error metadata is preserved.
+- **Zero-auth transport** — `redirect: 'error'`, no `Authorization` header;
+  `available()` is always true (no API-key gate, unlike the cloud plugin).
 
 ---
 
@@ -239,7 +312,9 @@ curl -s -X POST http://127.0.0.1:3002/v2/scrape -H 'Content-Type: application/js
 3. **`web-fetch-http` isn't even installed** → fetch had no provider at all.
 
 So the real work was: add a Firecrawl search *and* fetch provider, select it,
-and turn on `tool-web.fetch`.
+and turn on `tool-web.fetch`. That last step has a subtlety: the **model-facing
+tool** is mounted by the agent preset, not the profile patch — see "How the
+`web_fetch` tool gets exposed" below.
 
 ### Gotcha #1 — the patch shape (the big one)
 
@@ -279,8 +354,8 @@ dropped. The fix is `- insert:`:
         baseURL: 'http://localhost:3002'
 ```
 
-Additionally, the final overlay's `web` / `tool-web` rows stay top-level
-(they *are* overrides of existing ids).
+Additionally, the final overlay's `web` row stays top-level
+(it *is* an override of an existing id); the provider entry uses `- insert:`.
 
 ### Gotcha #2 — provider package resolves/imports but wasn't mounted
 
@@ -295,6 +370,38 @@ node --input-type=module -e "import('@local/dsh-web-firecrawl').then(m=>console.
 That was necessary but not sufficient — the code was right, the wiring was the
 problem (see Gotcha #1).
 
+### Adding the profile + the `tool-web` fetch trap
+
+First, a clarifying gotcha about the **model-facing tools** vs the patch. You'd
+naturally try to enable `web_fetch` like this:
+
+```yaml
+- id: tool-web
+  config:
+    fetch: true
+```
+
+That *merges into the host `tool-web` row* — but the web-app ships that row
+`disabled: true`, and the tools a session actually sees are mounted **per-session
+by the agent preset**, where each shipped preset (`standard`/`code`/`cordis`)
+forces `fetch: false`. So a profile-patch `tool-web → fetch:true` is effectively
+a no-op and silently leaves `web_fetch` hidden.
+
+### How the `web_fetch` tool gets exposed
+
+The active lever is the **agent preset**, not the profile patch:
+
+1. The web profile selects a preset via `agent-presets: { default: standard }`.
+2. Each preset mounts its own `tool-web` with `fetch: false`.
+3. localflame flips that one flag to `fetch: true` in the presets you use
+   (`standard` = Standard, `code` = PTC, `cordis` = Creator), each backed up to
+   `*.localflame.bak`. The profile patch stays minimal — it only selects the
+   provider and disables the un-needed cloud search provider.
+
+So the "two `tool-web` rows" in the Plugin list are: the **host** row (ships
+`disabled: true` — dormant) and the **active per-session** row from your preset
+(now `fetch: true`). Only the latter reaches your session.
+
 ### The working end state
 
 - `~/.dsh/profiles/web/node_modules/@local/dsh-web-firecrawl/{package.json,lib/index.js}`
@@ -306,17 +413,18 @@ problem (see Gotcha #1).
     searchProvider: firecrawl-local
     fetchProvider: firecrawl-local
 
+- id: web-search-deepseek   # stock cloud provider — not needed with local Firecrawl
+  disabled: true
+
 - insert:
     - id: web-firecrawl-local
       name: '@local/dsh-web-firecrawl'
       config:
         baseURL: 'http://localhost:3002'
-
-- id: tool-web
-  config:
-    fetch: true
-    searchTimeoutMs: 60000
 ```
+
+- plus the `tool-web` `fetch: true` flip inside the
+  `standard` / `code` / `cordis` agent presets.
 
 After a restart, both tools worked against `:3002` end-to-end.
 
@@ -343,13 +451,16 @@ curl -s -X POST http://127.0.0.1:3002/v2/search -H 'Content-Type: application/js
 - DSH (`@deepseek-ai/dsh`) installed with a `web` profile.
 - A self-hosted, network-reachable Firecrawl accepting unauthenticated requests
   (default `http://localhost:3002`).
-- AGPL-3.0 — see [`LICENSE`](./LICENSE).
+- Node.js `^22.19.0 || >=24.0.0` (the same range `dsh-web`/upstream requires).
+- AGPL-3.0 — see [`LICENSE`](./LICENSE). Ported Firecrawl code is MIT and carries
+  full attribution in [`ATTRIBUTION.md`](./ATTRIBUTION.md).
 
 ## Where the numbers come from
 
 - DSH packages read: `/home/alienl/.bun/install/global/node_modules/@deepseek-ai/`
 - Hermes plugin: `~/.hermes/hermes-agent/plugins/web/firecrawl/provider.py`
 - OMP provider: `@oh-my-pi/pi-coding-agent/src/web/search/providers/firecrawl.ts`
+- Upstream provider (ported): [`firecrawl/dsh-firecrawl`](https://github.com/firecrawl/dsh-firecrawl) (MIT)
 - Docs: [firecrawl.dev](https://firecrawl.dev)
 
 ---
@@ -357,3 +468,7 @@ curl -s -X POST http://127.0.0.1:3002/v2/search -H 'Content-Type: application/js
 ## License
 
 GNU Affero General Public License v3.0 or later. See [LICENSE](./LICENSE).
+
+Ported portions of `firecrawl/dsh-firecrawl` (MIT) retain their copyright and
+permission notice; see [ATTRIBUTION.md](./ATTRIBUTION.md) for the full MIT text
+and a list of what was ported and how it was modified.
