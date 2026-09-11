@@ -135,6 +135,19 @@ bun run dsh:destroy-web
 That command invokes the same checked-in configure path as the installer. It
 does not edit the global DSH package and is safe to rerun after an upgrade.
 
+To update the Bun-global DSH package and immediately rebuild that policy in one
+repeatable pass:
+
+```bash
+./update-dsh.sh
+```
+
+The command uses `@deepseek-ai/dsh@latest` by default, verifies the installed
+`js-yaml` constructor contract that DSH boot requires, regenerates every
+managed preset, checks composed web-profile configuration, and runs the DSH
+doctor. Set `DSH_PACKAGE_SPEC=@deepseek-ai/dsh@next` only when deliberately
+testing the publisher's next tag.
+
 ## Update and repair
 
 ```bash
