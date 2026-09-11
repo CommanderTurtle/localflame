@@ -53,7 +53,8 @@ generation is part of this pass.
   copies and all three OMP MCP files unchanged, and the focused OMP doctor
   passed 19/19 checks.
 - [x] Persephone's owner handoffs now include Localflame, Retrieval, Librarian,
-  Camofox, and Context Mode. The commits through `def5da6` also migrate stale
+  Camofox, Context Mode, and Codebase Memory. The commits through `596424b`
+  also migrate stale
   backup ownership away from those delegated MCPs and honor Librarian's
   selected private backend. Its exact committed integration succeeded,
   TypeScript checking passed, and the configuration-only doctor reports every
@@ -66,6 +67,14 @@ generation is part of this pass.
   committed integration runs produced identical Hermes, OMP, and systemd file
   hashes without restarting the active daemon, and the runtime doctor passed
   every check.
+- [x] Codebase Memory's narrow Hermes/OMP owner contract is committed in
+  `~/Hermes/codebase-memory-mcp` at `6405c3be9`. Its exact committed
+  integration completed twice with identical configuration hashes and 38/38
+  checks on both passes. Public Hermes profiles expose its MCP and current
+  allowlisted `pre_llm_call` hook; the private Librarian profile has neither.
+  Default, Leetcoder, and Persephone OMP profiles expose the installed binary,
+  while isolated profiles do not. Librarian's independent doctor reconfirmed
+  its private boundary afterward.
 
 ### Current source and configuration facts
 
@@ -83,7 +92,8 @@ generation is part of this pass.
   `package.json` and `bun.lock` security overrides were preserved in its
   integration commit rather than reverted.
 - Native source and command output classify Camofox, Localflame, Context Mode,
-  Retrieval, Librarian, and Leetcoder as MCP servers. Context Mode also owns
+  Retrieval, Librarian, Leetcoder, and Codebase Memory as MCP servers. Context
+  Mode also owns
   a minimal Hermes native plugin bridge and its OMP lifecycle plugin;
   Retrieval owns its session-close hook. Legacy Context Mode routing-skill
   copies were moved to timestamped state backups rather than retained beside
@@ -525,8 +535,9 @@ two independent local sources or one local source plus official documentation.
 | Live DSH | installed packages/presets | real profile and regenerated preset | first integration passed; strict roster pending |
 | Camofox ownership | checked-in dual-harness installer | native Hermes/OMP config plus 67-check doctor | passed at `c766058` |
 | Context Mode ownership | native plugin/MCP installer | pinned registry, copied-plugin hashes, and 123-check doctor | passed twice through `0231bcb`; focused OMP doctor 19/19 |
-| Persephone delegation | committed owner-script call sites | integration-only doctor plus each owner doctor | passed through `def5da6` |
+| Persephone delegation | committed owner-script call sites | integration-only doctor plus each owner doctor | passed twice through `596424b` with byte-identical second-pass state |
 | Leetcoder ownership | checked-in Hermes-only MCP installer | identical second-pass hashes, unchanged service PID/start time, and runtime doctor | passed twice at `fbb7bbe` |
+| Codebase Memory ownership | checked-in Hermes/OMP reconciler plus native Hermes registries | identical second-pass hashes, current targeted hook consent, and 38-check doctor | passed twice at `6405c3be9` |
 | Repository contents | unit/static checks | `git diff --check` and tracked-file audit | Localflame/Retrieval passed; later repos pending |
 
 ## 9. Retrieval, skill lifecycle, and Librarian integration
@@ -684,6 +695,9 @@ documented local APIs and should not duplicate their storage or agent loops.
 - [x] Commit Leetcoder's Hermes-only MCP plus OMP-worker gateway contract,
   execute the committed integration twice, compare all generated hashes and
   the active service identity, and pass its full read-only runtime doctor.
+- [x] Commit Codebase Memory's public/private Hermes and OMP owner contract,
+  reconcile its exact hook consent without blanket approval, execute it twice,
+  and delegate Persephone's former copied definition back to that owner.
 - [ ] Commit Sandwich update orchestration without changing its Bun-backed
   `node`, `npm`, `npx`, `pnpm`, or `yarn` compatibility behavior.
 - [ ] Commit Diogenes only after all backend commands and runtime/service/UI
