@@ -103,8 +103,43 @@ generation is part of this pass.
 - [x] Diogenes's backend owner delegation and OMP baseline repair are committed
   at `f6c87a1`. Its configuration actions now call repository-owned update,
   integrate, and doctor entrypoints rather than writing harness configuration
-  directly. Rich Retrieval, Librarian, Persephone, and RoboOMP interfaces remain
-  pending and intentionally block the final Diogenes UI delivery.
+  directly.
+- [x] Persephone's typed RoboOMP owner workspace is committed at `c5538ec`.
+  It owns redacted configuration reads, fixed lifecycle commands, planned
+  mutations, bounded issue/worktree/Git/SQLite/session/artifact inspection, and
+  OMP source-version synchronization. The durable owner action was used to
+  synchronize the private runtime pin to OMP `18.1.16`; it did not build or
+  start the unconfigured service.
+- [x] Diogenes's Retrieval, Librarian, Persephone, and RoboOMP workspaces are
+  committed at `4b2d259`. The fork's independent README update and upstream's
+  MCP argument-validation fix were then joined by normal merges at `69d21bf`
+  and `d3bae06`. The merged tree passes 69 focused backend/route/UI checks; all
+  four workspace modules, the application shell, and the full stylesheet
+  bundle successfully. A real read-only call through the Diogenes RoboOMP
+  adapter returned `persephone.robomp.workspace.v1`, all eight runtime views,
+  39 redacted configuration fields, and four secret descriptors with no secret
+  values.
+
+### Active continuation after the first Diogenes UI delivery
+
+- [ ] Librarian's Diogenes workspace has browse, relationship graph, concept
+  reader, trace history, health, agent chat, and reviewed dream proposal
+  apply/reject/rollback. It still needs owner-backed guided add, update,
+  maintenance, import, and export operations before section 10.3 is complete.
+- [ ] RoboOMP's Diogenes workspace has repository/issue browsing, current
+  worktree status, red/green diffs, branch and commit history, tool/event/log
+  timelines, release runs, configuration, lifecycle, triage, cleanup, audit,
+  timers, and version synchronization. Its owner contract still needs an audit
+  for explicit pull-request/review/handoff operations; unsupported controls
+  must not be invented in the browser.
+- [ ] Re-run the final cross-repository convergence only after those remaining
+  owner contracts are committed and the Diogenes integration is updated.
+- [ ] The broad `test_ulysses_*.py test_diogenes_*.py` run currently has 246
+  passes and one pre-existing Colibri expectation failure (`make cuda-test` is
+  absent from the current plan). Full collection has four pre-existing MCP
+  server import errors after collecting 6,266 tests. Neither is in the files
+  touched by these workspaces; keep them visible rather than folding them into
+  the integration changes.
 
 ### Current source and configuration facts
 
@@ -132,9 +167,11 @@ generation is part of this pass.
   the native plugin/MCP contract.
   Persephone remains a gateway/network process backed by OMP RPC rather than
   being reclassified as an MCP server.
-- Diogenes still exposes Retrieval as a flat Skills Auditor and Librarian,
-  Persephone, and RoboOMP mainly as service controls. The richer Diogenes-only
-  workspaces in section 10 remain pending.
+- Diogenes now exposes Retrieval's structured catalog and runtime graph,
+  Librarian's versioned loopback API, Persephone's owner CLI, and RoboOMP's
+  Persephone-owned Git workspace through separate responsive workspaces.
+  Browser code stores only window/layout state; credentials remain server-side
+  or write-only. The two remaining feature gaps are recorded immediately above.
 - Sandwich's Bun-backed `node`, `npm`, `npx`, `pnpm`, and `yarn` shims are
   intact; `npx` resolves to `bun x --bun`. Its checked-in owner orchestrator now
   provides the post-update reconciliation path for Localflame, Retrieval,
@@ -596,7 +633,7 @@ two independent local sources or one local source plus official documentation.
 - [x] Route supported OMP/Hermes configuration changes through their native
   `config` commands and use their documented MCP configuration boundary where
   no non-interactive command exists.
-- [ ] Replace Diogenes's flat skill-file audit source with Retrieval's structured
+- [x] Replace Diogenes's flat skill-file audit source with Retrieval's structured
   catalog API and add a source/category/skill graph browser to the existing
   operator window; retain edit actions only for canonical editable files.
 - [x] Verify Retrieval and Librarian appear in both Hermes's native MCP listing
