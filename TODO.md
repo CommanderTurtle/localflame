@@ -67,11 +67,14 @@ generation is part of this pass.
   and frozen install pass while the pre-existing Vitest/Zod named-import test
   incompatibility remains separately documented.
 - [x] Context Mode's dependency refresh, portable Hermes test, native plugin
-  package, dual-harness integration, pinned-listing doctor repair, and normal
-  upstream-history merge are committed in `~/Hermes/context-mode` through
-  `585c4fe`. The current revision passed 123/123 checks on repeated owner runs,
-  all six Hermes plugin copies and all three OMP MCP files remained unchanged,
-  and the focused OMP doctor passed 19/19 checks.
+  package, dual-harness integration, pinned-listing doctor repair, normal
+  upstream-history merge, and host-owned execution-policy handoff are committed
+  in `~/Hermes/context-mode` through `b702bda`. The exact owner marker delegates
+  `ctx_execute`, `ctx_execute_file`, and `ctx_batch_execute` policy to OMP or
+  Hermes after their approval layer; unrelated clients retain Context Mode's
+  upstream deny and project-boundary checks. Two exact owner runs passed
+  126/126 checks with byte-identical configuration state, and the focused OMP
+  doctor passed 22/22 checks.
 - [x] Persephone's owner handoffs now include Localflame, Retrieval, Librarian,
   Camofox, Context Mode, and Codebase Memory. The commits through `596424b`
   also migrate stale
@@ -617,10 +620,13 @@ SHA-256 over each normalized transcript body:
 - [ ] Verify Librarian calls from OMP use Librarian's OMP MCP/RPC route and
   public tool contract directly. They must not detour through Hermes or expose
   the private Hermes-only `librarian-okf` worker.
-- [ ] Audit Context Mode's OMP `ctx_execute` registration, permissions, and
+- [x] Audit Context Mode's OMP `ctx_execute` registration, permissions, and
   subprocess policy. Make its intended shell execution unrestricted by a
   Context Mode sandbox/blocklist so agents do not detour through Python or raw
   curl; preserve normal harness/user approval boundaries outside that owner.
+  Context Mode `b702bda` implements this with an exact owner-installed marker,
+  a guarded-default/trusted-host JSON-RPC smoke check, two 126/126 owner runs,
+  identical second-pass configuration hashes, and a 22/22 focused OMP doctor.
 - [ ] Put every OMP runtime repair in Persephone's committed, idempotent owner
   scripts, execute those scripts, then rerun them and verify unchanged
   semantic state in at least two independent sources so later OMP breaking
@@ -744,7 +750,7 @@ two independent local sources or one local source plus official documentation.
 | Live Hermes | current repo docs/source | real launcher/updater/config state and native registry output | converged, restarted, and all intended registrations active |
 | Live DSH | installed packages/presets | real profile, regenerated preset, and repeated committed updater | passed twice through Localflame `1cbd3e1`; second run byte-identical |
 | Camofox ownership | checked-in dual-harness installer | native Hermes/OMP config plus 67-check doctor | passed at `c766058` |
-| Context Mode ownership | native plugin/MCP installer | pinned registry, copied-plugin hashes, and 123-check doctor | passed repeatedly through `585c4fe`; focused OMP doctor 19/19 |
+| Context Mode ownership | native plugin/MCP installer | pinned registry, copied-plugin hashes, guarded-default/trusted-host execution smoke, identical repeat-run hashes, and 126-check doctor | passed twice through `b702bda`; focused OMP doctor 22/22 |
 | Persephone delegation | committed owner-script call sites | integration-only doctor plus each owner doctor | passed twice through `596424b` with byte-identical second-pass state |
 | Leetcoder ownership | checked-in Hermes-only MCP installer | identical second-pass hashes, unchanged service PID/start time, and runtime doctor | passed twice at `fbb7bbe` |
 | Codebase Memory ownership | checked-in Hermes/OMP reconciler plus native Hermes registries | installed-source receipt, private staging, current targeted hook consent, and 38-check doctor | passed twice through `a5a8c9b77` |
