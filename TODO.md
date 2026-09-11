@@ -140,6 +140,11 @@ generation is part of this pass.
   for explicit pull-request/review/handoff operations. The reviewed host
   worktree/PR handoff is complete at Persephone `3928ba8` and Diogenes
   `d02fa59`; unsupported controls were not invented in the browser.
+- [ ] Extend that RoboOMP workspace from its completed owner/control baseline
+  into the full Diogenes-only ADE: use Gitcito's code as an audited interaction
+  reference, expose the complete RoboOMP-authorized tool surface, and add
+  model-assisted questions/actions over selected diffs, commits, issues,
+  reviews, and artifacts without creating an independent web service.
 - [x] Re-run final cross-repository convergence after those owner contracts.
   The complete owner updater finished with 8 installed, 0 skipped, and 0
   failed after the durable Persephone cache ignore and Codebase Memory
@@ -444,6 +449,14 @@ Like. We never clear default skills for omp. But yeah. Didn't mean to interrupt.
 
 </details>
 
+<details><summary>Current + 4 — Complete the Diogenes RoboOMP ADE</summary>
+
+`````text
+And I do hope gitcito is being used as a raw "code" baseline that we can take and apply to our standalone webui. The way it implements git in a UI is rather fantastic. But rather, our persephone roboomp interface solely visible in the webui of diogenes should be more ADE-defined, like, not only can you "do" the intended things that roboomp allows, but you should be able to ask the model stuff, etcetera. Simple questions on diffs. But like, not just that, it should be a fully isolated web environment, with all the tools available there. Including what we intended for our usage of roboomp initially
+`````
+
+</details>
+
 ### Steering-to-checklist verification
 
 | Transcript steer | Durable coverage | State |
@@ -468,6 +481,7 @@ Like. We never clear default skills for omp. But yeah. Didn't mean to interrupt.
 | Current + 1 | Section 3: direct OMP Retrieval and Librarian MCP/RPC availability without Hermes detours | Active after cross-repository convergence |
 | Current + 2 | Section 3: turn-local Retrieval results without adding retrieved packages to OMP's skill trees | Active after cross-repository convergence |
 | Current + 3 | Section 3: preserve OMP's entire default skill baseline while keeping Retrieval results turn-local | Recorded as a non-destructive constraint |
+| Current + 4 | Section 10.5: Gitcito-informed, Diogenes-only RoboOMP ADE with model-assisted Git questions and the complete authorized owner surface | Backend/control baseline complete; richer ADE active |
 
 ### Exact transcript audit
 
@@ -489,6 +503,9 @@ Like. We never clear default skills for omp. But yeah. Didn't mean to interrupt.
   mapped it to the no-retrieved-skill-copy acceptance check in section 3.
 - [x] Appended the OMP default-skill clarification verbatim as `Current + 3`;
   section 3 now forbids clearing or replacing that baseline.
+- [x] Appended the RoboOMP ADE clarification verbatim as `Current + 4` and
+  reopened the richer Diogenes-only interaction work without undoing the
+  completed owner/control baseline.
 
 The 2026-09-11 audit fingerprints are the first 12 hexadecimal characters of
 SHA-256 over each normalized transcript body:
@@ -839,6 +856,20 @@ documented local APIs and should not duplicate their storage or agent loops.
   operation.
 - [x] Preserve the existing credential proxy, webhook verification, SQLite
   queue, isolated issue worktrees, and proposal-only scheduled audit behavior.
+- [ ] Audit Gitcito's source as a code-level reference for repository browsing,
+  diff navigation, staging/review affordances, and dense Git status—not as a
+  runtime dependency or a copied brand/theme.
+- [ ] Add a model interaction pane backed by the existing RoboOMP/OMP owner
+  contract so a user can ask focused questions about the selected diff,
+  commit, issue, pull request, run, log, or artifact and can review any proposed
+  action before execution.
+- [ ] Make the Diogenes window a complete isolated ADE for the authorized
+  RoboOMP surface: browse, inspect, query, plan, execute, review, and hand off
+  without exposing arbitrary host commands or adding a standalone RoboOMP web
+  service.
+- [ ] Re-audit the original RoboOMP use cases and owner CLI after the model pane
+  is wired; every supported operation should be reachable or explicitly shown
+  as unavailable from the owner rather than approximated in browser code.
 
 ## 11. Cross-repository delivery order
 
