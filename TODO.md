@@ -457,6 +457,14 @@ And I do hope gitcito is being used as a raw "code" baseline that we can take an
 
 </details>
 
+<details><summary>Current + 5 — Persephone owns OMP post-update reconciliation</summary>
+
+`````text
+Again, interesting approach might be adding the config to persephone, rather than diogenes, thuswise it can locally detect from the script if something is off when omp updates. Something to think about, so it only dynamically reinjects when needed, things that are typically "not configurable" by default in omp, like the update to the websearch provider, the update to the browser tool showing, the update to the base64 optimizing that occurs "hidden" as an available feature. Basically just a clean solution is moving entirely out of diogenes and storing in persephone when one git clones it and has such a fresh omp install
+`````
+
+</details>
+
 ### Steering-to-checklist verification
 
 | Transcript steer | Durable coverage | State |
@@ -482,6 +490,7 @@ And I do hope gitcito is being used as a raw "code" baseline that we can take an
 | Current + 2 | Section 3: turn-local Retrieval results without adding retrieved packages to OMP's skill trees | Active after cross-repository convergence |
 | Current + 3 | Section 3: preserve OMP's entire default skill baseline while keeping Retrieval results turn-local | Recorded as a non-destructive constraint |
 | Current + 4 | Section 10.5: Gitcito-informed, Diogenes-only RoboOMP ADE with model-assisted Git questions and the complete authorized owner surface | Backend/control baseline complete; richer ADE active |
+| Current + 5 | Sections 3, 7, 10.4, and 11: Persephone owns an idempotent OMP post-update reconcile/doctor contract; Diogenes only delegates; hidden web search, Camofox browser, and image/base64 capability drift is repaired only when detected | Active; ownership supersedes the Diogenes-owned ompconfig implementation plan |
 
 ### Exact transcript audit
 
@@ -506,6 +515,9 @@ And I do hope gitcito is being used as a raw "code" baseline that we can take an
 - [x] Appended the RoboOMP ADE clarification verbatim as `Current + 4` and
   reopened the richer Diogenes-only interaction work without undoing the
   completed owner/control baseline.
+- [x] Appended the OMP ownership clarification verbatim as `Current + 5` and
+  moved the durable runtime-repair source from Diogenes to Persephone. Any
+  retained Diogenes entrypoint is now a compatibility delegate only.
 
 The 2026-09-11 audit fingerprints are the first 12 hexadecimal characters of
 SHA-256 over each normalized transcript body:
@@ -550,7 +562,7 @@ SHA-256 over each normalized transcript body:
   and resource inventory tools.
 - [x] Keep an in-memory bounded LRU; never persist browsing data.
 
-## 3. OMP integration
+## 3. OMP integration (Persephone-owned reconciliation)
 
 - [x] Merge a stdio server into `~/.omp/agent/mcp.json` without replacing
   existing servers.
@@ -559,12 +571,21 @@ SHA-256 over each normalized transcript body:
   Localflame policy that disabled them and perform the one-time repair through
   the checked-in migration described above.
 - [x] Update Diogenes's tracked `ompsettings.sh` so its repeatable OMP baseline
-  reapplies Localflame through the toolkit's own installer.
+  reapplies Localflame through the toolkit's own installer. This is the
+  historical baseline only; the current ownership migration below supersedes
+  Diogenes as the source of OMP post-update repair.
 - [x] Verify the adapter against both OMP's JSON schema and loader source.
 - [ ] Read the currently installed `omp --help`, native tool/help output,
   effective configuration, and current OMP source before changing the
-  one-off ompconfig appliance. Distinguish built-in `web_search` and `browser`
+  reconciliation appliance. Distinguish built-in `web_search` and `browser`
   labels from MCP tool registrations rather than relying on their names.
+- [ ] Make Persephone the sole checked-in owner of OMP post-update
+  reconciliation. A fresh Persephone checkout plus a fresh OMP installation
+  must expose one zero-knowledge integrate/reconcile command and one read-only
+  doctor; both must discover the current OMP schema and paths at runtime.
+- [ ] Reconcile only positive drift. Do not rewrite already-correct files,
+  reorder unrelated settings, replace user-owned model/provider entries, or
+  stamp a configuration merely because the command was run.
 - [ ] Make OMP's model-facing search route prefer and successfully advertise
   Localflame's Firecrawl MCP on every ordinary profile, without removing
   unrelated native providers or changing DSH's stricter Localflame-only rule.
@@ -591,9 +612,12 @@ SHA-256 over each normalized transcript body:
   subprocess policy. Make its intended shell execution unrestricted by a
   Context Mode sandbox/blocklist so agents do not detour through Python or raw
   curl; preserve normal harness/user approval boundaries outside that owner.
-- [ ] Put every repair in committed, idempotent ompconfig/owner scripts, execute
-  those scripts, then rerun them and verify unchanged semantic state in at
-  least two independent sources so later OMP breaking updates are repairable.
+- [ ] Put every OMP runtime repair in Persephone's committed, idempotent owner
+  scripts, execute those scripts, then rerun them and verify unchanged
+  semantic state in at least two independent sources so later OMP breaking
+  updates are repairable. If Diogenes retains `ompsettings.sh`, reduce it to a
+  compatibility launcher that invokes Persephone and contains no second copy
+  of the policy.
 
 ## 4. Hermes integration
 
