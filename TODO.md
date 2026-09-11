@@ -89,6 +89,8 @@ generation is part of this pass.
   full doctor found Firecrawl-first `web_search`, the Camofox `browser`, and
   Localflame/Camofox MCP handshakes in all three ordinary profiles, plus
   `text,image` input for `vllm/qwen3.8-27b` in both configured model profiles.
+  The gateway owner workspace now also exposes connector validation and a
+  bounded, on-demand user-journal contract through `66aa1e2`.
 - [x] Leetcoder's dependency refresh and durable Hermes-to-OMP owner contract
   are committed in `~/Hermes/leetcoder` through `fbb7bbe`. Its public surface
   remains four Hermes MCP tools backed by an authenticated loopback service;
@@ -142,6 +144,13 @@ generation is part of this pass.
   39 redacted configuration fields, and four secret descriptors with no secret
   values. Librarian now adds guided reviewed operations and bundle transfer;
   RoboOMP now adds planned host worktree/PR review handoff.
+- [x] Persephone's Diogenes workspace now includes daemon loops, live and
+  persisted OMP workers/sessions, route-bound approvals, and service logs that
+  are fetched only after an operator asks for them. Connector setup renders
+  owner-generated validation and provider resources. Persephone `66aa1e2` and
+  Diogenes `89d4ac4` pass 21 Bun tests plus TypeScript checking, 52 focused
+  Python tests, and a browser bundle; repeated workspace/log reads were
+  semantically identical after removing timestamps.
 
 ### Active continuation after the first Diogenes UI delivery
 
@@ -216,7 +225,8 @@ generation is part of this pass.
   Librarian's versioned loopback API, Persephone's owner CLI, and RoboOMP's
   Persephone-owned Git workspace through separate responsive workspaces.
   Browser code stores only window/layout state; credentials remain server-side
-  or write-only. The two remaining feature gaps are recorded immediately above.
+  or write-only. Persephone's gateway operator breadth is complete; the major
+  remaining interface expansion is the RoboOMP ADE recorded above.
 - Sandwich's Bun-backed `node`, `npm`, `npx`, `pnpm`, and `yarn` shims are
   intact; `npx` resolves to `bun x --bun`. Its checked-in owner orchestrator now
   provides the post-update reconciliation path for Localflame, Retrieval,
@@ -508,16 +518,16 @@ Again, interesting approach might be adding the config to persephone, rather tha
 | 202018 | Section 9: session-close deduplication/indexing and clean upstream skill baselines | Complete; exact three-router allowlist installed |
 | 202805 | Sections 3-6 and 11: Localflame name, both harnesses, DSH exclusivity, native listing, gateway restart, zero-knowledge scripts | Complete through `1cbd3e1`; native gateway restart and registry capture passed |
 | 202930 | Sections 6, 7, 10.1, and 11: scripts make mutations, are independently runnable and repeatable, remove stale/duplicate state, and receive two-source verification | Active |
-| 203275 | Section 10: rich Diogenes-only Retrieval/Librarian/Persephone/RoboOMP workspaces using their CLI/MCP backends | Fully enumerated; pending |
+| 203275 | Section 10: rich Diogenes-only Retrieval/Librarian/Persephone/RoboOMP workspaces using their CLI/MCP backends | Retrieval, Librarian, and Persephone complete; RoboOMP ADE remains active |
 | 204258 | Superseding web-provider policy and Persistent routing skills above | Complete |
 | 204423 / 204484 | Current execution state, this verbatim record, and this mapping | Complete and maintained from the local transcript |
-| 205375 | Sections 4, 7, 9, and 10: audit Hermes hook/tool/MCP standards, classify callable backends from source, and keep Persephone on its gateway/network contract | Native help and Context Mode/Camofox ownership complete; remaining backends and Diogenes interfaces pending |
+| 205375 | Sections 4, 7, 9, and 10: audit Hermes hook/tool/MCP standards, classify callable backends from source, and keep Persephone on its gateway/network contract | Native help and Context Mode/Camofox ownership complete; Persephone gateway UI complete; RoboOMP ADE remains |
 | Current OMP audit | Section 3: Localflame-backed search, Camofox browser routing, vision/base64 capability, MCP visibility, unrestricted Context Mode execution, and durable post-update reapplication | Complete through Context Mode `b702bda`, Persephone `cb36532`, and Diogenes delegate `48ec1f2` |
 | Current + 1 | Section 3: direct OMP Retrieval and Librarian MCP/RPC availability without Hermes detours | Complete through Retrieval `3e92e8c`, Librarian `e2abd26`, and the installed OMP owner doctors |
 | Current + 2 | Section 3: turn-local Retrieval results without adding retrieved packages to OMP's skill trees | Complete through Retrieval `3e92e8c` |
 | Current + 3 | Section 3: preserve OMP's entire default skill baseline while keeping Retrieval results turn-local | Recorded as a non-destructive constraint |
 | Current + 4 | Section 10.5: Gitcito-informed, Diogenes-only RoboOMP ADE with model-assisted Git questions and the complete authorized owner surface | Backend/control baseline complete; richer ADE active |
-| Current + 5 | Sections 3, 7, 10.4, and 11: Persephone owns an idempotent OMP post-update reconcile/doctor contract; Diogenes only delegates; hidden web search, Camofox browser, and image/base64 capability drift is repaired only when detected | Complete at Persephone `cb36532` and Diogenes `48ec1f2` |
+| Current + 5 | Sections 3, 7, 10.4, and 11: Persephone owns an idempotent OMP post-update reconcile/doctor contract; Diogenes only delegates; hidden web search, Camofox browser, and image/base64 capability drift is repaired only when detected | Complete at Persephone `cb36532` and Diogenes `48ec1f2`; gateway diagnostics completed at Persephone `66aa1e2` and Diogenes `89d4ac4` |
 
 ### Exact transcript audit
 
@@ -783,7 +793,7 @@ two independent local sources or one local source plus official documentation.
 | Hermes config | native `hermes tools`/`hermes mcp`/`hermes hooks` output | installed profile config, hooks, and gateway child processes | all seven intended MCPs and both exact hooks passed after final restart |
 | DSH config | installed `dsh-mcp-client` | installed profile/preset loader | strict four-preset roster, read-only Localflame access, and 30/30 owner checks passed on DSH `0.1.5-rc.1` |
 | Update resilience | installer source audit | repeated aggregate owner update plus head/config hashes | `update=0 check=0 heads=0 config=0` at Sandwich `5cd08d4` |
-| Live OMP/Diogenes | installed schema/config loader | Diogenes owner-delegation tests and repeated rerun state | backend ownership passed at `f6c87a1`; rich operator interfaces pending |
+| Live OMP/Diogenes | installed schema/config loader | Diogenes owner-delegation tests, focused UI/API tests, browser bundle, and repeated owner reads | OMP ownership delegates at `48ec1f2`; Persephone runtime workspace passed at `89d4ac4` |
 | Live Hermes | current repo docs/source | real launcher/updater/config state and native registry output | converged, restarted, and all intended registrations active |
 | Live DSH | installed packages/presets | real profile, regenerated preset, and repeated committed updater | passed twice through Localflame `1cbd3e1`; second run byte-identical |
 | Camofox ownership | checked-in dual-harness installer | native Hermes/OMP config plus 67-check doctor | passed at `c766058` |
@@ -791,6 +801,7 @@ two independent local sources or one local source plus official documentation.
 | Persephone delegation | committed owner-script call sites | integration-only doctor plus each owner doctor | passed twice through `596424b` with byte-identical second-pass state |
 | OMP post-update reconciliation | installed OMP `18.1.16` config/model/extension source plus native help | two no-write committed reconciler passes, RPC `get_state`, effective model catalog, and Localflame/Camofox MCP handshakes in all ordinary profiles | passed at Persephone `cb36532`; 20 tests and TypeScript check passed, no model/web request issued |
 | Diogenes OMP compatibility delegation | committed 36-line `ompsettings.sh` wrapper and README ownership wording | shell syntax/help checks, clean repository state, and two output-identical wrapper runs containing only `unchanged` records | passed at Diogenes `48ec1f2`; no OMP policy remains in Diogenes |
+| Persephone gateway workspace | Hermes `0.21.1` native setup source plus Persephone connector/runtime source | owner-generated validation, bounded journal contract, 21 Bun tests, TypeScript check, 52 Diogenes tests, browser bundle, and repeated normalized reads | passed at Persephone `66aa1e2` and Diogenes `89d4ac4`; logs remain on-demand and approvals reuse native conversation commands |
 | Leetcoder ownership | checked-in Hermes-only MCP installer | identical second-pass hashes, unchanged service PID/start time, and runtime doctor | passed twice at `fbb7bbe` |
 | Codebase Memory ownership | checked-in Hermes/OMP reconciler plus native Hermes registries | installed-source receipt, private staging, current targeted hook consent, and 38-check doctor | passed twice through `a5a8c9b77` |
 | Retrieval delivery and lifecycle ownership | checked-in exact-consent Hermes reconciler plus turn-local OMP contract | native Hermes hook listings, OMP MCP markers, absence of OMP projection/extension state, byte-identical second-pass config, and owner doctor | 37 tests and 81/81 checks passed twice at `3e92e8c`; second-pass configuration hashes were identical |
@@ -904,24 +915,32 @@ documented local APIs and should not duplicate their storage or agent loops.
   small addendum to Localflame or the Retrieval/Librarian interfaces.
 - [x] Replace its duplicate in-process Firecrawl search adapter with the
   versioned Localflame MCP while retaining the Camofox browser adapter.
-- [ ] Add a Diogenes setup flow comparable in completeness to
+- [x] Add a Diogenes setup flow comparable in completeness to
   `hermes setup gateway`: Signal, Discord, and Slack steps; exact provider-side
   settings; copy-ready values; allowlists; secrets/environment targets; and
-  validation state.
-- [ ] Expose gateway lifecycle, connector health, logs, routes, sessions,
+  validation state. Persephone `66aa1e2` generates Signal commands and health
+  URL, Discord intents/invite values, a Slack Socket Mode manifest, provider
+  resources, and live readiness checks; Diogenes `89d4ac4` only renders them.
+- [x] Expose gateway lifecycle, connector health, logs, routes, sessions,
   schedules, approvals, queued messages, retry state, and worker/profile state
-  through Persephone's existing CLI/control API.
+  through Persephone's existing CLI/control API. The Runtime tab reads daemon
+  loops and workers from `workspace show`, loads a bounded journal snapshot
+  only on demand, and sends approvals through Persephone's existing
+  `/approve`/`/deny` conversation path.
 - [x] Ensure Persephone can operate from its own OMP RPC service contract and
   does not depend on the Hermes TUI or Hermes gateway being active.
 - [x] Give install, integrate, doctor, update, restart-if-active, and uninstall
-  one idempotent script path each. Diogenes button routing to those paths
-  remains part of the pending UI audit.
+  one idempotent script path each. Diogenes lifecycle controls route through
+  fixed owner CLI plans; no equivalent shell operation is reimplemented in
+  browser code.
 - [x] Own OMP post-update repair in Persephone rather than Diogenes. The narrow
   `reconcile` path detects drift before writing, while the doctor verifies
   native search/browser exposure and direct image capability per profile.
-- [ ] Compare connector generation and validation with Hermes's current native
+- [x] Compare connector generation and validation with Hermes's current native
   gateway setup implementation and help output, then document intentional
-  differences rather than guessing configuration values.
+  differences rather than guessing configuration values. The comparison is
+  recorded against Hermes Agent `0.21.1` revision `a3190625c0a2` in
+  Persephone's `docs/GATEWAY-AUDIT.md`.
 
 ### 10.5 RoboOMP Git workspace
 
@@ -967,7 +986,8 @@ documented local APIs and should not duplicate their storage or agent loops.
 - [x] Commit Persephone's Localflame handoff and repeatable integration changes
   before adding or revising its Diogenes workspace. Follow with the Retrieval,
   Librarian, Camofox, and Context Mode owner handoffs through `def5da6`, then
-  the OMP post-update reconciliation owner at `cb36532`.
+  the OMP post-update reconciliation owner at `cb36532`, then the owner-side
+  gateway diagnostics/setup contract at `66aa1e2`.
 - [x] Commit Camofox's integration contract and Context Mode's native
   OMP/Hermes plugin-plus-MCP contract independently, then run each owner doctor
   and prove Context Mode's second same-revision pass is a semantic no-op.
@@ -982,8 +1002,8 @@ documented local APIs and should not duplicate their storage or agent loops.
 - [x] Commit Diogenes only after all backend commands and runtime/service/UI
   contracts above have stable, independently committed sources. Retrieval,
   Librarian, Persephone, and RoboOMP were committed through `d02fa59` after
-  their owner contracts; the remaining Persephone connector breadth and the
-  new OMP runtime audit stay independently tracked.
+  their owner contracts; the Persephone connector/runtime pass followed at
+  Diogenes `89d4ac4`. The remaining large UI item is the RoboOMP ADE.
 - [x] Run each owning repository's update/integrate script twice, compare
   semantic state after both runs, and run each read-only doctor.
 - [x] Confirm `hermes mcp list`, all intended Hermes profile configs, OMP's
