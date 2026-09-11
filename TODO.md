@@ -512,12 +512,12 @@ Again, interesting approach might be adding the config to persephone, rather tha
 | 204258 | Superseding web-provider policy and Persistent routing skills above | Complete |
 | 204423 / 204484 | Current execution state, this verbatim record, and this mapping | Complete and maintained from the local transcript |
 | 205375 | Sections 4, 7, 9, and 10: audit Hermes hook/tool/MCP standards, classify callable backends from source, and keep Persephone on its gateway/network contract | Native help and Context Mode/Camofox ownership complete; remaining backends and Diogenes interfaces pending |
-| Current OMP audit | Section 3: Localflame-backed search, Camofox browser routing, vision/base64 capability, MCP visibility, unrestricted Context Mode execution, and durable post-update reapplication | Complete through Context Mode `b702bda` and Persephone `cb36532`; Diogenes compatibility delegation remains separate |
+| Current OMP audit | Section 3: Localflame-backed search, Camofox browser routing, vision/base64 capability, MCP visibility, unrestricted Context Mode execution, and durable post-update reapplication | Complete through Context Mode `b702bda`, Persephone `cb36532`, and Diogenes delegate `48ec1f2` |
 | Current + 1 | Section 3: direct OMP Retrieval and Librarian MCP/RPC availability without Hermes detours | Complete through Retrieval `3e92e8c`, Librarian `e2abd26`, and the installed OMP owner doctors |
 | Current + 2 | Section 3: turn-local Retrieval results without adding retrieved packages to OMP's skill trees | Complete through Retrieval `3e92e8c` |
 | Current + 3 | Section 3: preserve OMP's entire default skill baseline while keeping Retrieval results turn-local | Recorded as a non-destructive constraint |
 | Current + 4 | Section 10.5: Gitcito-informed, Diogenes-only RoboOMP ADE with model-assisted Git questions and the complete authorized owner surface | Backend/control baseline complete; richer ADE active |
-| Current + 5 | Sections 3, 7, 10.4, and 11: Persephone owns an idempotent OMP post-update reconcile/doctor contract; Diogenes only delegates; hidden web search, Camofox browser, and image/base64 capability drift is repaired only when detected | Owner complete at Persephone `cb36532`; Diogenes compatibility delegation remains pending |
+| Current + 5 | Sections 3, 7, 10.4, and 11: Persephone owns an idempotent OMP post-update reconcile/doctor contract; Diogenes only delegates; hidden web search, Camofox browser, and image/base64 capability drift is repaired only when detected | Complete at Persephone `cb36532` and Diogenes `48ec1f2` |
 
 ### Exact transcript audit
 
@@ -666,8 +666,10 @@ SHA-256 over each normalized transcript body:
   semantic state in at least two independent sources so later OMP breaking
   updates are repairable. This owner portion is complete at `cb36532` using
   config/model hashes and mtimes plus OMP RPC/MCP runtime inspection.
-- [ ] If Diogenes retains `ompsettings.sh`, reduce it to a compatibility
-  launcher that invokes Persephone and contains no second copy of the policy.
+- [x] Reduce Diogenes's retained `ompsettings.sh` to a compatibility launcher
+  that invokes `persephone reconcile` and contains no second copy of the
+  policy. Diogenes `48ec1f2` was checked with syntax/help validation plus two
+  identical runs containing only `unchanged` records.
 
 ## 4. Hermes integration
 
@@ -788,6 +790,7 @@ two independent local sources or one local source plus official documentation.
 | Context Mode ownership | native plugin/MCP installer | pinned registry, copied-plugin hashes, guarded-default/trusted-host execution smoke, identical repeat-run hashes, and 126-check doctor | passed twice through `b702bda`; focused OMP doctor 22/22 |
 | Persephone delegation | committed owner-script call sites | integration-only doctor plus each owner doctor | passed twice through `596424b` with byte-identical second-pass state |
 | OMP post-update reconciliation | installed OMP `18.1.16` config/model/extension source plus native help | two no-write committed reconciler passes, RPC `get_state`, effective model catalog, and Localflame/Camofox MCP handshakes in all ordinary profiles | passed at Persephone `cb36532`; 20 tests and TypeScript check passed, no model/web request issued |
+| Diogenes OMP compatibility delegation | committed 36-line `ompsettings.sh` wrapper and README ownership wording | shell syntax/help checks, clean repository state, and two output-identical wrapper runs containing only `unchanged` records | passed at Diogenes `48ec1f2`; no OMP policy remains in Diogenes |
 | Leetcoder ownership | checked-in Hermes-only MCP installer | identical second-pass hashes, unchanged service PID/start time, and runtime doctor | passed twice at `fbb7bbe` |
 | Codebase Memory ownership | checked-in Hermes/OMP reconciler plus native Hermes registries | installed-source receipt, private staging, current targeted hook consent, and 38-check doctor | passed twice through `a5a8c9b77` |
 | Retrieval delivery and lifecycle ownership | checked-in exact-consent Hermes reconciler plus turn-local OMP contract | native Hermes hook listings, OMP MCP markers, absence of OMP projection/extension state, byte-identical second-pass config, and owner doctor | 37 tests and 81/81 checks passed twice at `3e92e8c`; second-pass configuration hashes were identical |
