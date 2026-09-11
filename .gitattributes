@@ -6,3 +6,4 @@
 *.json text eol=lf
 *.yaml text eol=lf
 *.yml text eol=lf
+TODO.md whitespace=-blank-at-eol

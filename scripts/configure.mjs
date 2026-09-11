@@ -17,13 +17,14 @@ const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..
 const MANAGED_START = "# >>> localflame managed >>>";
 const MANAGED_END = "# <<< localflame managed <<<";
 const MAX_TIMER_MS = 2_147_483_647;
+const PROVIDER_POLICY_SCHEMA = 1;
 
 function usage() {
   return `Usage: bun scripts/configure.mjs [install|uninstall] [options]
 
   --target omp|hermes|dsh|all   target client; repeatable (default: all)
   --firecrawl-url URL           base URL (default: http://127.0.0.1:3002)
-  --dsh-profile NAME            DSH profile (default: web)
+  --dsh-profile NAME|all        DSH boot profile (default: all)
   --dry-run                     show changes without writing
   --help                        show help
 
@@ -34,7 +35,7 @@ function parseArgs(argv) {
   const out = {
     action: "install", targets: [], dryRun: false,
     firecrawlUrl: process.env.LOCALFLAME_BASE_URL || process.env.FIRECRAWL_API_URL || "http://127.0.0.1:3002",
-    dshProfile: process.env.DSH_PROFILE || "web",
+    dshProfile: process.env.DSH_PROFILE || "all",
   };
   const args = [...argv];
   if (["install", "uninstall"].includes(args[0])) out.action = args.shift();
@@ -53,7 +54,9 @@ function parseArgs(argv) {
   out.targets = [...new Set(out.targets)];
   const invalid = out.targets.filter((value) => !["omp", "hermes", "dsh"].includes(value));
   if (invalid.length) throw new Error(`Unknown target: ${invalid.join(", ")}`);
-  if (!/^[A-Za-z0-9_-]+$/.test(out.dshProfile)) throw new Error("Invalid DSH profile name.");
+  if (out.dshProfile !== "all" && !/^[A-Za-z0-9_-]+$/.test(out.dshProfile)) {
+    throw new Error("Invalid DSH profile name.");
+  }
   out.firecrawlUrl = normalizeFirecrawlUrl(out.firecrawlUrl).replace(/\/v2$/, "");
   return out;
 }
@@ -65,8 +68,11 @@ const hermesHome = path.resolve(process.env.HERMES_HOME || path.join(home, ".her
 const dshHome = path.resolve(process.env.DSH_HOME || path.join(home, ".dsh"));
 const runtimeCommand = process.execPath;
 const serverEntry = path.join(REPO_ROOT, "bin", "localflame.js");
-const skillSource = path.join(REPO_ROOT, "SKILL.md");
+const dshSkillSource = path.join(REPO_ROOT, "SKILL.md");
+const routingSkillSource = path.join(REPO_ROOT, "skills", "localflame", "SKILL.md");
 const backupRoot = path.join(home, ".local", "state", "localflame", "backups");
+const providerPolicyStatePath = path.join(home, ".local", "state", "localflame", "provider-policy.json");
+const dshManagedPresetRoot = path.join(dshHome, ".localflame-agent-presets");
 let backupStamp = "";
 
 function log(message) {
@@ -134,14 +140,14 @@ function runClient(command, args, environment = {}) {
   });
 }
 
-function installSkill(file) {
-  if (!existsSync(skillSource)) throw new Error(`Skill source is missing: ${skillSource}`);
-  atomicWrite(file, readFileSync(skillSource, "utf8"), 0o644);
+function installSkill(source, file) {
+  if (!existsSync(source)) throw new Error(`Skill source is missing: ${source}`);
+  atomicWrite(file, readFileSync(source, "utf8"), 0o644);
 }
 
-function uninstallSkill(file) {
+function uninstallSkill(source, file) {
   if (!existsSync(file)) return;
-  if (!existsSync(skillSource) || readFileSync(file, "utf8") !== readFileSync(skillSource, "utf8")) {
+  if (!existsSync(source) || readFileSync(file, "utf8") !== readFileSync(source, "utf8")) {
     log(`retain modified skill ${file}`);
     return;
   }
@@ -160,6 +166,27 @@ function hermesSkillFiles() {
     }
   }
   return files;
+}
+
+function providerPolicyState() {
+  const state = readJson(providerPolicyStatePath, {});
+  return {
+    schema_version: PROVIDER_POLICY_SCHEMA,
+    omp: Array.isArray(state.omp) ? state.omp.map(String) : [],
+    hermes: Array.isArray(state.hermes) ? state.hermes.map(String) : [],
+  };
+}
+
+function providerPolicyMigrated(client, directory) {
+  return providerPolicyState()[client].includes(path.resolve(directory));
+}
+
+function markProviderPolicyMigrated(client, directory) {
+  if (options.dryRun) return;
+  const state = providerPolicyState();
+  const resolved = path.resolve(directory);
+  state[client] = [...new Set([...state[client], resolved])].sort();
+  atomicWrite(providerPolicyStatePath, JSON.stringify(state, null, 2));
 }
 
 function ompAgentDirectories({ includeOnlyConfigured = false } = {}) {
@@ -198,6 +225,8 @@ function installOmpAgent(directory) {
     mcpServers: {},
   });
   mcp.mcpServers = mcp.mcpServers && typeof mcp.mcpServers === "object" ? mcp.mcpServers : {};
+  const legacyPolicy = Object.hasOwn(mcp.mcpServers, "localflame")
+    && !providerPolicyMigrated("omp", directory);
   mcp.mcpServers.localflame = {
     type: "stdio", command: runtimeCommand, args: [serverEntry], cwd: REPO_ROOT,
     env: { FIRECRAWL_API_URL: options.firecrawlUrl }, enabled: true, timeout: 0,
@@ -208,12 +237,14 @@ function installOmpAgent(directory) {
   const omp = commandPath("omp");
   if (!omp) throw new Error("OMP is not on PATH; cannot apply its native settings contract.");
   const ompEnv = { PI_CODING_AGENT_DIR: directory };
-  runClient(omp, ["config", "set", "web_search.enabled", "false"], ompEnv);
-  runClient(omp, ["config", "set", "fetch.enabled", "false"], ompEnv);
+  if (legacyPolicy) {
+    log(`restore OMP web-provider defaults previously changed by Localflame in ${directory}`);
+    runClient(omp, ["config", "reset", "web_search.enabled"], ompEnv);
+    runClient(omp, ["config", "reset", "fetch.enabled"], ompEnv);
+  }
   runClient(omp, ["config", "set", "mcp.renderMarkdownResults", "true"], ompEnv);
-  // Localflame's full skill stays cold in Retrieval.  OMP keeps only its
-  // upstream baseline and Retrieval's tiny native routing skill.
-  uninstallSkill(path.join(directory, "skills", "localflame", "SKILL.md"));
+  installSkill(routingSkillSource, path.join(directory, "skills", "localflame", "SKILL.md"));
+  markProviderPolicyMigrated("omp", directory);
 }
 
 function installOmp() {
@@ -228,7 +259,7 @@ function uninstallOmp() {
       delete mcp.mcpServers.localflame;
       atomicWrite(mcpPath, JSON.stringify(mcp, null, 2));
     } else log(`not present OMP MCP entry localflame in ${directory}`);
-    uninstallSkill(path.join(directory, "skills", "localflame", "SKILL.md"));
+    uninstallSkill(routingSkillSource, path.join(directory, "skills", "localflame", "SKILL.md"));
   }
 }
 
@@ -277,34 +308,46 @@ function installHermesProfile(profile) {
     max_lifetime_seconds: 0, supports_parallel_tool_calls: true,
     tools: { prompts: false, resources: false },
   };
-  const disabled = Array.isArray(config.agent?.disabled_toolsets) ? config.agent.disabled_toolsets : [];
+  const legacyPolicy = Boolean(config.mcp_servers?.localflame)
+    && !providerPolicyMigrated("hermes", profile.directory);
   const hermes = commandPath("hermes");
   if (!hermes) throw new Error("Hermes is not on PATH; cannot apply its native configuration contract.");
   const hermesEnv = { HERMES_HOME: hermesHome };
   runClient(hermes, hermesArguments(profile.name, ["config", "set", "--force", "mcp_servers.localflame", JSON.stringify(server)]), hermesEnv);
-  runClient(hermes, hermesArguments(profile.name, ["config", "set", "agent.disabled_toolsets", JSON.stringify([...new Set([...disabled, "web"])])]), hermesEnv);
+  if (legacyPolicy) restoreHermesWebProviders(profile, config, hermes, hermesEnv);
+  installSkill(routingSkillSource, path.join(profile.directory, "skills", "web", "localflame", "SKILL.md"));
+  markProviderPolicyMigrated("hermes", profile.directory);
+}
 
-  // Camofox remains the interactive browser.  When Hermes supports per-server
-  // tool filters, hide only its search macro so Firecrawl is the single search
-  // backend while every navigation/observation tool remains available.
+function restoreHermesWebProviders(profile, config, hermes, hermesEnv) {
+  log(`restore Hermes web providers previously changed by Localflame in ${profile.name}`);
+  const disabled = Array.isArray(config.agent?.disabled_toolsets)
+    ? config.agent.disabled_toolsets.filter((name) => name !== "web")
+    : [];
+  const disabledArgs = disabled.length
+    ? ["config", "set", "--force", "agent.disabled_toolsets", JSON.stringify(disabled)]
+    : ["config", "unset", "agent.disabled_toolsets"];
+  runClient(hermes, hermesArguments(profile.name, disabledArgs), hermesEnv);
+
   for (const name of ["camofox-mcp", "camofox"]) {
     const camofox = config.mcp_servers?.[name];
     if (!camofox || typeof camofox !== "object") continue;
-    const currentTools = camofox.tools && typeof camofox.tools === "object" ? camofox.tools : {};
-    const desiredTools = Array.isArray(currentTools.include)
-      ? { include: currentTools.include.filter((tool) => tool !== "web_search") }
-      : { exclude: [...new Set([...(Array.isArray(currentTools.exclude) ? currentTools.exclude : []), "web_search"])] };
-    if (JSON.stringify(currentTools) !== JSON.stringify(desiredTools)) {
-      runClient(hermes, hermesArguments(profile.name, ["config", "set", "--force", `mcp_servers.${name}.tools`, JSON.stringify(desiredTools)]), hermesEnv);
+    const currentTools = camofox.tools && typeof camofox.tools === "object"
+      ? structuredClone(camofox.tools)
+      : {};
+    if (Array.isArray(currentTools.exclude)) {
+      currentTools.exclude = currentTools.exclude.filter((tool) => tool !== "web_search");
+      if (!currentTools.exclude.length) delete currentTools.exclude;
     }
+    const toolArgs = Object.keys(currentTools).length
+      ? ["config", "set", "--force", `mcp_servers.${name}.tools`, JSON.stringify(currentTools)]
+      : ["config", "unset", `mcp_servers.${name}.tools`];
+    runClient(hermes, hermesArguments(profile.name, toolArgs), hermesEnv);
   }
 }
 
 function installHermes() {
   for (const profile of hermesProfiles()) installHermesProfile(profile);
-  // Localflame's full skill stays cold in Retrieval.  Hermes keeps only its
-  // upstream baseline and Retrieval's tiny native routing skill.
-  for (const file of hermesSkillFiles()) uninstallSkill(file);
 }
 
 function uninstallHermes() {
@@ -317,8 +360,8 @@ function uninstallHermes() {
       runClient(hermes, hermesArguments(profile.name, ["config", "unset", "mcp_servers.localflame"]), { HERMES_HOME: hermesHome });
     } else log(`not present Hermes MCP entry localflame in ${profile.name}`);
   }
-  for (const file of hermesSkillFiles()) uninstallSkill(file);
-  log("Hermes keeps its native 'web' toolset disabled; re-enable it manually only if wanted.");
+  for (const file of hermesSkillFiles()) uninstallSkill(routingSkillSource, file);
+  log("Hermes web providers are not changed by Localflame uninstall.");
 }
 
 function commandPath(name) {
@@ -392,60 +435,104 @@ function dshPresetComposition(source) {
 
 function dshProfilePatch(source) {
   const clean = removeLegacyDshRows(source);
-  const managed = `${MANAGED_START}\n# Select the upgrade-regenerated preset; its only web tools come from MCP.\n- id: agent-presets\n  config:\n    default: localflame\n${MANAGED_END}`;
+  const managed = `${MANAGED_START}\n# Replace every selectable preset with an upgrade-regenerated copy whose only\n# web surface is Localflame. Disable the host web registry as well as its\n# providers so changing presets cannot restore DeepSeek search or HTTP fetch.\n- id: web\n  disabled: true\n\n- id: web-search-deepseek\n  disabled: true\n\n- id: web-fetch-http\n  disabled: true\n\n- id: tool-web\n  disabled: true\n\n- id: agent-presets\n  config:\n    default: standard\n    roots:\n      - path: ${quoteYaml(dshManagedPresetRoot)}\n        trust: user\n    includeShippedRoot: false\n    includeUserRoot: false\n${MANAGED_END}`;
   return `${clean}${clean ? "\n\n" : ""}${managed}\n`;
+}
+
+function dshProfileDirectories({ onlyManaged = false } = {}) {
+  const profilesRoot = path.join(dshHome, "profiles");
+  if (options.dshProfile !== "all") {
+    const directory = path.join(profilesRoot, options.dshProfile);
+    if (!existsSync(directory) && !options.dryRun) {
+      throw new Error(`DSH profile does not exist: ${directory}`);
+    }
+    return [directory];
+  }
+  if (!existsSync(profilesRoot)) {
+    if (options.dryRun) return [];
+    throw new Error(`DSH profiles directory does not exist: ${profilesRoot}`);
+  }
+  const directories = readdirSync(profilesRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => path.join(profilesRoot, entry.name))
+    .filter((directory) => existsSync(path.join(directory, "cordis.yml"))
+      || existsSync(path.join(directory, "package.json"))
+      || existsSync(path.join(directory, "cordis.patch.yml")));
+  if (!onlyManaged) return directories;
+  return directories.filter((directory) => {
+    const patchPath = path.join(directory, "cordis.patch.yml");
+    return existsSync(patchPath) && readFileSync(patchPath, "utf8").includes(MANAGED_START);
+  });
+}
+
+function dshPresetIds(root) {
+  if (!existsSync(root)) return [];
+  return readdirSync(root, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory()
+      && existsSync(path.join(root, entry.name, "agent.cordis.yml")))
+    .map((entry) => entry.name)
+    .sort();
+}
+
+function regenerateDshPresetRoot(sourceRoot) {
+  const presetIds = dshPresetIds(sourceRoot);
+  if (!presetIds.length) throw new Error(`DSH preset root contains no presets: ${sourceRoot}`);
+  log(`regenerate ${dshManagedPresetRoot} from ${sourceRoot} (${presetIds.join(", ")})`);
+  if (options.dryRun) return presetIds;
+
+  ensureDirectory(path.dirname(dshManagedPresetRoot));
+  const temporary = `${dshManagedPresetRoot}.tmp-${process.pid}-${randomBytes(4).toString("hex")}`;
+  cpSync(sourceRoot, temporary, { recursive: true, dereference: true });
+  for (const presetId of presetIds) {
+    const composition = path.join(temporary, presetId, "agent.cordis.yml");
+    writeFileSync(composition, dshPresetComposition(readFileSync(composition, "utf8")), { mode: 0o600 });
+  }
+  if (existsSync(dshManagedPresetRoot)) rmSync(dshManagedPresetRoot, { recursive: true, force: true });
+  renameSync(temporary, dshManagedPresetRoot);
+  chmodSync(dshManagedPresetRoot, 0o700);
+  return presetIds;
 }
 
 function installDsh() {
   const presetRoot = findDshPresetRoot();
   if (!presetRoot) throw new Error("Could not find DSH's installed Standard preset. Set DSH_PRESET_ROOT and re-run.");
-  const sourceDir = path.join(presetRoot, "standard");
-  const targetDir = path.join(dshHome, ".agent-presets", "localflame");
-  const sourceComposition = readFileSync(path.join(sourceDir, "agent.cordis.yml"), "utf8");
-  log(`regenerate ${targetDir} from ${sourceDir}`);
-  if (!options.dryRun) {
-    ensureDirectory(path.dirname(targetDir));
-    const temporary = `${targetDir}.tmp-${process.pid}-${randomBytes(4).toString("hex")}`;
-    cpSync(sourceDir, temporary, { recursive: true, dereference: true });
-    writeFileSync(path.join(temporary, "agent.cordis.yml"), dshPresetComposition(sourceComposition), { mode: 0o600 });
-    writeFileSync(path.join(temporary, "preset.yml"), "name: Localflame\ndescription: Standard coding agent with Firecrawl-only MCP search and scrape.\n", { mode: 0o600 });
-    if (existsSync(targetDir)) {
-      backup(path.join(targetDir, "agent.cordis.yml"));
-      backup(path.join(targetDir, "preset.yml"));
-      rmSync(targetDir, { recursive: true, force: true });
-    }
-    renameSync(temporary, targetDir);
-    chmodSync(targetDir, 0o700);
-  }
+  const presetIds = regenerateDshPresetRoot(presetRoot);
+  for (const profileDir of dshProfileDirectories()) {
+    const patchPath = path.join(profileDir, "cordis.patch.yml");
+    const patch = existsSync(patchPath) ? readFileSync(patchPath, "utf8") : "";
+    atomicWrite(patchPath, dshProfilePatch(patch));
 
-  const profileDir = path.join(dshHome, "profiles", options.dshProfile);
-  if (!existsSync(profileDir) && !options.dryRun) throw new Error(`DSH profile does not exist: ${profileDir}`);
-  const patchPath = path.join(profileDir, "cordis.patch.yml");
-  const patch = existsSync(patchPath) ? readFileSync(patchPath, "utf8") : "";
-  atomicWrite(patchPath, dshProfilePatch(patch));
+    const legacy = path.join(profileDir, "node_modules", "@local", "dsh-web-firecrawl");
+    if (existsSync(legacy)) {
+      log(`remove obsolete DSH-private provider ${legacy}`);
+      if (!options.dryRun) rmSync(legacy, { recursive: true, force: true });
+    }
+  }
 
   const settingsPath = path.join(dshHome, "settings.yaml");
   const settings = readYamlDocument(settingsPath);
-  settings.setIn(["agent-presets", "default"], "localflame");
+  const selected = String(settings.getIn(["agent-presets", "default"]) || "standard");
+  settings.setIn(["agent-presets", "default"], presetIds.includes(selected) ? selected : "standard");
   writeYamlDocument(settingsPath, settings);
-  installSkill(path.join(dshHome, "skills", "localflame", "SKILL.md"));
+  installSkill(dshSkillSource, path.join(dshHome, "skills", "localflame", "SKILL.md"));
 
-  const legacy = path.join(profileDir, "node_modules", "@local", "dsh-web-firecrawl");
-  if (existsSync(legacy)) {
-    log(`remove obsolete DSH-private provider ${legacy}`);
-    if (!options.dryRun) rmSync(legacy, { recursive: true, force: true });
+  const legacyPreset = path.join(dshHome, ".agent-presets", "localflame");
+  if (existsSync(legacyPreset)) {
+    log(`remove obsolete single-preset copy ${legacyPreset}`);
+    if (!options.dryRun) rmSync(legacyPreset, { recursive: true, force: true });
   }
 }
 
 function uninstallDsh() {
-  const targetDir = path.join(dshHome, ".agent-presets", "localflame");
-  if (existsSync(targetDir)) {
-    log(`remove managed preset ${targetDir}`);
-    if (!options.dryRun) rmSync(targetDir, { recursive: true, force: true });
+  if (existsSync(dshManagedPresetRoot)) {
+    log(`remove managed preset root ${dshManagedPresetRoot}`);
+    if (!options.dryRun) rmSync(dshManagedPresetRoot, { recursive: true, force: true });
   }
-  uninstallSkill(path.join(dshHome, "skills", "localflame", "SKILL.md"));
-  const patchPath = path.join(dshHome, "profiles", options.dshProfile, "cordis.patch.yml");
-  if (existsSync(patchPath)) atomicWrite(patchPath, removeManagedText(readFileSync(patchPath, "utf8")));
+  uninstallSkill(dshSkillSource, path.join(dshHome, "skills", "localflame", "SKILL.md"));
+  for (const profileDir of dshProfileDirectories({ onlyManaged: true })) {
+    const patchPath = path.join(profileDir, "cordis.patch.yml");
+    atomicWrite(patchPath, removeManagedText(readFileSync(patchPath, "utf8")));
+  }
   const settingsPath = path.join(dshHome, "settings.yaml");
   if (existsSync(settingsPath)) {
     const settings = readYamlDocument(settingsPath);
@@ -454,7 +541,7 @@ function uninstallDsh() {
       writeYamlDocument(settingsPath, settings);
     }
   }
-  log("DSH's native web provider remains disabled if an earlier localflame version disabled it.");
+  log("DSH strict web rows were removed; any pre-existing profile rows now take effect again.");
 }
 
 const handlers = {

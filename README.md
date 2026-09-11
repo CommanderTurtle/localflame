@@ -50,17 +50,17 @@ cd ~/Deepseek/localflame
 ```
 
 The installer is repeatable. It performs a frozen Bun install, adds the
-`localflame` executable, merges client configuration, installs `SKILL.md` only
-where the client needs its own copy, and runs a static doctor. It does not call
-Firecrawl or a model. Hermes and OMP discover the complete skill from
-Retrieval's cold catalog while retaining only Retrieval's routing skill in
-their native trees.
+`localflame` executable, merges client configuration, installs a small routing
+skill in ordinary Hermes and OMP profiles, and runs a static doctor. It does
+not call Firecrawl or a model. The fuller operating guide remains available to
+Retrieval as a cold source; DSH receives its own full skill copy.
 
 Select clients explicitly when needed:
 
 ```bash
 ./install.sh --target omp
 ./install.sh --target hermes
+./install.sh --target dsh
 ./install.sh --target dsh --dsh-profile web
 ./install.sh --target omp --target hermes
 ./install.sh --dry-run --target all
@@ -82,11 +82,14 @@ Empty auditor/scout profiles and Librarian's private worker stay isolated. OMP
 has an interactive `/mcp` command
 but no standalone non-interactive `omp mcp` subcommand; the MCP file is
 therefore its documented automation boundary. Existing MCP servers are
-preserved. Localflame's complete `SKILL.md` is indexed as a cold Retrieval
-source, while OMP retains only Retrieval's small native routing skill.
+preserved. OMP receives a small `localflame` routing skill beside the existing
+Retrieval and Librarian routers.
 
-OMP's native `web_search` and `fetch` settings are disabled so the model sees
-one web family. Its MCP timeout is `0`, the OMP no-timeout value.
+Localflame does not prescribe OMP's native `web_search` or `fetch` settings.
+For installations touched by the earlier exclusive-provider release, the next
+run resets only those two Localflame-owned settings through `omp config` once,
+records the migration, and leaves subsequent user choices alone. Its MCP
+timeout is `0`, the OMP no-timeout value.
 
 ### Hermes Agent
 
@@ -96,29 +99,41 @@ ordinary named profile, producing the same MCP mappings shown by
 isolated and receives no general web tools.
 `hermes mcp add` is intentionally not used
 by unattended setup because it starts and probes the server, then asks an
-interactive tool-selection question. Localflame's complete `SKILL.md` is
-indexed as a cold Retrieval source, while Hermes retains only Retrieval's small
-native routing skill.
+interactive tool-selection question. Hermes receives the same small
+Localflame routing skill while the complete guide remains a Retrieval source.
 
-Hermes's native `web` toolset is disabled while MCP tools remain enabled. Its
-request timeout is 86,400 seconds because Hermes treats zero as immediate
-expiry; idle and process-lifetime limits remain disabled.
-
-If Camofox is configured, the installer adds only `web_search` to that MCP
-server's Hermes exclusion list. Camofox's navigation, page-reading, transcript,
-and interaction tools remain available; Localflame is the sole general search
-backend.
+Hermes's native web toolset and configured providers are preserved. For
+profiles touched by the earlier exclusive-provider release, the next run
+removes only Localflame's added `web` disable and Camofox `web_search`
+exclusion through `hermes config`, records that migration, and does not revisit
+provider choices. The Localflame MCP request timeout is 86,400 seconds because
+Hermes treats zero as immediate expiry; idle and process-lifetime limits remain
+disabled.
 
 ### DeepSeek Harness
 
-DSH is not patched in place. Every configure/update pass copies the currently
-installed Standard preset into `~/.dsh/.agent-presets/localflame`, removes the
-native `tool-web` row, adds the official `@deepseek-ai/dsh-mcp-client`, and
-selects the managed preset for the requested profile. This preserves upstream
-updates and replaces the obsolete private provider cleanly.
+DSH is not patched in place. Every configure/update pass copies the complete
+currently installed preset roster into
+`~/.dsh/.localflame-agent-presets`, removes `tool-web` from every copy, and adds
+the official `@deepseek-ai/dsh-mcp-client` to every copy. Each selected boot
+profile is then restricted to that regenerated root and has the host `web`,
+DeepSeek search, HTTP fetch, and `tool-web` rows disabled. Switching among
+Standard, PTC, Minimal, and Cordis therefore cannot restore a second web path.
+The default target is every installed DSH boot profile.
 
-The skill is installed under `~/.dsh/skills`, which the Standard preset's
-filesystem provider already scans.
+The skill is installed under `~/.dsh/skills`. Every Localflame MCP operation is
+declared read-only, so all seven remain available under DSH's `read-only`
+permission preset even while its filesystem and shell policies stay
+restricted. The finite MCP timeout is DSH's largest safe JavaScript timer.
+
+The DSH-only policy can also be regenerated directly:
+
+```bash
+bun run dsh:destroy-web
+```
+
+That command invokes the same checked-in configure path as the installer. It
+does not edit the global DSH package and is safe to rerun after an upgrade.
 
 ## Update and repair
 
@@ -140,12 +155,12 @@ Static inspection is available separately:
 
 ```bash
 bun scripts/doctor.mjs --target all
-bun scripts/doctor.mjs --target dsh --dsh-profile web --json
+bun scripts/doctor.mjs --target dsh --dsh-profile all --json
 ```
 
-The doctor checks executable paths, configuration shape, preset selection,
-timeouts, clean native skill baselines, and migration state. It makes no
-network request.
+The doctor checks executable paths, configuration shape, provider-policy
+migration state, persistent routing skills, the complete regenerated DSH
+preset roster, and read-only tool annotations. It makes no network request.
 
 ## Uninstall owned entries
 
@@ -153,13 +168,11 @@ network request.
 bun scripts/configure.mjs uninstall --target all
 ```
 
-This removes the Localflame MCP entries, DSH managed preset, and unchanged DSH
-skill copy. It also removes an unchanged Localflame skill left in Hermes or OMP
-by an older release; modified copies are retained for Retrieval's session-close
-intake. It does not delete Firecrawl, other MCP servers, or unrelated harness
-settings. Native web tools remain disabled so uninstall cannot unexpectedly
-broaden an agent's network surface; re-enable them deliberately through the
-corresponding client command.
+This removes the Localflame MCP entries, routing skills, DSH managed preset
+root, strict DSH patch block, and unchanged DSH skill copy. Modified skill
+copies are retained. It does not delete Firecrawl, other MCP servers, or
+unrelated harness settings. Hermes and OMP provider choices are left alone;
+removing the DSH block exposes whatever profile policy existed before it.
 
 ## Environment
 
@@ -172,7 +185,7 @@ corresponding client command.
 | `OMP_HOME` | `~/.omp/agent` | OMP agent configuration directory. |
 | `HERMES_HOME` | `~/.hermes` | Hermes configuration root. |
 | `DSH_HOME` | `~/.dsh` | DSH configuration root. |
-| `DSH_PROFILE` | `web` | DSH profile receiving the managed preset patch. |
+| `DSH_PROFILE` | `all` | DSH boot profile receiving the strict policy, or every profile. |
 
 See [`docs/INTEGRATION-AUDIT.md`](docs/INTEGRATION-AUDIT.md) for the source and
 client contracts checked during the MCP migration.
