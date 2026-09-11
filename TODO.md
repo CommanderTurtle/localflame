@@ -14,7 +14,7 @@ generation is part of this pass.
 
 ### Completed and installed
 
-- [x] Localflame is committed in `~/Deepseek/localflame` through `1cbd3e1`. Its Bun
+- [x] Localflame is committed in `~/Deepseek/localflame` through `1b0d65b`. Its Bun
   MCP exposes `firecrawl_search`, `firecrawl_scrape`, `firecrawl_read`,
   `firecrawl_find`, `firecrawl_outline`, `firecrawl_images`, and
   `firecrawl_resources`.
@@ -45,8 +45,8 @@ generation is part of this pass.
   `hermes hooks list` show every intended registration and both exact allowed
   hooks. Hermes's status command still emits an upstream false-positive unit
   warning caused only by two equivalent Windows PowerShell PATH spellings.
-- [x] Librarian's public/private integration is committed in
-  `~/Hermes/librarian` at `937dd6a`; its Bun build succeeded and the exact
+- [x] Librarian's public/private integration and reviewed knowledge operations
+  are committed in `~/Hermes/librarian` through `3c44d6d`; its Bun build succeeded and the exact
   committed integration entrypoint completed twice. It registered the five
   public tools in six ordinary Hermes profiles and three ordinary OMP profiles
   while leaving the selected Hermes-private worker with only
@@ -70,7 +70,8 @@ generation is part of this pass.
   selected private backend. Its exact committed integration succeeded,
   TypeScript checking passed, and the configuration-only doctor reports every
   current integration and profile boundary healthy without a Firecrawl or
-  model request.
+  model request. Its reviewed RoboOMP host handoff and generated-cache hygiene
+  are committed through `b0146b9`.
 - [x] Leetcoder's dependency refresh and durable Hermes-to-OMP owner contract
   are committed in `~/Hermes/leetcoder` through `fbb7bbe`. Its public surface
   remains four Hermes MCP tools backed by an authenticated loopback service;
@@ -88,7 +89,9 @@ generation is part of this pass.
   while isolated profiles do not. The updater now rejects stale installed
   binaries and invokes the native installer only from an owner-private staging
   directory. Librarian's independent doctor reconfirmed its private boundary
-  afterward.
+  afterward. Its updater now preserves local integration commits across
+  upstream divergence, aborts and restores on merge conflict, and has merged
+  current upstream cleanly at `929e2e7ec` with 38/38 checks passing.
 - [x] Hermes Workspace's formerly ignored local lifecycle controls are tracked
   in `~/Hermes/hermes-workspace` through `7161224f`, including start, stop,
   status, doctor, dashboard, stack, and update entrypoints. Its updater joined
@@ -99,7 +102,9 @@ generation is part of this pass.
   `sandwich integrations update --strict` and `check --strict` delegate to the
   independently committed repositories without changing the Bun-backed
   compatibility shims. The final aggregate repeat returned
-  `update=0 check=0 heads=0 config=0`.
+  `update=0 check=0 heads=0 config=0`. After the final Librarian/RoboOMP work,
+  another complete `update --strict` converged with 8 installed, 0 skipped,
+  and 0 failed owners.
 - [x] Diogenes's backend owner delegation and OMP baseline repair are committed
   at `f6c87a1`. Its configuration actions now call repository-owned update,
   integrate, and doctor entrypoints rather than writing harness configuration
@@ -111,29 +116,37 @@ generation is part of this pass.
   synchronize the private runtime pin to OMP `18.1.16`; it did not build or
   start the unconfigured service.
 - [x] Diogenes's Retrieval, Librarian, Persephone, and RoboOMP workspaces are
-  committed at `4b2d259`. The fork's independent README update and upstream's
+  committed through `d02fa59`. The fork's independent README update and upstream's
   MCP argument-validation fix were then joined by normal merges at `69d21bf`
   and `d3bae06`. The merged tree passes 69 focused backend/route/UI checks; all
   four workspace modules, the application shell, and the full stylesheet
   bundle successfully. A real read-only call through the Diogenes RoboOMP
   adapter returned `persephone.robomp.workspace.v1`, all eight runtime views,
   39 redacted configuration fields, and four secret descriptors with no secret
-  values.
+  values. Librarian now adds guided reviewed operations and bundle transfer;
+  RoboOMP now adds planned host worktree/PR review handoff.
 
 ### Active continuation after the first Diogenes UI delivery
 
-- [ ] Librarian's Diogenes workspace has browse, relationship graph, concept
+- [x] Librarian's Diogenes workspace has browse, relationship graph, concept
   reader, trace history, health, agent chat, and reviewed dream proposal
-  apply/reject/rollback. It still needs owner-backed guided add, update,
-  maintenance, import, and export operations before section 10.3 is complete.
-- [ ] RoboOMP's Diogenes workspace has repository/issue browsing, current
+  apply/reject/rollback. Owner-backed guided add, update, maintenance, import,
+  and export operations are complete at Librarian `3c44d6d` and Diogenes
+  `d02fa59`.
+- [x] RoboOMP's Diogenes workspace has repository/issue browsing, current
   worktree status, red/green diffs, branch and commit history, tool/event/log
   timelines, release runs, configuration, lifecycle, triage, cleanup, audit,
   timers, and version synchronization. Its owner contract still needs an audit
-  for explicit pull-request/review/handoff operations; unsupported controls
-  must not be invented in the browser.
-- [ ] Re-run the final cross-repository convergence only after those remaining
-  owner contracts are committed and the Diogenes integration is updated.
+  for explicit pull-request/review/handoff operations. The reviewed host
+  worktree/PR handoff is complete at Persephone `3928ba8` and Diogenes
+  `d02fa59`; unsupported controls were not invented in the browser.
+- [x] Re-run final cross-repository convergence after those owner contracts.
+  The complete owner updater finished with 8 installed, 0 skipped, and 0
+  failed after the durable Persephone cache ignore and Codebase Memory
+  divergence-safe updater repair.
+- [ ] Audit and repair OMP's current native web, browser, vision, MCP, and
+  Context Mode execution configuration through the one-off ompconfig owner.
+  The exact requirements are in the latest verbatim steer below and section 3.
 - [ ] The broad `test_ulysses_*.py test_diogenes_*.py` run currently has 246
   passes and one pre-existing Colibri expectation failure (`make cuda-test` is
   absent from the current plan). Full collection has four pre-existing MCP
@@ -399,6 +412,22 @@ Don't forget, hermes being reliant on hooks, usually it does take a decent look 
 
 </details>
 
+<details><summary>Current — OMP web, vision, MCP, and Context Mode execution audit</summary>
+
+`````text
+Another mild problem. Add to todo where it fits best. Likely the omp config appliance. The live omp session `omp --help` reports web\_search and `browser` are tools. Neither are configured right. web\_search should hook to firecrawl's mcp every time. And report it's working. It should survive breaking changes updates/rebuilds. So re-application of any of these applicable configs should work likewise. Second. The model is always selected as non-image. It's an image model, and yet it's likely not following the up-to-date robustness with base64 that Diogenes is using. Likewise, the model is interacting with camofox mcp just fine, but I can't confirm `browser`. Browser states still that the only available option is puppeteer. Chrome should not exist on this system, and likewise, the model should be able to view images. Currently pi throws an error at the model each time (similarly to how diogenes did it) that says image omitted, because this model cannot read images. Literally the model is reading that report out loud. Like wait, image omitted? And the model itself can see images. Exactly as Diogenes did. An audit of the `browser` and `web_search` should be necessary, and likewise, making sure everything is *still* the active config we tried to put into place all that time ago when we made the omp config. Likewise, our mcp servers should actually show up. Firecrawl is working though with the new localflame, well done. I just hate that models still fallback to curl lol. Also likewise, they fall back to raw python to avoid having to deal with ctx\_execute, meanwhile it completely blocks them from bash. It's the most annoying thing. ctx\_execute should have no sandbox, and no blockers. A lot of people decide that ctx-mode's shell is way too restrictive, too. And also, models get around it anyways. It just makes them use convoluted python with stdout
+`````
+
+</details>
+
+<details><summary>Current + 1 — OMP Retrieval and Librarian direct routing</summary>
+
+`````text
+omp should have access to retrieval's mcp too, just a definite verification. Lmao. Likewise, when omp calls librarian it should work with librarian too, following the docs for RPC similarly with omp's route, rather than diffing out to hermes.
+`````
+
+</details>
+
 ### Steering-to-checklist verification
 
 | Transcript steer | Durable coverage | State |
@@ -419,18 +448,25 @@ Don't forget, hermes being reliant on hooks, usually it does take a decent look 
 | 204258 | Superseding web-provider policy and Persistent routing skills above | Complete |
 | 204423 / 204484 | Current execution state, this verbatim record, and this mapping | Complete and maintained from the local transcript |
 | 205375 | Sections 4, 7, 9, and 10: audit Hermes hook/tool/MCP standards, classify callable backends from source, and keep Persephone on its gateway/network contract | Native help and Context Mode/Camofox ownership complete; remaining backends and Diogenes interfaces pending |
+| Current OMP audit | Section 3: Localflame-backed search, Camofox browser routing, vision/base64 capability, MCP visibility, unrestricted Context Mode execution, and durable ompconfig reapplication | Active after cross-repository convergence |
+| Current + 1 | Section 3: direct OMP Retrieval and Librarian MCP/RPC availability without Hermes detours | Active after cross-repository convergence |
 
 ### Exact transcript audit
 
-- [x] Read the task JSONL directly and selected the 20 user-message records
+- [x] Read the original task JSONL directly and selected the 20 user-message records
   by transcript ordinal rather than reconstructing them from memory.
-- [x] Found 20 expected transcript records, 20 fenced verbatim TODO bodies,
+- [x] Found 20 expected original transcript records, 20 fenced verbatim TODO bodies,
   and 20 exact body matches after normalizing CRLF/LF plus the transcript
   transport's one terminal line feed.
 - [x] Found no missing record, extra record, or mismatched body.
 - [x] Mapped every recorded steer to one or more executable checklist sections
   in the table above; the verbatim blocks remain the authority if a summary
   ever becomes ambiguous.
+- [x] Appended the post-audit OMP steer verbatim when it arrived and mapped it
+  to the new section 3 continuation; its `Current` label is deliberately not
+  included in the immutable 20-record transcript fingerprint table below.
+- [x] Appended the immediately following OMP Retrieval/Librarian steer verbatim
+  as `Current + 1` and mapped it to section 3 under the same rule.
 
 The 2026-09-11 audit fingerprints are the first 12 hexadecimal characters of
 SHA-256 over each normalized transcript body:
@@ -486,6 +522,35 @@ SHA-256 over each normalized transcript body:
 - [x] Update Diogenes's tracked `ompsettings.sh` so its repeatable OMP baseline
   reapplies Localflame through the toolkit's own installer.
 - [x] Verify the adapter against both OMP's JSON schema and loader source.
+- [ ] Read the currently installed `omp --help`, native tool/help output,
+  effective configuration, and current OMP source before changing the
+  one-off ompconfig appliance. Distinguish built-in `web_search` and `browser`
+  labels from MCP tool registrations rather than relying on their names.
+- [ ] Make OMP's model-facing search route prefer and successfully advertise
+  Localflame's Firecrawl MCP on every ordinary profile, without removing
+  unrelated native providers or changing DSH's stricter Localflame-only rule.
+- [ ] Make OMP's browser route advertise the installed Camofox MCP behavior;
+  remove stale Puppeteer/Chrome assumptions only where the checked-in
+  ompconfig owner positively identifies them as owned configuration.
+- [ ] Audit the configured model/provider capability record and OMP image
+  serialization path against Diogenes's working base64 transport. A
+  vision-capable model must receive images rather than an `image omitted`
+  placeholder caused by a stale non-image capability flag.
+- [ ] Verify all intended MCP servers through both OMP's native runtime listing
+  and its generated profile configuration after rerunning the owner appliance.
+- [ ] Verify Retrieval is callable from every intended ordinary OMP profile,
+  not merely present in `mcp.json`, and that its routing skill points directly
+  to the Retrieval MCP/OMP scout contract.
+- [ ] Verify Librarian calls from OMP use Librarian's OMP MCP/RPC route and
+  public tool contract directly. They must not detour through Hermes or expose
+  the private Hermes-only `librarian-okf` worker.
+- [ ] Audit Context Mode's OMP `ctx_execute` registration, permissions, and
+  subprocess policy. Make its intended shell execution unrestricted by a
+  Context Mode sandbox/blocklist so agents do not detour through Python or raw
+  curl; preserve normal harness/user approval boundaries outside that owner.
+- [ ] Put every repair in committed, idempotent ompconfig/owner scripts, execute
+  those scripts, then rerun them and verify unchanged semantic state in at
+  least two independent sources so later OMP breaking updates are repairable.
 
 ## 4. Hermes integration
 
@@ -652,62 +717,62 @@ documented local APIs and should not duplicate their storage or agent loops.
 
 ### 10.1 Shared interface contract
 
-- [ ] Reuse the compact interaction language proven in the static `llm`
+- [x] Reuse the compact interaction language proven in the static `llm`
   project where it fits: resizable panes, searchable lists, expandable rich
   Markdown, copy actions, visible JSON details, deterministic status, and
   responsive/mobile layouts.
-- [ ] Keep backend calls demand-driven. Opening an interface may load an index;
+- [x] Keep backend calls demand-driven. Opening an interface may load an index;
   expensive searches, graph walks, queries, mutations, and exports run only
   after the corresponding user action.
-- [ ] Give every mutation a preview/plan result, explicit confirmation, visible
+- [x] Give every mutation a preview/plan result, explicit confirmation, visible
   command/API provenance, terminal status, and an error state that retains its
   output.
-- [ ] Persist only Diogenes window/layout preferences. Backend-owned data stays
+- [x] Persist only Diogenes window/layout preferences. Backend-owned data stays
   in Retrieval, Librarian, Persephone, OMP, or RoboOMP.
-- [ ] Trace every new control through HTML, JavaScript, route model, Python
+- [x] Trace every new control through HTML, JavaScript, route model, Python
   controller, runtime job/status persistence, service descriptor, diagnostics,
   and the owning repository's command/API before committing Diogenes.
-- [ ] Verify each action against both the backend CLI/API implementation and
+- [x] Verify each action against both the backend CLI/API implementation and
   the Diogenes route/controller call site without starting a model or making a
   live Firecrawl request.
 
 ### 10.2 Retrieval workspace
 
-- [ ] Replace the flat Skills Auditor result list with a full Retrieval
+- [x] Replace the flat Skills Auditor result list with a full Retrieval
   workspace backed by `retrieval catalog browse --json` and the structured
   source/category/skill graph.
-- [ ] Provide source, category, package, duplicate-group, and skill views with
+- [x] Provide source, category, package, duplicate-group, and skill views with
   counts, provenance, digest, active/cold state, canonical path, and last-index
   information.
-- [ ] Provide instant fuzzy/exact search, tag/category/source filters, graph and
+- [x] Provide instant fuzzy/exact search, tag/category/source filters, graph and
   tree navigation, rich `SKILL.md` preview, and a raw JSON inspector.
-- [ ] Make byte-identical duplicate merges visible as one package with all
+- [x] Make byte-identical duplicate merges visible as one package with all
   source locations. Preserve same-name packages whose bundle digests differ.
-- [ ] Surface one-turn retrieval, read-only scout, projection, synchronize,
+- [x] Surface one-turn retrieval, read-only scout, projection, synchronize,
   and session-close actions through Retrieval's CLI rather than filesystem
   grepping.
-- [ ] Show which Hermes and OMP profiles have the routing skill and Retrieval
+- [x] Show which Hermes and OMP profiles have the routing skill and Retrieval
   MCP, which projections are manifest-owned, and what a cleanup run would
   remove.
-- [ ] Retain edit/delete actions only when Retrieval reports a canonical,
+- [x] Retain edit/delete actions only when Retrieval reports a canonical,
   editable source. Cold indexes and upstream/baseline packages remain read-only.
 
 ### 10.3 Librarian workspace
 
-- [ ] Replace the thin dream-oriented surface with a complete knowledge
+- [x] Replace the thin dream-oriented surface with a complete knowledge
   workspace backed by Librarian's public `memory_*` MCP and existing local HTTP
   API where applicable.
-- [ ] Provide OKF tree, concept/document reader, full-text query, relationship
+- [x] Provide OKF tree, concept/document reader, full-text query, relationship
   graph, trace history, cache/hot-set status, and raw bundle metadata views.
-- [ ] Provide guided add, update, maintain, import, and export flows that retain
+- [x] Provide guided add, update, maintain, import, and export flows that retain
   required frontmatter and show exact file diffs before approval.
-- [ ] Keep dream proposal, apply, reject, and rollback controls, but integrate
+- [x] Keep dream proposal, apply, reject, and rollback controls, but integrate
   them into the same document/diff/history interface rather than making dreams
   the primary identity of the workspace.
-- [ ] Show selected delegated backend/profile, public-versus-private MCP
+- [x] Show selected delegated backend/profile, public-versus-private MCP
   boundary, worker state, query timing, and errors without exposing the private
   `librarian-okf` tools to an interactive profile.
-- [ ] Preserve Librarian's deterministic bundle writer, human approval rules,
+- [x] Preserve Librarian's deterministic bundle writer, human approval rules,
   compensation behavior, query cache, and ephemeral delegated sessions.
 
 ### 10.4 Persephone workspace and integration contract
@@ -734,19 +799,19 @@ documented local APIs and should not duplicate their storage or agent loops.
 
 ### 10.5 RoboOMP Git workspace
 
-- [ ] Treat RoboOMP as an OMP-owned Git automation backend and expose it only
+- [x] Treat RoboOMP as an OMP-owned Git automation backend and expose it only
   through Diogenes, connected to the existing `~/.omp` installation and its
   native service/CLI contracts.
-- [ ] Build a repository-first interface with repository, branch, issue, pull
+- [x] Build a repository-first interface with repository, branch, issue, pull
   request, worktree, run queue, session, proposal, review, log, and artifact
   views comparable in breadth to a dedicated Git desktop interface.
-- [ ] Provide explicit connect/configure, build, start/stop, doctor, triage,
+- [x] Provide explicit connect/configure, build, start/stop, doctor, triage,
   review, scheduled proposal, and handoff actions without creating another Git
   agent implementation.
-- [ ] Show permission/proxy status, webhook health, isolation paths, current
+- [x] Show permission/proxy status, webhook health, isolation paths, current
   OMP profile/model role, pending approvals, and exact command/output for each
   operation.
-- [ ] Preserve the existing credential proxy, webhook verification, SQLite
+- [x] Preserve the existing credential proxy, webhook verification, SQLite
   queue, isolated issue worktrees, and proposal-only scheduled audit behavior.
 
 ## 11. Cross-repository delivery order
@@ -773,8 +838,11 @@ documented local APIs and should not duplicate their storage or agent loops.
   and delegate Persephone's former copied definition back to that owner.
 - [x] Commit Sandwich update orchestration without changing its Bun-backed
   `node`, `npm`, `npx`, `pnpm`, or `yarn` compatibility behavior.
-- [ ] Commit Diogenes only after all backend commands and runtime/service/UI
-  contracts above have stable, independently committed sources.
+- [x] Commit Diogenes only after all backend commands and runtime/service/UI
+  contracts above have stable, independently committed sources. Retrieval,
+  Librarian, Persephone, and RoboOMP were committed through `d02fa59` after
+  their owner contracts; the remaining Persephone connector breadth and the
+  new OMP runtime audit stay independently tracked.
 - [x] Run each owning repository's update/integrate script twice, compare
   semantic state after both runs, and run each read-only doctor.
 - [x] Confirm `hermes mcp list`, all intended Hermes profile configs, OMP's
