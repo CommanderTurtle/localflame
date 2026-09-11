@@ -25,20 +25,27 @@ generation is part of this pass.
   global DSH package from `0.1.2-rc.1` to `0.1.5-rc.1`, regenerated the managed
   roster, passed 30/30 DSH checks, and produced byte-identical configuration on
   a second same-version run.
-- [x] Retrieval is committed in `~/Hermes/retrieval` through `825d00a`. IWE's
+- [x] Retrieval is committed in `~/Hermes/retrieval` through `3e92e8c`. IWE's
   ranking behavior is internal, its external checkout and binaries are gone,
   the schema-5 catalog is isolated from older running processes, and its
   structured catalog currently reports 1,001 entries, 3,406 graph nodes,
   15,139 graph edges, 30 roots, and 18 byte-identical duplicate exclusions.
   Its owner installer now records current consent for only its exact
   session-close hook in every ordinary Hermes profile and revokes that owned
-  consent from private profiles.
+  consent from private profiles. Its OMP route is now current-turn-only: the
+  selected `SKILL.md` is returned in the MCP result without a package
+  projection, reload command, or shutdown extension. Search results also merge
+  same-named variants after rank ordering rather than showing duplicate cards.
 - [x] Retrieval's setup completed twice. The first pass consolidated 522 Hermes
   package occurrences and removed 521 redundant installed copies; the second
   pass consolidated and removed zero. The durable copies remain under
   `~/Hermes/skill-library`. After the hook-consent repair, the exact committed
   integration completed twice at 81/81 checks and produced byte-identical
-  Hermes/OMP configuration and routing hashes on both passes.
+  Hermes/OMP configuration and routing hashes on both passes. The migration at
+  `3e92e8c` then completed twice at 81/81 checks, removed the old OMP projection
+  lane and exact Retrieval shutdown extensions, preserved OMP's other custom
+  skill directories, and again produced byte-identical second-pass config
+  hashes. All 37 Retrieval tests passed.
 - [x] The Hermes gateway was restarted through its native command after final
   owner convergence. The new gateway process owns all seven intended MCP child
   processes, and native `hermes mcp list`, `hermes tools list`, and
@@ -46,12 +53,14 @@ generation is part of this pass.
   hooks. Hermes's status command still emits an upstream false-positive unit
   warning caused only by two equivalent Windows PowerShell PATH spellings.
 - [x] Librarian's public/private integration and reviewed knowledge operations
-  are committed in `~/Hermes/librarian` through `3c44d6d`; its Bun build succeeded and the exact
+  are committed in `~/Hermes/librarian` through `e2abd26`; its Bun build succeeded and the exact
   committed integration entrypoint completed twice. It registered the five
   public tools in six ordinary Hermes profiles and three ordinary OMP profiles
   while leaving the selected Hermes-private worker with only
   `librarian-okf`; its owner doctor reconfirmed that topology after the latest
-  downstream integration.
+  downstream integration. Public calls now use `LIBRARIAN_AGENT_BACKEND=hermes`
+  from Hermes and `LIBRARIAN_AGENT_BACKEND=omp` from OMP, while the selected
+  private worker remains independently configured as Hermes.
 - [x] Camofox MCP's secured dependency refresh and native OMP/Hermes ownership
   are committed in `~/Hermes/camofox-mcp` at `68a1fdf` and `c766058`.
   Its checked-in integration completed with 67/67 doctor checks; the Bun build
@@ -739,7 +748,7 @@ two independent local sources or one local source plus official documentation.
 | Persephone delegation | committed owner-script call sites | integration-only doctor plus each owner doctor | passed twice through `596424b` with byte-identical second-pass state |
 | Leetcoder ownership | checked-in Hermes-only MCP installer | identical second-pass hashes, unchanged service PID/start time, and runtime doctor | passed twice at `fbb7bbe` |
 | Codebase Memory ownership | checked-in Hermes/OMP reconciler plus native Hermes registries | installed-source receipt, private staging, current targeted hook consent, and 38-check doctor | passed twice through `a5a8c9b77` |
-| Retrieval hook ownership | checked-in exact-consent reconciler plus owner doctor | native Hermes hook listings, byte-identical second-pass state, and neighboring owner doctors | passed twice at `825d00a`; 81/81 Retrieval, 38/38 Codebase Memory, and Librarian topology checks passed |
+| Retrieval delivery and lifecycle ownership | checked-in exact-consent Hermes reconciler plus turn-local OMP contract | native Hermes hook listings, OMP MCP markers, absence of OMP projection/extension state, byte-identical second-pass config, and owner doctor | 37 tests and 81/81 checks passed twice at `3e92e8c`; second-pass configuration hashes were identical |
 | Hermes Workspace lifecycle | tracked start/stop/status/update controls | successful Vite builds, owner doctor, and same-head second update | passed through `7161224f` without starting its stopped service |
 | Repository contents | unit/static checks | `git diff --check`, tracked-file audit, remote comparison, and final aggregate head hashes | all touched owner repositories clean and stable |
 
@@ -757,11 +766,11 @@ two independent local sources or one local source plus official documentation.
   `retrieve_skill` and the parallel read-only scout before a call is needed.
 - [x] Add an idempotent session-close operation that synchronizes the catalog
   and removes only manifest-owned projections for the closing harness.
-- [x] Attach that operation to current Hermes and OMP session lifecycle hooks,
-  record current consent for only the exact owned Hermes command in every
-  ordinary profile, revoke it from private profiles, and audit installed skill
-  trees against each upstream baseline so retrieved skills do not permanently
-  pollute either harness.
+- [x] Attach that operation to Hermes session lifecycle hooks, record current
+  consent for only the exact owned Hermes command in every ordinary profile,
+  revoke it from private profiles, and audit installed skill trees against each
+  upstream baseline. OMP retrieval remains in the requesting turn and installs
+  neither a projected package nor a cleanup extension.
 - [x] Route supported OMP/Hermes configuration changes through their native
   `config` commands and use their documented MCP configuration boundary where
   no non-interactive command exists.
@@ -770,6 +779,8 @@ two independent local sources or one local source plus official documentation.
   operator window; retain edit actions only for canonical editable files.
 - [x] Verify Retrieval and Librarian appear in both Hermes's native MCP listing
   and OMP's native `/mcp` configuration source without starting either server.
+  Verify Librarian's public OMP registration selects its OMP RPC worker rather
+  than detouring through Hermes.
 - [x] Confirm Librarian contains the fetched `understory/main` tip before adding
   any integration commit; preserve its existing dependency updates.
 - [x] Give Librarian the same repeatable dual-harness routing skill and registration
