@@ -14,19 +14,22 @@ generation is part of this pass.
 
 ### Completed and installed
 
-- [x] Localflame is committed in `~/Deepseek/localflame` at `211fda7`. Its Bun
+- [x] Localflame is committed in `~/Deepseek/localflame` through `1cbd3e1`. Its Bun
   MCP exposes `firecrawl_search`, `firecrawl_scrape`, `firecrawl_read`,
   `firecrawl_find`, `firecrawl_outline`, `firecrawl_images`, and
   `firecrawl_resources`.
-- [x] The Localflame installer completed twice. The second pass was
-  semantically idempotent and the static doctor reported 80/80 checks after
-  the DSH-only provider policy and ordinary-profile provider preservation were
-  installed.
+- [x] The Localflame installer and owner updater completed repeatedly. The
+  converged pass was semantically idempotent and the static doctor reported
+  80/80 checks after the DSH-only provider policy and ordinary-profile provider
+  preservation were installed. Its committed `update-dsh.sh` upgraded the Bun
+  global DSH package from `0.1.2-rc.1` to `0.1.5-rc.1`, regenerated the managed
+  roster, passed 30/30 DSH checks, and produced byte-identical configuration on
+  a second same-version run.
 - [x] Retrieval is committed in `~/Hermes/retrieval` through `825d00a`. IWE's
   ranking behavior is internal, its external checkout and binaries are gone,
   the schema-5 catalog is isolated from older running processes, and its
-  structured catalog currently reports 1,000 entries, 3,405 graph nodes,
-  15,132 graph edges, 30 roots, and 17 byte-identical duplicate exclusions.
+  structured catalog currently reports 1,001 entries, 3,406 graph nodes,
+  15,139 graph edges, 30 roots, and 18 byte-identical duplicate exclusions.
   Its owner installer now records current consent for only its exact
   session-close hook in every ordinary Hermes profile and revokes that owned
   consent from private profiles.
@@ -36,9 +39,12 @@ generation is part of this pass.
   `~/Hermes/skill-library`. After the hook-consent repair, the exact committed
   integration completed twice at 81/81 checks and produced byte-identical
   Hermes/OMP configuration and routing hashes on both passes.
-- [x] The Hermes gateway was restarted once after the first Localflame and
-  Retrieval integration. A final restart remains required after all routing
-  skills and backends converge.
+- [x] The Hermes gateway was restarted through its native command after final
+  owner convergence. The new gateway process owns all seven intended MCP child
+  processes, and native `hermes mcp list`, `hermes tools list`, and
+  `hermes hooks list` show every intended registration and both exact allowed
+  hooks. Hermes's status command still emits an upstream false-positive unit
+  warning caused only by two equivalent Windows PowerShell PATH spellings.
 - [x] Librarian's public/private integration is committed in
   `~/Hermes/librarian` at `937dd6a`; its Bun build succeeded and the exact
   committed integration entrypoint completed twice. It registered the five
@@ -52,11 +58,11 @@ generation is part of this pass.
   and frozen install pass while the pre-existing Vitest/Zod named-import test
   incompatibility remains separately documented.
 - [x] Context Mode's dependency refresh, portable Hermes test, native plugin
-  package, dual-harness integration, and pinned-listing doctor repair are
-  committed in `~/Hermes/context-mode` through `0231bcb`. The current revision
-  passed 123/123 checks, a same-revision repeat reported all six Hermes plugin
-  copies and all three OMP MCP files unchanged, and the focused OMP doctor
-  passed 19/19 checks.
+  package, dual-harness integration, pinned-listing doctor repair, and normal
+  upstream-history merge are committed in `~/Hermes/context-mode` through
+  `585c4fe`. The current revision passed 123/123 checks on repeated owner runs,
+  all six Hermes plugin copies and all three OMP MCP files remained unchanged,
+  and the focused OMP doctor passed 19/19 checks.
 - [x] Persephone's owner handoffs now include Localflame, Retrieval, Librarian,
   Camofox, Context Mode, and Codebase Memory. The commits through `596424b`
   also migrate stale
@@ -72,14 +78,33 @@ generation is part of this pass.
   committed integration runs produced identical Hermes, OMP, and systemd file
   hashes without restarting the active daemon, and the runtime doctor passed
   every check.
-- [x] Codebase Memory's narrow Hermes/OMP owner contract is committed in
-  `~/Hermes/codebase-memory-mcp` at `6405c3be9`. Its exact committed
-  integration completed twice with identical configuration hashes and 38/38
-  checks on both passes. Public Hermes profiles expose its MCP and current
+- [x] Codebase Memory's narrow Hermes/OMP owner contract, installed-source
+  revision receipt, and private staging repair are committed in
+  `~/Hermes/codebase-memory-mcp` through `a5a8c9b77`. Its exact committed
+  updater completed twice with identical configuration state and 38/38 checks
+  on both passes. Public Hermes profiles expose its MCP and current
   allowlisted `pre_llm_call` hook; the private Librarian profile has neither.
   Default, Leetcoder, and Persephone OMP profiles expose the installed binary,
-  while isolated profiles do not. Librarian's independent doctor reconfirmed
-  its private boundary afterward.
+  while isolated profiles do not. The updater now rejects stale installed
+  binaries and invokes the native installer only from an owner-private staging
+  directory. Librarian's independent doctor reconfirmed its private boundary
+  afterward.
+- [x] Hermes Workspace's formerly ignored local lifecycle controls are tracked
+  in `~/Hermes/hermes-workspace` through `7161224f`, including start, stop,
+  status, doctor, dashboard, stack, and update entrypoints. Its updater joined
+  the fetched upstream history with a normal preflighted merge, built both Vite
+  targets, passed its doctor, and completed a second no-op update without
+  starting the stopped service.
+- [x] Sandwich's owner integration orchestration is committed at `5cd08d4`.
+  `sandwich integrations update --strict` and `check --strict` delegate to the
+  independently committed repositories without changing the Bun-backed
+  compatibility shims. The final aggregate repeat returned
+  `update=0 check=0 heads=0 config=0`.
+- [x] Diogenes's backend owner delegation and OMP baseline repair are committed
+  at `f6c87a1`. Its configuration actions now call repository-owned update,
+  integrate, and doctor entrypoints rather than writing harness configuration
+  directly. Rich Retrieval, Librarian, Persephone, and RoboOMP interfaces remain
+  pending and intentionally block the final Diogenes UI delivery.
 
 ### Current source and configuration facts
 
@@ -111,10 +136,10 @@ generation is part of this pass.
   Persephone, and RoboOMP mainly as service controls. The richer Diogenes-only
   workspaces in section 10 remain pending.
 - Sandwich's Bun-backed `node`, `npm`, `npx`, `pnpm`, and `yarn` shims are
-  intact; `npx` resolves to `bun x --bun`. Its Hermes updater still needs a
-  post-update reconciliation path for the independently committed Localflame,
-  Retrieval, Librarian, Camofox, Context Mode, Leetcoder, and Persephone
-  integrations.
+  intact; `npx` resolves to `bun x --bun`. Its checked-in owner orchestrator now
+  provides the post-update reconciliation path for Localflame, Retrieval,
+  Librarian, Camofox, Context Mode, Codebase Memory, Leetcoder, Persephone, and
+  Hermes Workspace.
 
 ### Superseding web-provider policy
 
@@ -346,12 +371,12 @@ Don't forget, hermes being reliant on hooks, usually it does take a decent look 
 | 200858 | Sections 6, 7, and 11: inspect, repair, run, rerun, and commit each repository's native integration/update scripts | Active |
 | 200910 | This record plus sections 1-11 retain the initial request as the governing scope | Recorded |
 | 200980 | Current-state ownership plus section 7: model projects under ~/Hermes; Localflame alone under ~/Deepseek; installed homes remain config targets | Recorded and observed |
-| 201025 | Sections 3, 7, 10, and 11: Diogenes and one-off ompconfig only after every UI/backend contract is traced | Pending by design |
+| 201025 | Sections 3, 7, 10, and 11: Diogenes and one-off ompconfig only after every UI/backend contract is traced | Backend ownership committed at `f6c87a1`; rich interfaces remain pending by design |
 | 201233 / 201235 | Sections 7 and 11: preserve Sandwich's Bun-backed npx and all compatibility shims | Recorded; no shim change made |
 | 201609 / 201622 | Sections 4, 7, and 9: native CLIs, internalized IWE ranking, one-turn Retrieval, Librarian in both harnesses, Understory sync | Retrieval and Librarian backends complete; Diogenes interfaces pending |
 | 201896 | Sections 9 and 10.2: no external IWE; replace flat Diogenes grep with graph/tree Retrieval UI | Backend complete; UI pending |
 | 202018 | Section 9: session-close deduplication/indexing and clean upstream skill baselines | Complete; exact three-router allowlist installed |
-| 202805 | Sections 3-6 and 11: Localflame name, both harnesses, DSH exclusivity, native listing, gateway restart, zero-knowledge scripts | Strict DSH revision complete; final gateway restart pending |
+| 202805 | Sections 3-6 and 11: Localflame name, both harnesses, DSH exclusivity, native listing, gateway restart, zero-knowledge scripts | Complete through `1cbd3e1`; native gateway restart and registry capture passed |
 | 202930 | Sections 6, 7, 10.1, and 11: scripts make mutations, are independently runnable and repeatable, remove stale/duplicate state, and receive two-source verification | Active |
 | 203275 | Section 10: rich Diogenes-only Retrieval/Librarian/Persephone/RoboOMP workspaces using their CLI/MCP backends | Fully enumerated; pending |
 | 204258 | Superseding web-provider policy and Persistent routing skills above | Complete |
@@ -421,7 +446,7 @@ SHA-256 over each normalized transcript body:
 - [x] Preserve OMP's built-in web search/fetch settings. Remove the obsolete
   Localflame policy that disabled them and perform the one-time repair through
   the checked-in migration described above.
-- [ ] Update Diogenes's tracked `ompsettings.sh` so its repeatable OMP baseline
+- [x] Update Diogenes's tracked `ompsettings.sh` so its repeatable OMP baseline
   reapplies Localflame through the toolkit's own installer.
 - [x] Verify the adapter against both OMP's JSON schema and loader source.
 
@@ -451,7 +476,7 @@ SHA-256 over each normalized transcript body:
   register its MCP through Hermes's native config command, leave the gateway
   restart to final convergence, and prove repeat runs do not restart its
   already-active loopback service or mutate the resulting integration state.
-- [ ] Audit `~/Hermes` start/update/status scripts for a repeatable update path.
+- [x] Audit `~/Hermes` start/update/status scripts for a repeatable update path.
 
 ## 5. DeepSeek Harness integration
 
@@ -487,26 +512,26 @@ SHA-256 over each normalized transcript body:
 - [x] Inventory the canonical repositories, remotes, branches, dirty state,
   installed versions, launchers, updaters, status checks, and integration
   scripts for `~/Deepseek`, `~/Hermes`, and Diogenes/OMP before changing them.
-- [ ] Fast-forward each clean, behind repository through its own intended
-  updater; do not hide local changes or replace a project-specific update
-  contract with a generic `git pull`.
+- [x] Fast-forward or normally merge each clean, behind repository through its
+  own intended updater; do not hide local changes or replace a project-specific
+  update contract with a generic `git pull`.
 - [x] Install the first Localflame policy into the real OMP, Hermes, and DSH
   configurations and
   verify that every configured command/path exists.
 - [x] Run the first Localflame installer/configurator repeatedly and prove the second
   and later passes are semantic no-ops.
-- [ ] Audit OMP's volatile config keys against the newest installed schema and
+- [x] Audit OMP's volatile config keys against the newest installed schema and
   update Diogenes's one-off OMP configuration script where its tracked baseline
   or localflame wiring is stale.
 - [ ] Audit Diogenes launch/service code that consumes OMP or external services;
   trace every affected UI, controller, process, status, persistence, and script
   contract before changing it, then commit the integration on Diogenes's
   existing branch.
-- [ ] Audit `~/Hermes` start, stop, status, install, and update entrypoints;
+- [x] Audit `~/Hermes` start, stop, status, install, and update entrypoints;
   treat each applicable child repository as an independent project, repair
   missing or stale tracked scripts, and make an independent commit in every
   affected repository.
-- [ ] For every applicable Hermes integration, trace native tool enablement,
+- [x] For every applicable Hermes integration, trace native tool enablement,
   lifecycle hooks, MCP registration, and profile-specific exclusions as four
   separate contracts before calling the integration complete.
 - [x] Keep all model-project integration under `~/Hermes`; do not create a
@@ -514,11 +539,11 @@ SHA-256 over each normalized transcript body:
 - [x] Treat `~/.hermes`, `~/.omp`, and `~/.dsh` strictly as installed runtime
   and configuration targets, while retaining `~/Deepseek/localflame` as the
   one-off source repository for this MCP toolkit.
-- [ ] Audit `~/Deepseek`/DSH start, profile, update, and localflame entrypoints;
+- [x] Audit `~/Deepseek`/DSH start, profile, update, and localflame entrypoints;
   make post-upgrade preset regeneration a one-command path.
-- [ ] Compare every touched repository with its remote before committing, and
+- [x] Compare every touched repository with its remote before committing, and
   leave each with a clean, intentional commit on its existing branch.
-- [ ] Verify integration state after the update paths are run, without making a
+- [x] Verify integration state after the update paths are run, without making a
   live Firecrawl request or starting a model.
 
 ## 8. Verification ledger
@@ -534,19 +559,20 @@ two independent local sources or one local source plus official documentation.
 | Firecrawl request/response | official v2 API reference | `CommanderTurtle/llm` implementation | passed for `3c97a84` |
 | Section/index behavior | `llm/src/context.js` | static invariant and call-site audit | passed for `3c97a84` |
 | OMP config | installed `mcp-schema.json` | installed MCP loader/config source | MCP and provider preservation passed |
-| Hermes config | native `hermes tools`/`hermes mcp` output | installed profile config and hooks | MCP and provider preservation passed; deeper integration audit active |
-| DSH config | installed `dsh-mcp-client` | installed profile/preset loader | strict four-preset roster and read-only Localflame access passed |
-| Update resilience | installer source audit | current and prior client config contracts | pending |
-| Live OMP/Diogenes | installed schema/config loader | Diogenes scripts and rerun state | pending |
-| Live Hermes | current repo docs/source | real launcher/updater/config state | first integration passed; final convergence pending |
-| Live DSH | installed packages/presets | real profile and regenerated preset | first integration passed; strict roster pending |
+| Hermes config | native `hermes tools`/`hermes mcp`/`hermes hooks` output | installed profile config, hooks, and gateway child processes | all seven intended MCPs and both exact hooks passed after final restart |
+| DSH config | installed `dsh-mcp-client` | installed profile/preset loader | strict four-preset roster, read-only Localflame access, and 30/30 owner checks passed on DSH `0.1.5-rc.1` |
+| Update resilience | installer source audit | repeated aggregate owner update plus head/config hashes | `update=0 check=0 heads=0 config=0` at Sandwich `5cd08d4` |
+| Live OMP/Diogenes | installed schema/config loader | Diogenes owner-delegation tests and repeated rerun state | backend ownership passed at `f6c87a1`; rich operator interfaces pending |
+| Live Hermes | current repo docs/source | real launcher/updater/config state and native registry output | converged, restarted, and all intended registrations active |
+| Live DSH | installed packages/presets | real profile, regenerated preset, and repeated committed updater | passed twice through Localflame `1cbd3e1`; second run byte-identical |
 | Camofox ownership | checked-in dual-harness installer | native Hermes/OMP config plus 67-check doctor | passed at `c766058` |
-| Context Mode ownership | native plugin/MCP installer | pinned registry, copied-plugin hashes, and 123-check doctor | passed twice through `0231bcb`; focused OMP doctor 19/19 |
+| Context Mode ownership | native plugin/MCP installer | pinned registry, copied-plugin hashes, and 123-check doctor | passed repeatedly through `585c4fe`; focused OMP doctor 19/19 |
 | Persephone delegation | committed owner-script call sites | integration-only doctor plus each owner doctor | passed twice through `596424b` with byte-identical second-pass state |
 | Leetcoder ownership | checked-in Hermes-only MCP installer | identical second-pass hashes, unchanged service PID/start time, and runtime doctor | passed twice at `fbb7bbe` |
-| Codebase Memory ownership | checked-in Hermes/OMP reconciler plus native Hermes registries | identical second-pass hashes, current targeted hook consent, and 38-check doctor | passed twice at `6405c3be9` |
+| Codebase Memory ownership | checked-in Hermes/OMP reconciler plus native Hermes registries | installed-source receipt, private staging, current targeted hook consent, and 38-check doctor | passed twice through `a5a8c9b77` |
 | Retrieval hook ownership | checked-in exact-consent reconciler plus owner doctor | native Hermes hook listings, byte-identical second-pass state, and neighboring owner doctors | passed twice at `825d00a`; 81/81 Retrieval, 38/38 Codebase Memory, and Librarian topology checks passed |
-| Repository contents | unit/static checks | `git diff --check` and tracked-file audit | Localflame/Retrieval passed; later repos pending |
+| Hermes Workspace lifecycle | tracked start/stop/status/update controls | successful Vite builds, owner doctor, and same-head second update | passed through `7161224f` without starting its stopped service |
+| Repository contents | unit/static checks | `git diff --check`, tracked-file audit, remote comparison, and final aggregate head hashes | all touched owner repositories clean and stable |
 
 ## 9. Retrieval, skill lifecycle, and Librarian integration
 
@@ -708,14 +734,14 @@ documented local APIs and should not duplicate their storage or agent loops.
 - [x] Commit Codebase Memory's public/private Hermes and OMP owner contract,
   reconcile its exact hook consent without blanket approval, execute it twice,
   and delegate Persephone's former copied definition back to that owner.
-- [ ] Commit Sandwich update orchestration without changing its Bun-backed
+- [x] Commit Sandwich update orchestration without changing its Bun-backed
   `node`, `npm`, `npx`, `pnpm`, or `yarn` compatibility behavior.
 - [ ] Commit Diogenes only after all backend commands and runtime/service/UI
   contracts above have stable, independently committed sources.
-- [ ] Run each owning repository's update/integrate script twice, compare
+- [x] Run each owning repository's update/integrate script twice, compare
   semantic state after both runs, and run each read-only doctor.
-- [ ] Confirm `hermes mcp list`, all intended Hermes profile configs, OMP's
+- [x] Confirm `hermes mcp list`, all intended Hermes profile configs, OMP's
   intended normal profile configs, and DSH's regenerated managed preset contain
   the expected entries while isolated profiles remain isolated.
-- [ ] Restart the Hermes gateway through its native command after configuration
+- [x] Restart the Hermes gateway through its native command after configuration
   convergence, without starting a model or issuing a Firecrawl request.
