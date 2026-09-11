@@ -14,14 +14,15 @@ generation is part of this pass.
 
 ### Completed and installed
 
-- [x] Localflame is committed in `~/Deepseek/localflame` at `3c97a84`. Its Bun
+- [x] Localflame is committed in `~/Deepseek/localflame` at `211fda7`. Its Bun
   MCP exposes `firecrawl_search`, `firecrawl_scrape`, `firecrawl_read`,
   `firecrawl_find`, `firecrawl_outline`, `firecrawl_images`, and
   `firecrawl_resources`.
 - [x] The Localflame installer completed twice. The second pass was
-  semantically idempotent and the static doctor reported 61/61 checks before
-  the provider-preservation policy below superseded several old assertions.
-- [x] Retrieval is committed in `~/Hermes/retrieval` at `0b02e0b`. IWE's
+  semantically idempotent and the static doctor reported 80/80 checks after
+  the DSH-only provider policy and ordinary-profile provider preservation were
+  installed.
+- [x] Retrieval is committed in `~/Hermes/retrieval` at `48d29ef`. IWE's
   ranking behavior is internal, its external checkout and binaries are gone,
   the schema-5 catalog is isolated from older running processes, and its
   structured catalog currently reports 1,000 entries, 3,405 graph nodes,
@@ -33,10 +34,11 @@ generation is part of this pass.
 - [x] The Hermes gateway was restarted once after the first Localflame and
   Retrieval integration. A final restart remains required after all routing
   skills and backends converge.
-- [x] Librarian's public/private integration is implemented in staging and its
-  Bun build succeeded. One integration run registered the five public tools in
-  six ordinary Hermes profiles and three ordinary OMP profiles while leaving
-  the selected private worker with only `librarian-okf`.
+- [x] Librarian's public/private integration is committed in
+  `~/Hermes/librarian` at `84f5e0e`; its Bun build succeeded and the exact
+  committed integration entrypoint completed twice. It registered the five
+  public tools in six ordinary Hermes profiles and three ordinary OMP profiles
+  while leaving the selected private worker with only `librarian-okf`.
 
 ### Current source and configuration facts
 
@@ -64,23 +66,23 @@ generation is part of this pass.
 
 ### Superseding web-provider policy
 
-- [ ] Add a checked-in DSH destroy/rebuild entrypoint. It must regenerate a
+- [x] Add a checked-in DSH destroy/rebuild entrypoint. It must regenerate a
   strict preset root from the currently installed DSH presets, remove every
   native `tool-web` row, disable all host search/fetch providers in every DSH
   boot profile, and expose only Localflame's seven Firecrawl tools. It must not
   edit shipped packages in place.
-- [ ] Make the strict DSH preset root the complete visible roster so switching
+- [x] Make the strict DSH preset root the complete visible roster so switching
   Standard/PTC/Cordis/Minimal cannot restore DeepSeek search. Regenerate it on
   every install/update and retain an uninstall path back to the shipped roster.
-- [ ] Verify DSH `read-only` retains the entire Localflame MCP surface while
+- [x] Verify DSH `read-only` retains the entire Localflame MCP surface while
   filesystem and shell permissions remain read-only.
-- [ ] Reverse the earlier Localflame-owned OMP settings change by resetting
+- [x] Reverse the earlier Localflame-owned OMP settings change by resetting
   `web_search.enabled` and `fetch.enabled` through `omp config`; future
   Localflame runs must preserve OMP's existing web providers.
-- [ ] Reverse the earlier Localflame-owned Hermes change by removing the added
+- [x] Reverse the earlier Localflame-owned Hermes change by removing the added
   `web` disable and Camofox `web_search` exclusion through Hermes's native
   configuration command; future runs must preserve Hermes's web providers.
-- [ ] Record that migration in Localflame-owned state so later reruns never
+- [x] Record that migration in Localflame-owned state so later reruns never
   overwrite a user's deliberate provider choices.
 
 ### Persistent routing skills
@@ -275,6 +277,14 @@ Well it should actually include verbatim everything I mentioned in steers as wel
 
 </details>
 
+<details><summary>205375 — Hermes hook/tool/MCP contracts and Diogenes backend classification</summary>
+
+`````text
+Don't forget, hermes being reliant on hooks, usually it does take a decent look at the actual `hermes tools --help` and `hermes mcp --help` standards, because prior when activating context mode I had to enable hooks and tools likewise that mattered. Probably indepodent for camofox's mcp, context-mode's mcp, and any other mcps we might need. I'd presume actually that leetcoder/librarian/retreival all are actually mcps, but I might be wrong. Since they do in fact call out to specific json rpc backends and yet—are in fact callable's. mcp would indeed make sense. As well, would probably make it easier when designing the webuis for all of them lol. Persephone on the other hand is indeed a native networking thing. So like. Shouldn't be hard there making the gitcito styled allinone webui once we get to the diogenes part.
+`````
+
+</details>
+
 ### Steering-to-checklist verification
 
 | Transcript steer | Durable coverage | State |
@@ -294,6 +304,34 @@ Well it should actually include verbatim everything I mentioned in steers as wel
 | 203275 | Section 10: rich Diogenes-only Retrieval/Librarian/Persephone/RoboOMP workspaces using their CLI/MCP backends | Fully enumerated; pending |
 | 204258 | Superseding web-provider policy and Persistent routing skills above | Active |
 | 204423 / 204484 | Current execution state, this verbatim record, and this mapping | Complete and maintained from the local transcript |
+| 205375 | Sections 4, 7, 9, and 10: audit Hermes hook/tool/MCP standards, classify callable backends from source, and keep Persephone on its gateway/network contract | Recorded; source audit pending |
+
+### Exact transcript audit
+
+- [x] Read the task JSONL directly and selected the 20 user-message records
+  by transcript ordinal rather than reconstructing them from memory.
+- [x] Found 20 expected transcript records, 20 fenced verbatim TODO bodies,
+  and 20 exact body matches after normalizing only CRLF/LF line endings.
+- [x] Found no missing record, extra record, or mismatched body.
+- [x] Mapped every recorded steer to one or more executable checklist sections
+  in the table above; the verbatim blocks remain the authority if a summary
+  ever becomes ambiguous.
+
+The 2026-09-11 audit fingerprints are the first 12 hexadecimal characters of
+SHA-256 over each normalized transcript body:
+
+| Ordinal | SHA-256/12 | Ordinal | SHA-256/12 |
+| --- | --- | --- | --- |
+| 200417 | `dde207d64237` | 200749 | `05508b2b63ab` |
+| 200858 | `2c4ec8ed4658` | 200910 | `5a2dae1a88e0` |
+| 200924 | `b43aaca856d8` | 200980 | `76efcbc5524a` |
+| 201025 | `58184a88be1b` | 201233 | `86084777dcee` |
+| 201235 | `31f4b3776f09` | 201609 | `0d89c14c2686` |
+| 201622 | `bdaadad9754b` | 201896 | `80ff9790aff9` |
+| 202018 | `49ac8f2d93f7` | 202805 | `674e3c0a8af6` |
+| 202930 | `9e357874fa3f` | 203275 | `d0fc7afd44ac` |
+| 204258 | `917ec30aef20` | 204423 | `c43a78e6d067` |
+| 204484 | `ed5542f306c3` | 205375 | `169b9282bfda` |
 
 ## 1. Server core
 
@@ -343,6 +381,13 @@ Well it should actually include verbatim everything I mentioned in steers as wel
 - [x] Use a deliberately generous per-server timeout because Hermes interprets
   zero as immediate expiry rather than unlimited.
 - [x] Verify against Hermes's current configuration docs and implementation.
+- [ ] Read and record the installed `hermes tools --help` and
+  `hermes mcp --help` contracts, then verify each required hook, toolset, and
+  MCP registration against both native command output and installed config.
+- [ ] Use Camofox and Context Mode as concrete integration precedents; classify
+  Leetcoder, Librarian, and Retrieval from their source and native callable
+  transport rather than assuming that every JSON-RPC service is registered the
+  same way.
 - [ ] Audit `~/Hermes` start/update/status scripts for a repeatable update path.
 
 ## 5. DeepSeek Harness integration
@@ -398,6 +443,9 @@ Well it should actually include verbatim everything I mentioned in steers as wel
   treat each applicable child repository as an independent project, repair
   missing or stale tracked scripts, and make an independent commit in every
   affected repository.
+- [ ] For every applicable Hermes integration, trace native tool enablement,
+  lifecycle hooks, MCP registration, and profile-specific exclusions as four
+  separate contracts before calling the integration complete.
 - [x] Keep all model-project integration under `~/Hermes`; do not create a
   second model-project tree under `~/Deepseek` or an installation directory.
 - [x] Treat `~/.hermes`, `~/.omp`, and `~/.dsh` strictly as installed runtime
