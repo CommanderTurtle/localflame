@@ -9,5 +9,10 @@ if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
   exit 1
 fi
 
-git pull --ff-only
+branch="$(git branch --show-current)"
+[[ -n "$branch" ]] || {
+  echo "localflame update requires a checked-out branch." >&2
+  exit 1
+}
+git pull --ff-only origin "$branch"
 exec "$ROOT/install.sh" "$@"

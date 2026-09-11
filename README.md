@@ -154,8 +154,8 @@ installed at its standard path.
 Static inspection is available separately:
 
 ```bash
-bun scripts/doctor.mjs --target all
-bun scripts/doctor.mjs --target dsh --dsh-profile all --json
+./doctor.sh --target all
+./doctor.sh --target dsh --dsh-profile all --json
 ```
 
 The doctor checks executable paths, configuration shape, provider-policy

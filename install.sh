@@ -28,7 +28,7 @@ command -v bun >/dev/null 2>&1 || { echo "localflame requires Bun" >&2; exit 1; 
 if [[ "$DRY" == 0 ]]; then
   cd "$ROOT"
   bun install --frozen-lockfile
-  chmod +x "$ROOT/bin/localflame.js" "$ROOT/scripts/configure.mjs" "$ROOT/scripts/doctor.mjs" "$ROOT/scripts/destroy-dsh-web.mjs"
+  chmod +x "$ROOT/doctor.sh" "$ROOT/bin/localflame.js" "$ROOT/scripts/configure.mjs" "$ROOT/scripts/doctor.mjs" "$ROOT/scripts/destroy-dsh-web.mjs"
   mkdir -p "$HOME/.local/bin"
   ln -sfn "$ROOT/bin/localflame.js" "$HOME/.local/bin/localflame"
 fi
