@@ -22,11 +22,11 @@ generation is part of this pass.
   semantically idempotent and the static doctor reported 80/80 checks after
   the DSH-only provider policy and ordinary-profile provider preservation were
   installed.
-- [x] Retrieval is committed in `~/Hermes/retrieval` at `1b055be`. IWE's
+- [x] Retrieval is committed in `~/Hermes/retrieval` through `a2aea08`. IWE's
   ranking behavior is internal, its external checkout and binaries are gone,
   the schema-5 catalog is isolated from older running processes, and its
   structured catalog currently reports 1,000 entries, 3,405 graph nodes,
-  15,132 graph edges, 30 roots, and 15 byte-identical duplicate exclusions.
+  15,132 graph edges, 30 roots, and 17 byte-identical duplicate exclusions.
 - [x] Retrieval's setup completed twice. The first pass consolidated 522 Hermes
   package occurrences and removed 521 redundant installed copies; the second
   pass consolidated and removed zero. The durable copies remain under
@@ -59,6 +59,13 @@ generation is part of this pass.
   TypeScript checking passed, and the configuration-only doctor reports every
   current integration and profile boundary healthy without a Firecrawl or
   model request.
+- [x] Leetcoder's dependency refresh and durable Hermes-to-OMP owner contract
+  are committed in `~/Hermes/leetcoder` through `fbb7bbe`. Its public surface
+  remains four Hermes MCP tools backed by an authenticated loopback service;
+  the OMP worker and auditor profiles cannot recurse into Leetcoder. Two exact
+  committed integration runs produced identical Hermes, OMP, and systemd file
+  hashes without restarting the active daemon, and the runtime doctor passed
+  every check.
 
 ### Current source and configuration facts
 
@@ -89,7 +96,8 @@ generation is part of this pass.
 - Sandwich's Bun-backed `node`, `npm`, `npx`, `pnpm`, and `yarn` shims are
   intact; `npx` resolves to `bun x --bun`. Its Hermes updater still needs a
   post-update reconciliation path for the independently committed Localflame,
-  Retrieval, Librarian, Camofox, Context Mode, and Persephone integrations.
+  Retrieval, Librarian, Camofox, Context Mode, Leetcoder, and Persephone
+  integrations.
 
 ### Superseding web-provider policy
 
@@ -422,6 +430,10 @@ SHA-256 over each normalized transcript body:
   prove a same-revision rerun is unchanged.
 - [x] Give Camofox MCP a checked-in dual-harness integration/doctor contract,
   preserve it as Hermes's browser backend, and exclude isolated profiles.
+- [x] Give Leetcoder checked-in install/integrate/doctor/update entrypoints,
+  register its MCP through Hermes's native config command, leave the gateway
+  restart to final convergence, and prove repeat runs do not restart its
+  already-active loopback service or mutate the resulting integration state.
 - [ ] Audit `~/Hermes` start/update/status scripts for a repeatable update path.
 
 ## 5. DeepSeek Harness integration
@@ -514,6 +526,7 @@ two independent local sources or one local source plus official documentation.
 | Camofox ownership | checked-in dual-harness installer | native Hermes/OMP config plus 67-check doctor | passed at `c766058` |
 | Context Mode ownership | native plugin/MCP installer | pinned registry, copied-plugin hashes, and 123-check doctor | passed twice through `0231bcb`; focused OMP doctor 19/19 |
 | Persephone delegation | committed owner-script call sites | integration-only doctor plus each owner doctor | passed through `def5da6` |
+| Leetcoder ownership | checked-in Hermes-only MCP installer | identical second-pass hashes, unchanged service PID/start time, and runtime doctor | passed twice at `fbb7bbe` |
 | Repository contents | unit/static checks | `git diff --check` and tracked-file audit | Localflame/Retrieval passed; later repos pending |
 
 ## 9. Retrieval, skill lifecycle, and Librarian integration
@@ -668,6 +681,9 @@ documented local APIs and should not duplicate their storage or agent loops.
 - [x] Commit Camofox's integration contract and Context Mode's native
   OMP/Hermes plugin-plus-MCP contract independently, then run each owner doctor
   and prove Context Mode's second same-revision pass is a semantic no-op.
+- [x] Commit Leetcoder's Hermes-only MCP plus OMP-worker gateway contract,
+  execute the committed integration twice, compare all generated hashes and
+  the active service identity, and pass its full read-only runtime doctor.
 - [ ] Commit Sandwich update orchestration without changing its Bun-backed
   `node`, `npm`, `npx`, `pnpm`, or `yarn` compatibility behavior.
 - [ ] Commit Diogenes only after all backend commands and runtime/service/UI
