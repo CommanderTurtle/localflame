@@ -428,6 +428,22 @@ omp should have access to retrieval's mcp too, just a definite verification. Lma
 
 </details>
 
+<details><summary>Current + 2 — OMP Retrieval remains turn-local</summary>
+
+`````text
+omp doesn't bloat to all hell its skills list though, so similarly it should just be pulling refs into a current chat, never saving ephemerally
+`````
+
+</details>
+
+<details><summary>Current + 3 — Preserve OMP default skills</summary>
+
+`````text
+Like. We never clear default skills for omp. But yeah. Didn't mean to interrupt. Simply update the todo in detail and continue wherever you were. On whatever you were.
+`````
+
+</details>
+
 ### Steering-to-checklist verification
 
 | Transcript steer | Durable coverage | State |
@@ -450,6 +466,8 @@ omp should have access to retrieval's mcp too, just a definite verification. Lma
 | 205375 | Sections 4, 7, 9, and 10: audit Hermes hook/tool/MCP standards, classify callable backends from source, and keep Persephone on its gateway/network contract | Native help and Context Mode/Camofox ownership complete; remaining backends and Diogenes interfaces pending |
 | Current OMP audit | Section 3: Localflame-backed search, Camofox browser routing, vision/base64 capability, MCP visibility, unrestricted Context Mode execution, and durable ompconfig reapplication | Active after cross-repository convergence |
 | Current + 1 | Section 3: direct OMP Retrieval and Librarian MCP/RPC availability without Hermes detours | Active after cross-repository convergence |
+| Current + 2 | Section 3: turn-local Retrieval results without adding retrieved packages to OMP's skill trees | Active after cross-repository convergence |
+| Current + 3 | Section 3: preserve OMP's entire default skill baseline while keeping Retrieval results turn-local | Recorded as a non-destructive constraint |
 
 ### Exact transcript audit
 
@@ -467,6 +485,10 @@ omp should have access to retrieval's mcp too, just a definite verification. Lma
   included in the immutable 20-record transcript fingerprint table below.
 - [x] Appended the immediately following OMP Retrieval/Librarian steer verbatim
   as `Current + 1` and mapped it to section 3 under the same rule.
+- [x] Appended the turn-local OMP Retrieval steer verbatim as `Current + 2` and
+  mapped it to the no-retrieved-skill-copy acceptance check in section 3.
+- [x] Appended the OMP default-skill clarification verbatim as `Current + 3`;
+  section 3 now forbids clearing or replacing that baseline.
 
 The 2026-09-11 audit fingerprints are the first 12 hexadecimal characters of
 SHA-256 over each normalized transcript body:
@@ -541,6 +563,10 @@ SHA-256 over each normalized transcript body:
 - [ ] Verify Retrieval is callable from every intended ordinary OMP profile,
   not merely present in `mcp.json`, and that its routing skill points directly
   to the Retrieval MCP/OMP scout contract.
+- [ ] Never clear or replace OMP's default skills. Preserve its baseline plus
+  the tiny managed routers. Retrieved skill/reference bodies must be injected
+  only into the requesting chat turn and must not be copied into an installed
+  or temporary OMP skill tree after the call.
 - [ ] Verify Librarian calls from OMP use Librarian's OMP MCP/RPC route and
   public tool contract directly. They must not detour through Hermes or expose
   the private Hermes-only `librarian-okf` worker.
