@@ -22,7 +22,7 @@ generation is part of this pass.
   semantically idempotent and the static doctor reported 80/80 checks after
   the DSH-only provider policy and ordinary-profile provider preservation were
   installed.
-- [x] Retrieval is committed in `~/Hermes/retrieval` at `48d29ef`. IWE's
+- [x] Retrieval is committed in `~/Hermes/retrieval` at `1b055be`. IWE's
   ranking behavior is internal, its external checkout and binaries are gone,
   the schema-5 catalog is isolated from older running processes, and its
   structured catalog currently reports 1,000 entries, 3,405 graph nodes,
@@ -52,9 +52,9 @@ generation is part of this pass.
   permission preset inside that profile, not a second profile directory.
   Localflame's seven MCP operations are all read-only and must remain available
   under that permission preset.
-- Librarian already contains the fetched `understory/main` tip. Existing
-  `package.json` and `bun.lock` security overrides are user-owned changes and
-  must be included, not reverted, in its integration commit.
+- Librarian contains the fetched `understory/main` tip. The pre-existing
+  `package.json` and `bun.lock` security overrides were preserved in its
+  integration commit rather than reverted.
 - Persephone still contains an in-process Firecrawl `web_search` adapter. It
   must delegate to the committed Localflame MCP while keeping Camofox and every
   gateway contract.
@@ -87,17 +87,17 @@ generation is part of this pass.
 
 ### Persistent routing skills
 
-- [ ] Keep exactly three small first-party routing skills beside each ordinary
+- [x] Keep exactly three small first-party routing skills beside each ordinary
   Hermes/OMP baseline: `retrieve-knowledge`, `localflame`, and `librarian`.
-- [ ] Localflame's router must make Firecrawl search/scrape the strongly
+- [x] Localflame's router must make Firecrawl search/scrape the strongly
   preferred indexed web path while acknowledging that Hermes and OMP retain
   their other providers.
-- [ ] Librarian's router must advertise the five public `memory_*` tools and
+- [x] Librarian's router must advertise the five public `memory_*` tools and
   never expose the private `librarian-okf` operations.
-- [ ] Retrieval's session-close cleanup must preserve those exact managed
+- [x] Retrieval's session-close cleanup must preserve those exact managed
   router paths, consolidate every other non-stock skill, and keep all three out
   of the private Librarian and read-only scout/auditor profiles.
-- [ ] Run each owning installer twice after these changes and verify router
+- [x] Run each owning installer twice after these changes and verify router
   presence in the filesystem, MCP presence in native config output, and
   private-profile absence from a second independent source.
 
@@ -365,7 +365,7 @@ SHA-256 over each normalized transcript body:
 - [x] Merge a stdio server into `~/.omp/agent/mcp.json` without replacing
   existing servers.
 - [x] Set the OMP MCP timeout to `0` (its documented no-timeout value).
-- [ ] Preserve OMP's built-in web search/fetch settings. Remove the obsolete
+- [x] Preserve OMP's built-in web search/fetch settings. Remove the obsolete
   Localflame policy that disabled them and perform the one-time repair through
   the checked-in migration described above.
 - [ ] Update Diogenes's tracked `ompsettings.sh` so its repeatable OMP baseline
@@ -376,7 +376,7 @@ SHA-256 over each normalized transcript body:
 
 - [x] Merge the stdio server into `~/.hermes/config.yaml` without replacing
   unrelated settings or MCP servers.
-- [ ] Preserve Hermes's built-in `web` toolset and every configured provider;
+- [x] Preserve Hermes's built-in `web` toolset and every configured provider;
   remove the obsolete disable/filter migration described above.
 - [x] Use a deliberately generous per-server timeout because Hermes interprets
   zero as immediate expiry rather than unlimited.
@@ -393,11 +393,11 @@ SHA-256 over each normalized transcript body:
 ## 5. DeepSeek Harness integration
 
 - [x] Stop modifying shipped DSH packages and presets in place.
-- [ ] Generate a strict managed roster from every currently installed DSH
+- [x] Generate a strict managed roster from every currently installed DSH
   preset on every configure/update pass.
-- [ ] Remove native `tool-web` from every managed copy, add DSH's official MCP
+- [x] Remove native `tool-web` from every managed copy, add DSH's official MCP
   client row to each, and hide the unsanitized shipped/user roots.
-- [ ] Apply the managed roster and host web-provider disables to every DSH boot
+- [x] Apply the managed roster and host web-provider disables to every DSH boot
   profile without disturbing unrelated profile rows.
 - [x] Use a generous finite MCP timeout because DSH interprets zero as an
   immediate timeout.
@@ -469,9 +469,9 @@ or one local source plus official documentation.
 | MCP server API | official TypeScript SDK server docs | installed package types/examples | passed for `3c97a84` |
 | Firecrawl request/response | official v2 API reference | `CommanderTurtle/llm` implementation | passed for `3c97a84` |
 | Section/index behavior | `llm/src/context.js` | static invariant and call-site audit | passed for `3c97a84` |
-| OMP config | installed `mcp-schema.json` | installed MCP loader/config source | MCP passed; provider-policy revision pending |
-| Hermes config | repository MCP/config docs | installed Hermes config/MCP source | MCP passed; provider-policy revision pending |
-| DSH config | installed `dsh-mcp-client` | installed profile/preset loader | single preset passed; strict roster pending |
+| OMP config | installed `mcp-schema.json` | installed MCP loader/config source | MCP and provider preservation passed |
+| Hermes config | native `hermes tools`/`hermes mcp` output | installed profile config and hooks | MCP and provider preservation passed; deeper integration audit active |
+| DSH config | installed `dsh-mcp-client` | installed profile/preset loader | strict four-preset roster and read-only Localflame access passed |
 | Update resilience | installer source audit | current and prior client config contracts | pending |
 | Live OMP/Diogenes | installed schema/config loader | Diogenes scripts and rerun state | pending |
 | Live Hermes | current repo docs/source | real launcher/updater/config state | first integration passed; final convergence pending |
@@ -501,11 +501,11 @@ or one local source plus official documentation.
 - [ ] Replace Diogenes's flat skill-file audit source with Retrieval's structured
   catalog API and add a source/category/skill graph browser to the existing
   operator window; retain edit actions only for canonical editable files.
-- [ ] Verify Retrieval and Librarian appear in both Hermes's native MCP listing
+- [x] Verify Retrieval and Librarian appear in both Hermes's native MCP listing
   and OMP's native `/mcp` configuration source without starting either server.
 - [x] Confirm Librarian contains the fetched `understory/main` tip before adding
   any integration commit; preserve its existing dependency updates.
-- [ ] Give Librarian the same repeatable dual-harness routing skill and registration
+- [x] Give Librarian the same repeatable dual-harness routing skill and registration
   behavior without changing its deterministic OKF or agent-loop contracts.
 
 ## 10. Diogenes-native operator interfaces
@@ -621,7 +621,7 @@ documented local APIs and should not duplicate their storage or agent loops.
 - [x] Commit Retrieval next, run its IWE removal and clean-baseline lifecycle
   scripts, then verify its catalog/tree output and installed routing skill in
   both harness families.
-- [ ] Commit Librarian's dual-harness integration while preserving its existing
+- [x] Commit Librarian's dual-harness integration while preserving its existing
   dependency changes and isolated worker profiles.
 - [ ] Commit Persephone's Localflame handoff and repeatable integration changes
   before adding or revising its Diogenes workspace.
