@@ -22,15 +22,20 @@ generation is part of this pass.
   semantically idempotent and the static doctor reported 80/80 checks after
   the DSH-only provider policy and ordinary-profile provider preservation were
   installed.
-- [x] Retrieval is committed in `~/Hermes/retrieval` through `a2aea08`. IWE's
+- [x] Retrieval is committed in `~/Hermes/retrieval` through `825d00a`. IWE's
   ranking behavior is internal, its external checkout and binaries are gone,
   the schema-5 catalog is isolated from older running processes, and its
   structured catalog currently reports 1,000 entries, 3,405 graph nodes,
   15,132 graph edges, 30 roots, and 17 byte-identical duplicate exclusions.
+  Its owner installer now records current consent for only its exact
+  session-close hook in every ordinary Hermes profile and revokes that owned
+  consent from private profiles.
 - [x] Retrieval's setup completed twice. The first pass consolidated 522 Hermes
   package occurrences and removed 521 redundant installed copies; the second
   pass consolidated and removed zero. The durable copies remain under
-  `~/Hermes/skill-library`.
+  `~/Hermes/skill-library`. After the hook-consent repair, the exact committed
+  integration completed twice at 81/81 checks and produced byte-identical
+  Hermes/OMP configuration and routing hashes on both passes.
 - [x] The Hermes gateway was restarted once after the first Localflame and
   Retrieval integration. A final restart remains required after all routing
   skills and backends converge.
@@ -95,7 +100,9 @@ generation is part of this pass.
   Retrieval, Librarian, Leetcoder, and Codebase Memory as MCP servers. Context
   Mode also owns
   a minimal Hermes native plugin bridge and its OMP lifecycle plugin;
-  Retrieval owns its session-close hook. Legacy Context Mode routing-skill
+  Retrieval owns its session-close hook and exact per-profile consent. Native
+  Hermes output reports that hook as allowed in all six ordinary profiles and
+  absent from the private Librarian worker. Legacy Context Mode routing-skill
   copies were moved to timestamped state backups rather than retained beside
   the native plugin/MCP contract.
   Persephone remains a gateway/network process backed by OMP RPC rather than
@@ -538,6 +545,7 @@ two independent local sources or one local source plus official documentation.
 | Persephone delegation | committed owner-script call sites | integration-only doctor plus each owner doctor | passed twice through `596424b` with byte-identical second-pass state |
 | Leetcoder ownership | checked-in Hermes-only MCP installer | identical second-pass hashes, unchanged service PID/start time, and runtime doctor | passed twice at `fbb7bbe` |
 | Codebase Memory ownership | checked-in Hermes/OMP reconciler plus native Hermes registries | identical second-pass hashes, current targeted hook consent, and 38-check doctor | passed twice at `6405c3be9` |
+| Retrieval hook ownership | checked-in exact-consent reconciler plus owner doctor | native Hermes hook listings, byte-identical second-pass state, and neighboring owner doctors | passed twice at `825d00a`; 81/81 Retrieval, 38/38 Codebase Memory, and Librarian topology checks passed |
 | Repository contents | unit/static checks | `git diff --check` and tracked-file audit | Localflame/Retrieval passed; later repos pending |
 
 ## 9. Retrieval, skill lifecycle, and Librarian integration
@@ -555,8 +563,10 @@ two independent local sources or one local source plus official documentation.
 - [x] Add an idempotent session-close operation that synchronizes the catalog
   and removes only manifest-owned projections for the closing harness.
 - [x] Attach that operation to current Hermes and OMP session lifecycle hooks,
-  then audit installed skill trees against each upstream baseline so retrieved
-  skills do not permanently pollute either harness.
+  record current consent for only the exact owned Hermes command in every
+  ordinary profile, revoke it from private profiles, and audit installed skill
+  trees against each upstream baseline so retrieved skills do not permanently
+  pollute either harness.
 - [x] Route supported OMP/Hermes configuration changes through their native
   `config` commands and use their documented MCP configuration boundary where
   no non-interactive command exists.
@@ -682,8 +692,8 @@ documented local APIs and should not duplicate their storage or agent loops.
   (`3c97a84`). Commit the provider-policy/routing revision before downstream
   update scripts are finalized.
 - [x] Commit Retrieval next, run its IWE removal and clean-baseline lifecycle
-  scripts, then verify its catalog/tree output and installed routing skill in
-  both harness families.
+  scripts, then verify its catalog/tree output, exact Hermes hook consent, and
+  installed routing skill in both harness families through `825d00a`.
 - [x] Commit Librarian's dual-harness integration while preserving its existing
   dependency changes and isolated worker profiles.
 - [x] Commit Persephone's Localflame handoff and repeatable integration changes
