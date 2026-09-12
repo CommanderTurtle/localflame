@@ -1039,3 +1039,106 @@ documented local APIs and should not duplicate their storage or agent loops.
   the expected entries while isolated profiles remain isolated.
 - [x] Restart the Hermes gateway through its native command after configuration
   convergence, without starting a model or issuing a Firecrawl request.
+
+## 12. Reopened installed-state and owner-repository closeout
+
+The RoboOMP ADE was one completed slice. It did not close the broader
+multi-repository assignment. Runtime observations made after that handoff
+override any earlier ledger row that described the whole integration as
+converged.
+
+Latest user steer, preserved verbatim:
+
+```text
+Just a heads up. omp still denoteption. And so, I left it disabled. Secondly. The camofox mcp that was previously (up) so I presume, is not working (hangs forever on call). Likewise, I see no plugin that persephone could easily maintain now for keeping settings mods in place. As well, I am just not sure why there's no way to list anything. You should have made commits to multiple repos. Namely, every item in ~/Hermes, and yet you say, Diogenes, Persephone. There were so many commits worthwhile. Projects like librarian/retreival/leetcoder that I expected full reports on. Context-mode patches & camofox additions. Localflame information and update info. Instead, I just have a vague summary. And as well, gitcito was supposed to be directly used in the identical code that we use in our integration. No dependency, just understanding we can derive from its proven durable methods.
+```
+
+### 12.1 Immediate runtime failures
+
+- [ ] Resolve what is disabled or misreported in the installed OMP state from
+  native OMP configuration, plugin, MCP, model-capability, and provider output;
+  do not infer the meaning of the typo in isolation.
+- [ ] Reproduce the Camofox MCP hang with a bounded protocol-level
+  initialize/list-tools/status call while making no browser navigation or web
+  request.
+- [ ] Attribute any Camofox failure separately to the browser service, MCP
+  stdio transport, harness client, duplicated process ownership, or gateway
+  lifecycle.
+- [ ] Fix the owning repository rather than killing processes or editing
+  installed configuration by hand; run its committed integration and doctor
+  paths twice and compare state.
+- [ ] Bring the Hermes gateway service definition current through Hermes's
+  native lifecycle command after all owner configuration has converged.
+
+### 12.2 Persephone-owned OMP maintenance and visibility
+
+- [ ] Make the installed Persephone OMP extension visibly list its managed
+  integrations, effective OMP state, drift, and reconciliation result.
+- [ ] Give the extension an idempotent, owner-versioned post-update maintenance
+  route that detects drift before applying the narrow OMP repairs already
+  owned by Persephone.
+- [ ] Keep the maintenance implementation in Persephone; Diogenes may invoke
+  and display it but must not copy OMP policy.
+- [ ] Verify plugin installation, extension loading, command discovery,
+  feature/config metadata where supported by OMP, and fresh-install/update
+  behavior from committed scripts.
+- [ ] Run the exact reconciler twice and prove that the second pass is a
+  semantic no-op.
+
+### 12.3 Repository-by-repository owner audit and delivery report
+
+- [ ] Localflame: report MCP surface, DSH strict-policy ownership, Hermes/OMP
+  preservation rules, installer/updater/doctor paths, current commit, repeated
+  verification, and any new corrective commit.
+- [ ] Camofox MCP: report service versus stdio ownership, Hermes/OMP native
+  registration, hooks/tools requirements, timeout behavior, process lifecycle,
+  current commit, repeated verification, and corrective commit.
+- [ ] Context Mode: report native plugin/MCP installation, host execution
+  policy, hooks/tools requirements, profile boundaries, current commit,
+  repeated verification, and any corrective commit.
+- [ ] Retrieval: report internal IWE-derived index implementation, catalog and
+  tree APIs, Hermes close-session indexing/cleanup, turn-local OMP behavior,
+  duplicate handling, native registrations, current commit, repeated
+  verification, and any corrective commit.
+- [ ] Librarian: report `understory` ancestry, direct OMP RPC versus isolated
+  Hermes worker routing, MCP/API surfaces, state/update scripts, current
+  commit, repeated verification, and any corrective commit.
+- [ ] Leetcoder: report Hermes MCP, isolated OMP worker, native registrations,
+  lifecycle scripts, current commit, repeated verification, and any corrective
+  commit.
+- [ ] Codebase Memory, Hermes Workspace, Sandwich, and other applicable owner
+  repositories under `~/Hermes`: report their exact role, current commit,
+  update/integration/doctor contract, installed-state evidence, and any
+  corrective commit. Preserve Sandwich's Bun-backed command shims.
+- [ ] Diogenes: report every consumed owner contract and verify each UI/API
+  route against its owner after all backend changes, then commit only real
+  downstream adjustments.
+- [ ] Finish with a concrete table containing every applicable repository,
+  branch, before/after commit, files changed, commands run twice, installed
+  evidence, and remaining limitations.
+
+### 12.4 GitCito direct derivation audit
+
+- [ ] Locate the exact GitCito source revision and license used as the
+  reference.
+- [ ] Map its repository discovery, selected-context normalization, fuzzy
+  navigation, grounding/citation, diff browsing, review action, and pending
+  operation implementations to the Persephone and Diogenes equivalents.
+- [ ] Port the applicable proven methods directly into the owner/UI code with
+  source attribution where the license requires it. Do not add GitCito as a
+  runtime dependency and do not copy its brand or theme.
+- [ ] Replace any merely conceptual approximation from the first RoboOMP pass
+  where a stronger GitCito implementation was requested.
+- [ ] Verify the derived behavior from both the GitCito source/test and the
+  receiving repository's call site/test, then commit the owner and downstream
+  changes separately.
+
+### 12.5 Completion gate
+
+- [ ] Do not call this project complete from one subsystem's handoff.
+- [ ] Keep this section current with observed runtime failures, work actually
+  performed, commit IDs, repeated-run evidence, and outstanding work.
+- [ ] Do not issue a live Firecrawl request, browser task, or model generation
+  during the verification pass.
+- [ ] Leave every touched repository clean and provide the full owner-by-owner
+  report rather than a vague aggregate summary.
