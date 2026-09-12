@@ -542,6 +542,85 @@ To make it helpful, to avoid tech debt, the idea being that for each path that d
 
 </details>
 
+<details><summary>Current + 7 — Ninfer, Diogenes runtime dependencies, and ORC installers</summary>
+
+`````text
+hey just curious so, update the todo with these details verbatim:
+
+
+
+So, firstly, I noticed 'llm' (solely a project on *this* local laptop btw) doesn't properly communicate with ninfer. The grab (you will see some CORS error), doesn't appear to work with a current model test I'm currently serving via ninfer (I forwarded reachability to this laptop's localhost:8000/v1/models BTW) -- basically it seems like our current variant of 'llm' does not yet support reaching out to these types of models and simply throws cors error unlike vllm.&#x20;
+
+
+
+Secondly, I currently have an ninfer install via docker right next to diogenes (\~/Odysseus/ninfer/ninfer).
+
+
+
+Basically, we should just make a minor update to the dependency possibilities within Diogenes. 1. Check durable paths for things like llama.cpp (they still don't use uv proper, like vllm does --iirc. I.e. it manually does the source .venv/bin/activate , then does uv pip instal..... ETC). For one, llama.cpp should build independently. As well, it should 1000% check that the current cuda correctness exists in \~/.bashrc. Again, WE DON'T RUN THIS. it's already installed. Right now, I have ninfer installed similarly to the directory layout that colibri and such use. I actually yeah, had to remove some of the colibri models due to some space savings needed, so we can remove from tests. The way ninfer should work is dead simple, it follows the instructions under (serving) docker @ [https://huggingface.co/DreamFast/Qwen-3.8-27b-Orcarouter-Uncensored-Ninfer](https://huggingface.co/DreamFast/Qwen-3.8-27b-Orcarouter-Uncensored-Ninfer)
+
+
+
+Likewise, we can then after the fact put it under our docker durable path under the services menu, and set up the config "manually" presuming that the following above readme snippet was run \*verbatim\*
+
+
+
+However, I downloaded 1 model. This was an ninfer artifact. So therefore *specially* under that very dependency layout where you can change files and stuff, you should be able to set up model configs. 1, 2, etc.
+
+
+
+You can see how i have them laid out as such:
+
+
+```bash
+docker run --rm --gpus '"device=0"' --publish 0.0.0.0:8080:8080   --volume "$PWD/models1:/models1:ro"   ninfer:local   ninfer-serve /models1/qwen3_8_27b_nvfp4.ninfer   --host 0.0.0.0   --max-context 200000 --kv-capacity auto --kv-dtype int8   --max-concurrency 4 --spec mtp --draft-tokens 3 --lm-head-draft --vision
+```
+
+
+
+or&#x20;
+
+
+```bash
+docker run --rm --gpus '"device=0"' --publish 0.0.0.0:8080:8080   --volume "$PWD/models1:/models1:ro"   ninfer:local   ninfer-serve /models1/qwen3_8_27b_nvfp4.ninfer   --host 0.0.0.0   --max-context 200000 --kv-capacity auto --kv-dtype int8   --max-concurrency 4 --spec mtp --draft-tokens 3 --lm-head-draft --vision
+```
+
+
+
+They should be *entirely* oneliners, solely configurable by the user.
+
+
+
+We should put them *here* and as options that *are appendable* with zero issue. Since the live terminal consistently updates, it must use an actual tmux viewer (like the venv section does) unappended by limitation. Likewise, you see I have two models downloaded as such nearby
+
+We should have these added to cookboox and downloading directly to the ninfer directory. What happens when someone downloads an ninfer artifact (we allow hf pointers and have an ultra minified entrypoint in its section in the menu similar to cookbook) is it *manually writes* a temp file, no matter the dependency layout, with verbatim what exists (the format of) \~/temp-download-venv 's download-ninfer.py script. It uses this format exactly. Zero verbage. Zero "being smart". It sources. It runs with "uv run" and it's progress is outlined in a similar terminal as cookbook's downloads do. Then the downloader script deletes itself. Likewise, then, the actual .ninfer artifact gets moved to a "models1,2,3,4... etc" directory within ninfer/ninfer (presuming post-build) and then gets saved as a deletable configuration for model. The sourced download persists, as do mine in the upper level folder, but the ninfer artifact itself gets moved to the proper directory with "cp". Zero wizardry. Zero overthinking this. It should just work
+
+
+
+
+
+Last thing to add to the todo: Completely re-organize and rewrite the /orc/tree/main/blog/\<install scripts> . They currently exist on this local laptop at
+```
+C:\Users\turtleuser\Documents\Dev\Website Stuff\orc\orc\blog
+```
+
+
+
+They should work. And there should be one that does like "AI" and only works on linux layout. Similarly basically doing my entire connected setup available on the local workstation. With explicit start instructions for the user. As well as mm-tools being a path.
+
+
+
+It should be not convoluted at all (currently it is) and work entirely.
+
+
+
+So once more. Update the rolling todo, with verbatim detail, and append the sections necessary, not stopping till finished, nor paraphrasing or rewriting the actual goals I have outlined here
+
+
+`````
+
+</details>
+
 ### Steering-to-checklist verification
 
 | Transcript steer | Durable coverage | State |
@@ -569,6 +648,7 @@ To make it helpful, to avoid tech debt, the idea being that for each path that d
 | Current + 4 | Section 10.5: Gitcito-informed, Diogenes-only RoboOMP ADE with model-assisted Git questions and the complete authorized owner surface | Complete at Persephone `b681bb4` and Diogenes `913d637` |
 | Current + 5 | Sections 3, 7, 10.4, and 11: Persephone owns an idempotent OMP post-update reconcile/doctor contract; Diogenes only delegates; hidden web search, Camofox browser, and image/base64 capability drift is repaired only when detected | Complete at Persephone `cb36532` and Diogenes `48ec1f2`; gateway diagnostics completed at Persephone `66aa1e2` and Diogenes `89d4ac4` |
 | Current + 6 | Section 12.7: repository-owned `audit.sh`, `update.sh`, `integrate.sh`, and `doctor.sh`; Sandwich-backed checking; safe source/fork reconciliation; local reviewed commits; exact no-push publication hints; no duplicated Diogenes update logic | Complete locally through Sandwich `68dc3bf`, Context Mode `ff60710`, Camofox Browser `64bd721`, Camofox MCP `b06a5c4`, Hermes Workspace `969791c5`, and Diogenes `156d53f`; publication remains user-owned |
+| Current + 7 | Section 13: laptop-local `llm` Ninfer/CORS compatibility; Diogenes llama.cpp and CUDA dependency checks; Docker-backed Ninfer service and appendable model commands; Cookbook-style Ninfer artifact acquisition; local ORC blog installer rewrite | Recorded verbatim; all implementation and runtime actions remain pending |
 
 ### Exact transcript audit
 
@@ -599,6 +679,9 @@ To make it helpful, to avoid tech debt, the idea being that for each path that d
 - [x] Appended the repository-owner maintenance clarification verbatim as
   `Current + 6` and mapped every completed and remaining publication step to
   section 12.7.
+- [x] Appended the Ninfer, Diogenes runtime dependency, and ORC installer steer
+  verbatim as `Current + 7` and mapped every requested implementation item to
+  section 13 without running or changing any named project.
 
 The 2026-09-11 audit fingerprints are the first 12 hexadecimal characters of
 SHA-256 over each normalized transcript body:
@@ -1406,3 +1489,128 @@ an upstream dependency.
   token identity and exact repository allowlist. Then use Persephone's typed
   config/doctor/build/start/status routes and point Diogenes at the healthy
   loopback viewer; do not hand-edit generated state.
+
+## 13. Ninfer, runtime dependency, and installer continuation
+
+This section is an implementation queue only. The recording pass that created
+it must not start a model, rebuild a dependency, move an artifact, change a
+runtime configuration, or edit any of the named application repositories.
+
+### 13.1 Laptop-local `llm` Ninfer transport
+
+- [ ] Work only in the `llm` project on this Windows laptop for this item.
+- [ ] Audit the browser request path used to discover models at the user's
+  forwarded `http://localhost:8000/v1/models` endpoint and reproduce from code
+  why Ninfer raises a CORS failure where the existing vLLM path succeeds.
+- [ ] Add the smallest Ninfer-compatible browser transport/discovery handling
+  that preserves the current vLLM behavior and the static-page architecture.
+- [ ] Do not turn this into a server-side proxy, endpoint rewrite, or broad
+  refactor. Keep the current endpoint selector, local-network behavior, and
+  working providers intact.
+- [ ] Verify the transport logic against both the Ninfer and vLLM request
+  shapes when implementation begins; the current TODO-only pass performs no
+  live endpoint request.
+
+### 13.2 Diogenes dependency and CUDA contracts
+
+- [ ] Audit Diogenes's durable dependency paths before changing them, including
+  the existing llama.cpp, vLLM, Colibri, Docker, service-menu, and tmux
+  contracts.
+- [ ] Keep llama.cpp independently buildable. Its route must follow its real
+  environment/build requirements rather than being forced into vLLM's uv
+  setup; specifically inspect the existing `source .venv/bin/activate` and
+  `uv pip install ...` sequence before changing anything.
+- [ ] Add a read-only prerequisite check that confirms the required CUDA
+  configuration is present and correct in `~/.bashrc`. Do not source, rewrite,
+  reinstall, or run that setup during this recording pass: the user's current
+  installation already exists.
+- [ ] Remove only tests whose fixtures require the Colibri model files the user
+  deliberately removed for disk-space savings. Do not remove Colibri runtime
+  support or weaken unrelated dependency coverage.
+- [ ] Treat `~/Odysseus/ninfer/ninfer` as the installed Docker-backed Ninfer
+  project beside Diogenes, matching the user's current directory layout.
+- [ ] Use the serving instructions from
+  `https://huggingface.co/DreamFast/Qwen-3.8-27b-Orcarouter-Uncensored-Ninfer`
+  as the governing Ninfer command contract when implementation begins.
+
+### 13.3 Diogenes Ninfer service and model configurations
+
+- [ ] Add Ninfer under Diogenes's durable Docker dependency path and services
+  menu without changing the default behavior of other services.
+- [ ] Presume the documented Docker build/setup command has already been run
+  verbatim. The service integration starts and observes that installation; it
+  does not silently rebuild or reinterpret it.
+- [ ] Add appendable model configuration slots numbered `1`, `2`, `3`, and so
+  on. Each slot stores a deletable model configuration independently.
+- [ ] Keep every launch configuration as one literal, user-editable command
+  line. Do not split, synthesize, normalize, or silently add flags. Preserve
+  commands such as the recorded `docker run ... ninfer-serve ...` line exactly
+  as entered.
+- [ ] Mount each numbered model directory read-only and keep its command's
+  directory/model path under user control.
+- [ ] Run an active Ninfer model in a real tmux-backed viewer matching the venv
+  service terminal. Its continuously updating terminal must not be replaced by
+  a truncated log excerpt or a fixed output limit.
+- [ ] Account for the two nearby model downloads observed by the user without
+  moving, deleting, or rewriting them automatically.
+
+### 13.4 Cookbook-style Ninfer artifact acquisition
+
+- [ ] Add Ninfer artifacts to Cookbook with an ultra-minimal Hugging Face
+  pointer input in the Ninfer service area.
+- [ ] Download directly within the Ninfer project workflow rather than placing
+  the final model under an unrelated dependency tree.
+- [ ] For every requested artifact, manually create a temporary Python file in
+  the exact format used by `~/temp-download-venv/download-ninfer.py`. Do not
+  replace that format with inferred repository logic or a new downloader
+  abstraction.
+- [ ] Source the intended environment, execute the temporary downloader with
+  `uv run`, and expose its progress through the same terminal style used by
+  Cookbook downloads.
+- [ ] Delete the temporary downloader file after its run. Preserve the sourced
+  download/cache and the user's existing upper-level downloads.
+- [ ] Copy, rather than destructively move, the resulting `.ninfer` artifact
+  into the next applicable `models1`, `models2`, `models3`, ... directory under
+  `~/Odysseus/ninfer/ninfer` after the Docker build layout exists.
+- [ ] Save the matching one-line launch command as that model's deletable
+  configuration. A deleted configuration must not implicitly delete the
+  retained source download unless the user explicitly requests that separate
+  destructive action.
+- [ ] Keep this flow literal and deterministic: no automatic flag selection,
+  path guessing beyond the numbered slot allocation, model conversion, or
+  hidden command rewriting.
+
+### 13.5 ORC blog installer rewrite
+
+- [ ] Perform this work only in the local Windows checkout at
+  `C:\Users\turtleuser\Documents\Dev\Website Stuff\orc\orc\blog`.
+- [ ] Inventory every existing `/orc/tree/main/blog/<install scripts>` entry
+  and identify overlap, stale paths, platform assumptions, and unnecessarily
+  convoluted control flow before editing.
+- [ ] Reorganize and rewrite the install scripts into a small, understandable,
+  dependable set while preserving every currently supported installation that
+  remains applicable.
+- [ ] Add one Linux-only `AI` installation route that reproduces the user's
+  connected workstation setup from explicit, durable steps.
+- [ ] Include clear start instructions for the user and make the `mm-tools`
+  project/location an explicit part of that Linux AI setup.
+- [ ] Make each installer safe to rerun and understandable without private
+  context. Avoid hidden workstation mutations, duplicated installation logic,
+  and needless prompts.
+- [ ] Verify the rewritten entrypoints from their intended local checkout and
+  platform contracts when implementation begins; this TODO update does not run
+  them or edit ORC.
+
+### 13.6 Acceptance and repository boundaries
+
+- [ ] Keep the three implementation scopes separate: laptop-local `llm`,
+  workstation Diogenes/Ninfer, and laptop-local ORC blog installers.
+- [ ] Preserve the verbatim `Current + 7` record as the authority whenever a
+  checklist summary is ambiguous, including its duplicate command example,
+  exact paths, spelling, and explicit prohibitions.
+- [ ] Make future mutations through durable project-owned scripts where the
+  surrounding owner-contract system requires them, then execute those scripts
+  rather than applying unrepeatable machine-only configuration.
+- [ ] Do not mark any subsection complete until its repository diff, runtime
+  boundary, and non-regression behavior have been checked in at least two
+  applicable places, consistent with the governing verification policy above.
