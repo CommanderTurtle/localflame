@@ -181,6 +181,15 @@ generation is part of this pass.
   reviewed reconcile contract in an on-demand Integrations tab at `0bbece3`.
   Five focused controller tests, Python compilation, a 14-module Bun browser
   bundle, and a real read-only owner-adapter call all passed.
+- [x] The Ninfer continuation is complete across its three deliberately
+  separate repositories. Laptop-local `llm` commit `638f3f4` diagnoses the
+  browser's opaque Ninfer CORS boundary without changing successful vLLM
+  requests. Workstation Diogenes commit `54778d9` adds read-only CUDA/runtime
+  auditing, an independent llama.cpp recipe, durable Docker/Ninfer service
+  configurations, tmux output, and the literal Cookbook artifact workflow.
+  Laptop-local ORC commit `c5808a5` replaces the duplicated blog installers
+  with rerunnable site, libraries, and Linux/WSL AI tracks. No model, Docker
+  image, endpoint, or service was run as part of this completion.
 
 ### Active continuation after the first Diogenes UI delivery
 
@@ -648,7 +657,7 @@ So once more. Update the rolling todo, with verbatim detail, and append the sect
 | Current + 4 | Section 10.5: Gitcito-informed, Diogenes-only RoboOMP ADE with model-assisted Git questions and the complete authorized owner surface | Complete at Persephone `b681bb4` and Diogenes `913d637` |
 | Current + 5 | Sections 3, 7, 10.4, and 11: Persephone owns an idempotent OMP post-update reconcile/doctor contract; Diogenes only delegates; hidden web search, Camofox browser, and image/base64 capability drift is repaired only when detected | Complete at Persephone `cb36532` and Diogenes `48ec1f2`; gateway diagnostics completed at Persephone `66aa1e2` and Diogenes `89d4ac4` |
 | Current + 6 | Section 12.7: repository-owned `audit.sh`, `update.sh`, `integrate.sh`, and `doctor.sh`; Sandwich-backed checking; safe source/fork reconciliation; local reviewed commits; exact no-push publication hints; no duplicated Diogenes update logic | Complete locally through Sandwich `68dc3bf`, Context Mode `ff60710`, Camofox Browser `64bd721`, Camofox MCP `b06a5c4`, Hermes Workspace `969791c5`, and Diogenes `156d53f`; publication remains user-owned |
-| Current + 7 | Section 13: laptop-local `llm` Ninfer/CORS compatibility; Diogenes llama.cpp and CUDA dependency checks; Docker-backed Ninfer service and appendable model commands; Cookbook-style Ninfer artifact acquisition; local ORC blog installer rewrite | Recorded verbatim; all implementation and runtime actions remain pending |
+| Current + 7 | Section 13: laptop-local `llm` Ninfer/CORS compatibility; Diogenes llama.cpp and CUDA dependency checks; Docker-backed Ninfer service and appendable model commands; Cookbook-style Ninfer artifact acquisition; local ORC blog installer rewrite | Complete at `llm` `638f3f4`, Diogenes `54778d9`, and ORC `c5808a5`; no model/runtime action was performed |
 
 ### Exact transcript audit
 
@@ -1492,125 +1501,147 @@ an upstream dependency.
 
 ## 13. Ninfer, runtime dependency, and installer continuation
 
-This section is an implementation queue only. The recording pass that created
-it must not start a model, rebuild a dependency, move an artifact, change a
-runtime configuration, or edit any of the named application repositories.
+The recording pass that created this section made no application changes. The
+subsequent implementation is complete in the three named repositories. It did
+not start a model, rebuild a dependency, move an artifact, or change an
+installed runtime configuration.
 
 ### 13.1 Laptop-local `llm` Ninfer transport
 
-- [ ] Work only in the `llm` project on this Windows laptop for this item.
-- [ ] Audit the browser request path used to discover models at the user's
+- [x] Work only in the `llm` project on this Windows laptop for this item.
+- [x] Audit the browser request path used to discover models at the user's
   forwarded `http://localhost:8000/v1/models` endpoint and reproduce from code
   why Ninfer raises a CORS failure where the existing vLLM path succeeds.
-- [ ] Add the smallest Ninfer-compatible browser transport/discovery handling
+- [x] Add the smallest Ninfer-compatible browser transport/discovery handling
   that preserves the current vLLM behavior and the static-page architecture.
-- [ ] Do not turn this into a server-side proxy, endpoint rewrite, or broad
+- [x] Do not turn this into a server-side proxy, endpoint rewrite, or broad
   refactor. Keep the current endpoint selector, local-network behavior, and
   working providers intact.
-- [ ] Verify the transport logic against both the Ninfer and vLLM request
+- [x] Verify the transport logic against both the Ninfer and vLLM request
   shapes when implementation begins; the current TODO-only pass performs no
   live endpoint request.
 
 ### 13.2 Diogenes dependency and CUDA contracts
 
-- [ ] Audit Diogenes's durable dependency paths before changing them, including
+- [x] Audit Diogenes's durable dependency paths before changing them, including
   the existing llama.cpp, vLLM, Colibri, Docker, service-menu, and tmux
   contracts.
-- [ ] Keep llama.cpp independently buildable. Its route must follow its real
+- [x] Keep llama.cpp independently buildable. Its route must follow its real
   environment/build requirements rather than being forced into vLLM's uv
   setup; specifically inspect the existing `source .venv/bin/activate` and
   `uv pip install ...` sequence before changing anything.
-- [ ] Add a read-only prerequisite check that confirms the required CUDA
+- [x] Add a read-only prerequisite check that confirms the required CUDA
   configuration is present and correct in `~/.bashrc`. Do not source, rewrite,
   reinstall, or run that setup during this recording pass: the user's current
   installation already exists.
-- [ ] Remove only tests whose fixtures require the Colibri model files the user
+- [x] Remove only tests whose fixtures require the Colibri model files the user
   deliberately removed for disk-space savings. Do not remove Colibri runtime
   support or weaken unrelated dependency coverage.
-- [ ] Treat `~/Odysseus/ninfer/ninfer` as the installed Docker-backed Ninfer
+- [x] Treat `~/Odysseus/ninfer/ninfer` as the installed Docker-backed Ninfer
   project beside Diogenes, matching the user's current directory layout.
-- [ ] Use the serving instructions from
+- [x] Use the serving instructions from
   `https://huggingface.co/DreamFast/Qwen-3.8-27b-Orcarouter-Uncensored-Ninfer`
   as the governing Ninfer command contract when implementation begins.
 
 ### 13.3 Diogenes Ninfer service and model configurations
 
-- [ ] Add Ninfer under Diogenes's durable Docker dependency path and services
+- [x] Add Ninfer under Diogenes's durable Docker dependency path and services
   menu without changing the default behavior of other services.
-- [ ] Presume the documented Docker build/setup command has already been run
+- [x] Presume the documented Docker build/setup command has already been run
   verbatim. The service integration starts and observes that installation; it
   does not silently rebuild or reinterpret it.
-- [ ] Add appendable model configuration slots numbered `1`, `2`, `3`, and so
+- [x] Add appendable model configuration slots numbered `1`, `2`, `3`, and so
   on. Each slot stores a deletable model configuration independently.
-- [ ] Keep every launch configuration as one literal, user-editable command
+- [x] Keep every launch configuration as one literal, user-editable command
   line. Do not split, synthesize, normalize, or silently add flags. Preserve
   commands such as the recorded `docker run ... ninfer-serve ...` line exactly
   as entered.
-- [ ] Mount each numbered model directory read-only and keep its command's
+- [x] Mount each numbered model directory read-only and keep its command's
   directory/model path under user control.
-- [ ] Run an active Ninfer model in a real tmux-backed viewer matching the venv
+- [x] Run an active Ninfer model in a real tmux-backed viewer matching the venv
   service terminal. Its continuously updating terminal must not be replaced by
   a truncated log excerpt or a fixed output limit.
-- [ ] Account for the two nearby model downloads observed by the user without
+- [x] Account for the two nearby model downloads observed by the user without
   moving, deleting, or rewriting them automatically.
 
 ### 13.4 Cookbook-style Ninfer artifact acquisition
 
-- [ ] Add Ninfer artifacts to Cookbook with an ultra-minimal Hugging Face
+- [x] Add Ninfer artifacts to Cookbook with an ultra-minimal Hugging Face
   pointer input in the Ninfer service area.
-- [ ] Download directly within the Ninfer project workflow rather than placing
+- [x] Download directly within the Ninfer project workflow rather than placing
   the final model under an unrelated dependency tree.
-- [ ] For every requested artifact, manually create a temporary Python file in
+- [x] For every requested artifact, manually create a temporary Python file in
   the exact format used by `~/temp-download-venv/download-ninfer.py`. Do not
   replace that format with inferred repository logic or a new downloader
   abstraction.
-- [ ] Source the intended environment, execute the temporary downloader with
+- [x] Source the intended environment, execute the temporary downloader with
   `uv run`, and expose its progress through the same terminal style used by
   Cookbook downloads.
-- [ ] Delete the temporary downloader file after its run. Preserve the sourced
+- [x] Delete the temporary downloader file after its run. Preserve the sourced
   download/cache and the user's existing upper-level downloads.
-- [ ] Copy, rather than destructively move, the resulting `.ninfer` artifact
+- [x] Copy, rather than destructively move, the resulting `.ninfer` artifact
   into the next applicable `models1`, `models2`, `models3`, ... directory under
   `~/Odysseus/ninfer/ninfer` after the Docker build layout exists.
-- [ ] Save the matching one-line launch command as that model's deletable
+- [x] Save the matching one-line launch command as that model's deletable
   configuration. A deleted configuration must not implicitly delete the
   retained source download unless the user explicitly requests that separate
   destructive action.
-- [ ] Keep this flow literal and deterministic: no automatic flag selection,
+- [x] Keep this flow literal and deterministic: no automatic flag selection,
   path guessing beyond the numbered slot allocation, model conversion, or
   hidden command rewriting.
 
 ### 13.5 ORC blog installer rewrite
 
-- [ ] Perform this work only in the local Windows checkout at
+- [x] Perform this work only in the local Windows checkout at
   `C:\Users\turtleuser\Documents\Dev\Website Stuff\orc\orc\blog`.
-- [ ] Inventory every existing `/orc/tree/main/blog/<install scripts>` entry
+- [x] Inventory every existing `/orc/tree/main/blog/<install scripts>` entry
   and identify overlap, stale paths, platform assumptions, and unnecessarily
   convoluted control flow before editing.
-- [ ] Reorganize and rewrite the install scripts into a small, understandable,
+- [x] Reorganize and rewrite the install scripts into a small, understandable,
   dependable set while preserving every currently supported installation that
   remains applicable.
-- [ ] Add one Linux-only `AI` installation route that reproduces the user's
+- [x] Add one Linux-only `AI` installation route that reproduces the user's
   connected workstation setup from explicit, durable steps.
-- [ ] Include clear start instructions for the user and make the `mm-tools`
+- [x] Include clear start instructions for the user and make the `mm-tools`
   project/location an explicit part of that Linux AI setup.
-- [ ] Make each installer safe to rerun and understandable without private
+- [x] Make each installer safe to rerun and understandable without private
   context. Avoid hidden workstation mutations, duplicated installation logic,
   and needless prompts.
-- [ ] Verify the rewritten entrypoints from their intended local checkout and
+- [x] Verify the rewritten entrypoints from their intended local checkout and
   platform contracts when implementation begins; this TODO update does not run
   them or edit ORC.
 
 ### 13.6 Acceptance and repository boundaries
 
-- [ ] Keep the three implementation scopes separate: laptop-local `llm`,
+- [x] Keep the three implementation scopes separate: laptop-local `llm`,
   workstation Diogenes/Ninfer, and laptop-local ORC blog installers.
-- [ ] Preserve the verbatim `Current + 7` record as the authority whenever a
+- [x] Preserve the verbatim `Current + 7` record as the authority whenever a
   checklist summary is ambiguous, including its duplicate command example,
   exact paths, spelling, and explicit prohibitions.
-- [ ] Make future mutations through durable project-owned scripts where the
+- [x] Make future mutations through durable project-owned scripts where the
   surrounding owner-contract system requires them, then execute those scripts
   rather than applying unrepeatable machine-only configuration.
-- [ ] Do not mark any subsection complete until its repository diff, runtime
+- [x] Do not mark any subsection complete until its repository diff, runtime
   boundary, and non-regression behavior have been checked in at least two
   applicable places, consistent with the governing verification policy above.
+
+### 13.7 Completion evidence
+
+- [x] `llm` `638f3f4`: all 73 Bun tests pass. The normal CORS-success path and
+  the opaque `no-cors` reachability probe are covered independently; the probe
+  only improves the error and never substitutes an unreadable response.
+- [x] Diogenes `54778d9`: Bun parsed all 172 browser modules and the 20 focused
+  host-service/Cookbook tests pass. A broader related run passed 58 tests and
+  retained one unrelated pre-existing Colibri plan assertion rather than
+  weakening that coverage. Source inspection and focused tests independently
+  cover command preservation, numbered slots, read-only mounts, downloader
+  cleanup/copy behavior, and the private tmux socket.
+- [x] ORC `c5808a5`: `render-site blog` produced `install.sh`, `install-ai.sh`,
+  `install.ps1`, and valid manifest JSON. Both shell entrypoints pass `bash -n`
+  and their Linux help/dry-run routes; all three PowerShell track dry runs pass
+  after AST parsing. A workstation-shaped Linux dry run selected `fork` rather
+  than assuming `origin` for Camofox Browser/MCP, Context Mode, and Hermes
+  Workspace, while preserving the Underbelly-managed Firecrawl checkout.
+- [x] Runtime boundary: no live model/Firecrawl request, model download,
+  artifact copy, Docker build, tmux launch, service start, dependency install,
+  or installed configuration mutation was used for this implementation.
