@@ -4,7 +4,7 @@ This file is the durable build checklist and audit record. It is intentionally
 kept in the repository so update work can resume without relying on chat
 history.
 
-## Current execution state (2026-09-11)
+## Current execution state (2026-09-12)
 
 The checkboxes in this file describe real repository and installed state. A
 checked item has source, a commit where required, and static verification. Work
@@ -14,7 +14,8 @@ generation is part of this pass.
 
 ### Completed and installed
 
-- [x] Localflame is committed in `~/Deepseek/localflame` through `c590c21`. Its Bun
+- [x] Localflame is committed in `~/Deepseek/localflame` through `658b58e` before
+  this ledger-only update. Its Bun
   MCP exposes `firecrawl_search`, `firecrawl_scrape`, `firecrawl_read`,
   `firecrawl_find`, `firecrawl_outline`, `firecrawl_images`, and
   `firecrawl_resources`.
@@ -61,17 +62,18 @@ generation is part of this pass.
   downstream integration. Public calls now use `LIBRARIAN_AGENT_BACKEND=hermes`
   from Hermes and `LIBRARIAN_AGENT_BACKEND=omp` from OMP, while the selected
   private worker remains independently configured as Hermes.
-- [x] Camofox MCP's secured dependency refresh and native OMP/Hermes ownership
-  are committed in `~/Hermes/camofox-mcp` through `9ced793`. The separately
-  owned browser runtime is committed at `~/Hermes/camofox/camofox-browser`
-  commit `0a44582`.
-  Its checked-in integration completed with 67/67 doctor checks; the Bun build
-  and frozen install pass while the pre-existing Vitest/Zod named-import test
-  incompatibility remains separately documented.
+- [x] Camofox MCP's owner maintenance and native OMP/Hermes ownership are
+  committed in `~/Hermes/camofox-mcp` through `b06a5c4`. The separately owned
+  browser runtime is committed at `~/Hermes/camofox/camofox-browser` through
+  `64bd721`; current upstream now provides the zero-idle-timeout behavior, and
+  the old local patch remains reachable only from the archival branch
+  `archive/pre-v1.15-sync-20260912`. Camofox MCP's real owner update completed
+  with 70/70 checks and a fresh 47-tool stdio discovery. Browser update and
+  build passed with a clean worktree and no browser launch.
 - [x] Context Mode's dependency refresh, portable Hermes test, native plugin
   package, dual-harness integration, pinned-listing doctor repair, normal
-  upstream-history merge, and host-owned execution-policy handoff are committed
-  in `~/Hermes/context-mode` through `b702bda`. The exact owner marker delegates
+  upstream-history merge, host-owned execution-policy handoff, and fork-owner
+  maintenance are committed in `~/Hermes/context-mode` through `ff60710`. The exact owner marker delegates
   `ctx_execute`, `ctx_execute_file`, and `ctx_batch_execute` policy to OMP or
   Hermes after their approval layer; unrelated clients retain Context Mode's
   upstream deny and project-boundary checks. Two exact owner runs passed
@@ -115,23 +117,26 @@ generation is part of this pass.
   afterward. Its updater now preserves local integration commits across
   upstream divergence, aborts and restores on merge conflict, and has merged
   current upstream cleanly at `929e2e7ec` with 38/38 checks passing.
-- [x] Hermes Workspace's formerly ignored local lifecycle controls are tracked
-  in `~/Hermes/hermes-workspace` through `7161224f`, including start, stop,
+- [x] Hermes Workspace's formerly ignored local lifecycle controls and owner
+  maintenance routes are tracked in `~/Hermes/hermes-workspace` through
+  `969791c5`, including start, stop,
   status, doctor, dashboard, stack, and update entrypoints. Its updater joined
   the fetched upstream history with a normal preflighted merge, built both Vite
   targets, passed its doctor, and completed a second no-op update without
   starting the stopped service.
-- [x] Sandwich's owner integration orchestration is committed at `5cd08d4`.
+- [x] Sandwich's owner integration orchestration and reusable repository
+  maintenance engine are committed through `68dc3bf`.
   `sandwich integrations update --strict` and `check --strict` delegate to the
   independently committed repositories without changing the Bun-backed
   compatibility shims. The final aggregate repeat returned
   `update=0 check=0 heads=0 config=0`. After the final Librarian/RoboOMP work,
   another complete `update --strict` converged with 8 installed, 0 skipped,
   and 0 failed owners.
-- [x] Diogenes's backend owner delegation and OMP baseline repair are committed
-  at `f6c87a1`. Its configuration actions now call repository-owned update,
-  integrate, and doctor entrypoints rather than writing harness configuration
-  directly.
+- [x] Diogenes's backend owner delegation, OMP baseline repair, named source
+  remotes, and fork-backed clone contracts are committed through `156d53f`.
+  Its Update action now calls each repository-owned updater exactly once; it no
+  longer repeats integration after the owner updater has built, integrated,
+  and run its doctor.
 - [x] Persephone's typed RoboOMP owner workspace is committed at `c5538ec`.
   It owns redacted configuration reads, fixed lifecycle commands, planned
   mutations, bounded issue/worktree/Git/SQLite/session/artifact inspection, and
@@ -529,6 +534,14 @@ Again, interesting approach might be adding the config to persephone, rather tha
 
 </details>
 
+<details><summary>Current + 6 — Repository-owned audit, update, integration, and publication preparation</summary>
+
+`````text
+To make it helpful, to avoid tech debt, the idea being that for each path that diogenes uses to update, what it actually can do is utilize the scripts (no duplicates) that exist within each of my own branches. Like perhaps something as easy as an audit.sh (updates via sandwich's check'r features) then literally auto-build a local branch if diverging , has full interactivity like echoing "push to blah blah if you're commanderturtle", similarly, you could build up update.sh which properly syncs the fork's (mine) branch where applicable, by basically automating the whole pull, sync, check if diff is clean merger, etcetera, then actually commit to the fork if it's indeed a nicely reviewed diff, then literally once more "push to blah blah if you're commanderturtle" similarly with integrate basically just being verified real scripts that integrate properly. Thuswise everything doesn't have to live "entirely" in diogenes. As well, literally minimal questions asked to the user. Things just fully automated. Append to the todo all of these things, verbatim, so they don't get lost and you have all real goals verifyable. Again, this is not much, this is more of a "prepare for the future" pass... LOL
+`````
+
+</details>
+
 ### Steering-to-checklist verification
 
 | Transcript steer | Durable coverage | State |
@@ -555,6 +568,7 @@ Again, interesting approach might be adding the config to persephone, rather tha
 | Current + 3 | Section 3: preserve OMP's entire default skill baseline while keeping Retrieval results turn-local | Recorded as a non-destructive constraint |
 | Current + 4 | Section 10.5: Gitcito-informed, Diogenes-only RoboOMP ADE with model-assisted Git questions and the complete authorized owner surface | Complete at Persephone `b681bb4` and Diogenes `913d637` |
 | Current + 5 | Sections 3, 7, 10.4, and 11: Persephone owns an idempotent OMP post-update reconcile/doctor contract; Diogenes only delegates; hidden web search, Camofox browser, and image/base64 capability drift is repaired only when detected | Complete at Persephone `cb36532` and Diogenes `48ec1f2`; gateway diagnostics completed at Persephone `66aa1e2` and Diogenes `89d4ac4` |
+| Current + 6 | Section 12.7: repository-owned `audit.sh`, `update.sh`, `integrate.sh`, and `doctor.sh`; Sandwich-backed checking; safe source/fork reconciliation; local reviewed commits; exact no-push publication hints; no duplicated Diogenes update logic | Complete locally through Sandwich `68dc3bf`, Context Mode `ff60710`, Camofox Browser `64bd721`, Camofox MCP `b06a5c4`, Hermes Workspace `969791c5`, and Diogenes `156d53f`; publication remains user-owned |
 
 ### Exact transcript audit
 
@@ -582,6 +596,9 @@ Again, interesting approach might be adding the config to persephone, rather tha
 - [x] Appended the OMP ownership clarification verbatim as `Current + 5` and
   moved the durable runtime-repair source from Diogenes to Persephone. Any
   retained Diogenes entrypoint is now a compatibility delegate only.
+- [x] Appended the repository-owner maintenance clarification verbatim as
+  `Current + 6` and mapped every completed and remaining publication step to
+  section 12.7.
 
 The 2026-09-11 audit fingerprints are the first 12 hexadecimal characters of
 SHA-256 over each normalized transcript body:
@@ -1168,23 +1185,24 @@ no configured upstream. A dirty count is stated only where it is nonzero.
 
 | Repository | Branch / upstream delta | Baseline -> delivered head | Durable route and repeated proof | Installed-state proof |
 | --- | --- | --- | --- | --- |
-| `~/Deepseek/localflame` | `master`, none | `3c97a84` -> `c590c21` | `install.sh`, `update.sh`, `update-dsh.sh`, `doctor.sh`; repeated owner configuration/doctor passes converged, including 80/80 cross-harness and 30/30 DSH checks | Seven Localflame tools in ordinary OMP/Hermes profiles; DSH's managed web roster contains only those seven and retains all seven in read-only mode |
-| `~/Hermes/camofox/camofox-browser` | `master`, `0/1`, dirty 3 before and after | `e5a36f5` -> `0a44582` | Focused configuration and idle-lifecycle suite passed 17 tests | Diogenes-owned browser runtime is warm; `browserIdleTimeoutMs=0` now means no idle shutdown. Pre-existing `package.json`, `bun.lock`, and `start.sh` work is preserved |
-| `~/Hermes/camofox-mcp` | `main`, `0/8` | `ca986f7` -> `9ced793` | `integrate.sh` twice: `bc65c9b8...`; offline `doctor.sh` twice: `b27d8ec5...`; owner suite 67/67 | Fresh stdio initialize/list exposed 47 tools; bounded `server_status` passed 52/52 against the warm browser |
-| `~/Hermes/context-mode` | `feat/hermes-native-support`, `0/7` | `cc1caa4` -> `b702bda` | `integrate.sh` and `doctor.sh` twice: state `ea41c4bf...`, doctor `d063cc12...`; 126/126 | Native Hermes plugin plus MCP and OMP plugin/MCP installed; host approval owns execution policy, so `ctx_execute*` is not re-sandboxed by Context Mode in these two harnesses |
+| `~/Deepseek/localflame` | `master`, origin synced before this ledger commit | `3c97a84` -> `658b58e` | `install.sh`, `update.sh`, `update-dsh.sh`, `doctor.sh`; repeated owner configuration/doctor passes converged, including 80/80 cross-harness and 30/30 DSH checks | Seven Localflame tools in ordinary OMP/Hermes profiles; DSH's managed web roster contains only those seven and retains all seven in read-only mode |
+| `~/Hermes/camofox/camofox-browser` | `master`, fork `0/2`; upstream contained | upstream `2c0036a` -> `64bd721` | `audit.sh`, `update.sh`, `integrate.sh`, and `doctor.sh`; owner update refreshed dependencies, built, committed, and left the worktree clean without starting a browser | Current upstream owns zero-idle timeout; the previous local tree is preserved at `archive/pre-v1.15-sync-20260912`; publish with `git push fork HEAD:master` |
+| `~/Hermes/camofox-mcp` | `main`, fork `0/10`; upstream contained | `ca986f7` -> `b06a5c4` | Owner update plus native integration/doctor passed 70/70; audit is clean and Sandwich checkExpr reports no dependency drift | Fresh stdio initialize/list exposed 47 tools and `server_status` saw the connected browser; publish with `git push fork HEAD:main` |
+| `~/Hermes/context-mode` | `main`, fork `36/12`; source contained | `cc1caa4` -> `ff60710` | Owner update and target-Hermes doctor passed 110/110; audit reports the intentional fork-lineage conflict and emits a lease-protected replacement command | Native Hermes plugin plus MCP and OMP plugin/MCP installed; publish with the exact `--force-with-lease=fork/main:<observed-tip>` command emitted by `audit.sh` |
 | `~/Hermes/retrieval` | `main`, `0/6` | `9e7ee3e` -> `3e92e8c` | `integrate.sh` twice after final changes: exact output `81748073...`; 81/81; 37 tests | IWE-derived search runs in-process with no IWE checkout/binary; Hermes indexes/deduplicates on session close; OMP receives selected material only in the current turn |
 | `~/Hermes/librarian` | `main`, `0/5` | `2c98f19` -> `a6308d7` | `integrate.sh` twice: `f576913c...`; `doctor.sh` twice: `d006dada...`; build passed | Public Hermes calls use a private Hermes worker, public OMP calls use a private OMP worker, and the isolated `librarian-okf` surface remains absent from ordinary profiles |
 | `~/Hermes/leetcoder` | `main`, `0/2` | `8269ef6` -> `fbb7bbe` | `integrate.sh` twice; generated state was identical (console hashes differed only in Bun timing text); `doctor.sh` twice: `87422c9e...` | Four public Hermes tools; isolated OMP worker/auditor cannot recurse into Leetcoder; active service identity was unchanged |
 | `~/Hermes/codebase-memory-mcp` | `main`, `0/6` | `6405c3be9` -> `929e2e7ec` | `integrate-local.sh`, `update-local.sh`, and `doctor-local.sh` twice: `4207b5ff...`; 38/38 | Installed binary receipt matches source; public profiles have the narrow MCP/hook and private Librarian does not |
-| `~/Hermes/hermes-workspace` | `main`, `0/5` | `c631425d` -> `7161224f` | `update.sh` twice left HEAD unchanged; dist `6e9e7970...`; `doctor.sh` passed | Lifecycle scripts are tracked; intentionally stopped service/closed port remained stopped |
-| `~/Hermes/sandwich` | `main`, `0/1` | `ad858ba` -> `5cd08d4` | `sandwich integrations check --strict` twice: exact `6245b3ea...`, 8 installed/0 skipped/0 failed | Owner walker delegates to Localflame, Context Mode, Camofox, Codebase Memory, Librarian, Leetcoder, Retrieval, and Persephone; Bun-backed Node shims remain intact, including `npx -> bun x --bun` |
+| `~/Hermes/hermes-workspace` | `main`, fork `0/7`; upstream contained | `c631425d` -> `969791c5` | Owner update built and verified without starting the stopped service; `audit.sh` is clean and reports the exact publication command | Lifecycle and owner scripts are tracked; the redundant merged local branch was removed after an ancestry proof; publish with `git push fork HEAD:main` |
+| `~/Hermes/sandwich` | `main`, origin ahead 2 | `ad858ba` -> `68dc3bf` | 75/75 compatibility tests plus a local bare-remote fixture prove audit is non-mutating, update safely merges and locally commits, and neither route pushes | Generic `sandwich repository audit/update` powers owner scripts; integration walker covers ten owners; Bun-backed shims remain intact, including `npx -> bun x --bun` |
 | `~/Hermes/persephone` | `main`, `0/20` | owner-workspace series -> `f1cd0b8` | `scripts/integrate.sh` twice `5d5e2882...`; read-only doctor twice `ed3550d4...`; inventory twice `392b5188...`; reconcile twice `cb618dac...`; 24 Bun tests/95 expects, 9 Python tests, TypeScript | Executable `persephone` CLI; direct OMP commands and tools; six owner integrations, seven OMP profiles, and 18/18 reconciled OMP checks visible from one versioned inventory |
-| `~/Odysseus/Diogenes` | `dev`, `0/11` | `f6c87a1` -> `0bbece3` | Owner-backed focused suites, Python compilation, browser bundles, and direct read-only adapters passed; latest integration slice passed 5 tests and a 14-module bundle | Retrieval, Librarian, Persephone, RoboOMP, and owner-integration workspaces consume their owners' versioned CLI/API contracts; Diogenes carries no duplicate OMP repair policy |
+| `~/Odysseus/Diogenes` | `dev`, origin ahead 13 | `f6c87a1` -> `156d53f` | Latest repository-owner contract slice passed 43/43 focused tests, JSON validation, real path resolution, and `git diff --check` | Four fresh-clone contracts target CommanderTurtle forks and defer upstream reconciliation to owner scripts; the Update action no longer duplicates owner integration |
 
 The abbreviated repeat hashes above are expanded by the specific checklist
-items in Sections 1-11. Every owner repository in this table is clean except
-the explicitly preserved three-file Camofox browser worktree. That dirt was
-present before the lifecycle commit and was not overwritten.
+items in Sections 1-11. Every owner repository changed in the
+repository-maintenance pass is clean. Camofox Browser's former local state
+remains reachable from its named archival branch and is no longer worktree
+dirt.
 
 #### Exact tracked delivery map
 
@@ -1198,13 +1216,14 @@ repository named here.
   `dsh-web-firecrawl/package.json`, `install.sh`, `package.json`,
   `scripts/configure.mjs`, `scripts/doctor.mjs`, `server.json`,
   `src/firecrawl.js`, `src/resources.js`, `src/server.js`, and `update.sh`.
-- Camofox browser: `README.md`, `camofox.config.json`, `lib/config.js`,
-  `server.js`, `tests/unit/config.test.js`, and
-  `tests/unit/idleShutdown.test.js`.
-- Camofox MCP: `README.md`, `bun.lock`, `doctor.sh`, `integrate.sh`,
+- Camofox browser: `.gitignore`, `README.md`, `audit.sh`, `doctor.sh`,
+  `integrate.sh`, `package.json`, `bun.lock`, and `update.sh` in the current
+  owner-maintenance delivery; the older idle implementation remains preserved
+  on its archival branch because upstream now implements that behavior.
+- Camofox MCP: `README.md`, `audit.sh`, `bun.lock`, `doctor.sh`, `integrate.sh`,
   `package.json`, `scripts/configure-harnesses.mjs`,
   `scripts/doctor-harnesses.mjs`, and `update.sh`.
-- Context Mode: `README.md`, `bun.lock`, `cli.bundle.mjs`, `doctor.sh`,
+- Context Mode: `README.md`, `audit.sh`, `bun.lock`, `cli.bundle.mjs`, `doctor.sh`,
   `hooks/security.bundle.mjs`, `integrate.sh`, the two files under
   `integrations/hermes-plugin/`, `package.json`, the four harness/version
   scripts under `scripts/`, `server.bundle.mjs`, `src/adapters/omp/plugin.ts`,
@@ -1226,13 +1245,13 @@ repository named here.
 - Codebase Memory: `README.md`, `docs/LOCAL-HARNESSES.md`,
   `doctor-local.sh`, `install-local.sh`, `integrate-local.sh`,
   `scripts/local-harnesses.ts`, and `update-local.sh`.
-- Hermes Workspace: `README.md`, `dashboard-start.sh`,
+- Hermes Workspace: `README.md`, `audit.sh`, `dashboard-start.sh`,
   `dashboard-status.sh`, `dashboard-stop.sh`, `doctor.sh`, `run.sh`,
   `start-stack.sh`, `status.sh`, `stop-stack.sh`, `stop.sh`, `update.sh`, and
   the two repaired mobile navigation components.
 - Sandwich: `README.md`, `bin/sandwich`, `manifest.json`, `package.json`,
-  `scripts/manage-integrations.sh`, `scripts/update-hermes.sh`, and
-  `tests/compat.sh`.
+  `scripts/manage-integrations.sh`, `scripts/manage-repository.sh`,
+  `scripts/update-hermes.sh`, and `tests/compat.sh`.
 - Persephone: `.gitignore`, `README.md`, `bun.lock`, its four architecture and
   audit documents, all RoboOMP integration manifests plus
   `workspace_agent.py`/`workspace_inspect.py`, `package.json`,
@@ -1246,7 +1265,9 @@ repository named here.
   `ompsettings.sh`, `routes/ulysses_routes.py`, the eight owner/dependency
   Python adapters, `static/app.js`, `static/index.html`, the four workspace JS
   modules, `static/style.css`, `static/sw.js`, and the nine focused test
-  modules.
+  modules. The latest owner-delegation slice specifically changes
+  `config/ulysses/runtime-management.json`,
+  `src/diogenes_dependency_action.py`, and its two focused test modules.
 
 #### Complete `~/Hermes` classification
 
@@ -1327,3 +1348,61 @@ an upstream dependency.
 - No Firecrawl request, page navigation, model start, or generation was used as
   proof. Verification stopped at configuration, stdio/RPC handshake, service
   status, static builds, focused tests, and read-only owner adapters.
+
+### 12.7 Repository-owned future update and publication contracts
+
+- [x] Put the reusable Git mechanics in Sandwich rather than copying them into
+  Diogenes or every owner. `sandwich repository audit` and
+  `sandwich repository update` accept a declared source remote/branch, fork
+  remote/branch, publication mode, verifier, and owner-specific arguments.
+- [x] Make audit read-only apart from `git fetch`: report source/fork
+  ahead/behind and ancestry, worktree state, a repository-scoped Sandwich
+  checkExpr result when a Bun lock exists, the owner doctor, and an exact
+  publication command. It does not call the aggregate integration walker and
+  therefore cannot recurse through itself.
+- [x] Make update refuse dirty worktrees, repair only declared remote URLs,
+  preflight source/fork merges, run repository-scoped dependency maintenance,
+  invoke the owner's verifier, reject unexpected untracked outputs, create a
+  local commit only for reviewed tracked maintenance changes, and never push,
+  rebase, stash, reset, or discard user work.
+- [x] Add thin committed `audit.sh` and `update.sh` owners to Context Mode,
+  Camofox Browser, Camofox MCP, and Hermes Workspace. Keep each repository's
+  existing `integrate.sh`/`doctor.sh` behavior as the verifier rather than
+  duplicating it in Sandwich.
+- [x] Run the real owner routes. Context Mode finished with 110/110 target
+  Hermes checks; Camofox MCP finished with 70/70 and 47-tool stdio discovery;
+  Camofox Browser refreshed dependencies and built cleanly; Hermes Workspace
+  built and verified while remaining intentionally stopped.
+- [x] Preserve fork topology. Context Mode declares `upstream`, `fork`, and
+  `ildunari` and uses lease-protected fork replacement; Camofox Browser,
+  Camofox MCP, and Hermes Workspace declare distinct `upstream` and `fork`
+  remotes and use ordinary fast-forward publication. Their source remotes are
+  fetch-only locally, while only the CommanderTurtle fork remote accepts a
+  push. Context Mode's delivered branch is named `main`; both superseded local
+  lines remain under named archive branches.
+- [x] Make Diogenes clone CommanderTurtle's publishing forks, then delegate its
+  Update action to each repository's `update.sh`. The owner script adds or
+  repairs its own upstream remote. Diogenes does not perform a second
+  integration pass after the updater returns.
+- [x] Verify the receiving side in two places: Sandwich's 75-test compatibility
+  suite plus its local bare-remote fixture, and Diogenes's 43-test owner/runtime
+  suite plus resolution of every declared script against the real checkouts.
+  The final `sandwich integrations check --strict` then completed across the
+  installed stack with 10 owners installed, 0 skipped, and 0 failed; Context
+  Mode's full cross-harness audit passed 126/126.
+- [x] Remove Hermes Workspace's redundant local feature branch only after
+  proving its tip is an ancestor of `main`; its commits remain reachable from
+  `main`.
+- [x] Leave all network publication user-owned. No owner updater, Diogenes
+  action, or command in this pass pushed a branch.
+- [ ] Publish Sandwich, Camofox Browser, Camofox MCP, Hermes Workspace,
+  Context Mode, Diogenes, and this Localflame ledger when CommanderTurtle is
+  ready. Use each owner audit's printed command; Context Mode must retain the
+  exact observed fork tip in its `--force-with-lease` argument.
+- [ ] After those pushes, verify one fresh clone per publishing fork can run
+  its owner audit/update path without relying on uncommitted files from the
+  workstation.
+- [ ] Complete RoboOMP setup only after the user supplies a dedicated GitHub
+  token identity and exact repository allowlist. Then use Persephone's typed
+  config/doctor/build/start/status routes and point Diogenes at the healthy
+  loopback viewer; do not hand-edit generated state.
