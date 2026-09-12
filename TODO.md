@@ -1057,33 +1057,56 @@ Just a heads up. omp still denoteption. And so, I left it disabled. Secondly. Th
 
 - [ ] Resolve what is disabled or misreported in the installed OMP state from
   native OMP configuration, plugin, MCP, model-capability, and provider output;
-  do not infer the meaning of the typo in isolation.
-- [ ] Reproduce the Camofox MCP hang with a bounded protocol-level
+  do not infer the meaning of the typo in isolation. OMP 18.1.16 reports the
+  Persephone and Context Mode plugins enabled; effective RPC exposes
+  Persephone's replacement `browser`, while `browser.enabled=false` keeps only
+  OMP's Puppeteer implementation disabled. Firecrawl-first search and
+  text+image model metadata pass the owner audit. The remaining user-disabled
+  item still needs to be identified by its native name rather than guessed
+  from “denoteption.”
+- [x] Reproduce the Camofox MCP hang with a bounded protocol-level
   initialize/list-tools/status call while making no browser navigation or web
-  request.
-- [ ] Attribute any Camofox failure separately to the browser service, MCP
+  request. Fresh stdio initialization, 47-tool discovery, and `server_status`
+  all completed in milliseconds; the OMP session log showed `create_tab`
+  hitting OMP's 30-second MCP deadline while the cold service was still inside
+  its 60-second browser-launch window.
+- [x] Attribute any Camofox failure separately to the browser service, MCP
   stdio transport, harness client, duplicated process ownership, or gateway
-  lifecycle.
-- [ ] Fix the owning repository rather than killing processes or editing
+  lifecycle. The fault was the browser service's five-minute idle shutdown,
+  not stdio or duplicate clients. Simultaneous gateway reconnects were recorded
+  separately and are not being presented as the root cause of this call.
+- [x] Fix the owning repository rather than killing processes or editing
   installed configuration by hand; run its committed integration and doctor
-  paths twice and compare state.
+  paths twice and compare state. `camofox-browser` commit `0a44582` makes zero
+  mean “never shut down,” reads the tracked timeout, and pins this managed
+  instance to zero. `camofox-mcp` commit `eb2ef89` adds bounded native/runtime
+  diagnostics. Two post-restart probes were byte-identical and passed with the
+  browser connected and zero tabs.
 - [ ] Bring the Hermes gateway service definition current through Hermes's
   native lifecycle command after all owner configuration has converged.
 
 ### 12.2 Persephone-owned OMP maintenance and visibility
 
-- [ ] Make the installed Persephone OMP extension visibly list its managed
+- [x] Make the installed Persephone OMP extension visibly list its managed
   integrations, effective OMP state, drift, and reconciliation result.
-- [ ] Give the extension an idempotent, owner-versioned post-update maintenance
+  Persephone `9e9eaab` adds the shared `persephone integrations`,
+  `/persephone integrations`, and `persephone_integrations` inventory.
+- [x] Give the extension an idempotent, owner-versioned post-update maintenance
   route that detects drift before applying the narrow OMP repairs already
-  owned by Persephone.
-- [ ] Keep the maintenance implementation in Persephone; Diogenes may invoke
+  owned by Persephone. The plugin runs the same owner reconciler on session
+  start by default and also exposes `/persephone reconcile` plus an approved
+  `persephone_reconcile_omp` tool.
+- [x] Keep the maintenance implementation in Persephone; Diogenes may invoke
   and display it but must not copy OMP policy.
 - [ ] Verify plugin installation, extension loading, command discovery,
   feature/config metadata where supported by OMP, and fresh-install/update
   behavior from committed scripts.
-- [ ] Run the exact reconciler twice and prove that the second pass is a
-  semantic no-op.
+- [x] Run the exact reconciler twice and prove that the second pass is a
+  semantic no-op. Both outputs had SHA-256
+  `cb618dac17c2861fe9d306b3473fc1bca8ad4fb94f20a8c67e6f05a56a23e0a9`;
+  the effective OMP/model snapshot remained
+  `639d6ccacd945a6b6671d1200e938a23ce6f797930031e80226cfa83c3bd261d`
+  before, between, and after the two runs.
 
 ### 12.3 Repository-by-repository owner audit and delivery report
 
