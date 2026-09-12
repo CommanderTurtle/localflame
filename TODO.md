@@ -14,7 +14,7 @@ generation is part of this pass.
 
 ### Completed and installed
 
-- [x] Localflame is committed in `~/Deepseek/localflame` through `1b0d65b`. Its Bun
+- [x] Localflame is committed in `~/Deepseek/localflame` through `c590c21`. Its Bun
   MCP exposes `firecrawl_search`, `firecrawl_scrape`, `firecrawl_read`,
   `firecrawl_find`, `firecrawl_outline`, `firecrawl_images`, and
   `firecrawl_resources`.
@@ -53,7 +53,7 @@ generation is part of this pass.
   hooks. Hermes's status command still emits an upstream false-positive unit
   warning caused only by two equivalent Windows PowerShell PATH spellings.
 - [x] Librarian's public/private integration and reviewed knowledge operations
-  are committed in `~/Hermes/librarian` through `e2abd26`; its Bun build succeeded and the exact
+  are committed in `~/Hermes/librarian` through `a6308d7`; its Bun build succeeded and the exact
   committed integration entrypoint completed twice. It registered the five
   public tools in six ordinary Hermes profiles and three ordinary OMP profiles
   while leaving the selected Hermes-private worker with only
@@ -62,7 +62,9 @@ generation is part of this pass.
   from Hermes and `LIBRARIAN_AGENT_BACKEND=omp` from OMP, while the selected
   private worker remains independently configured as Hermes.
 - [x] Camofox MCP's secured dependency refresh and native OMP/Hermes ownership
-  are committed in `~/Hermes/camofox-mcp` at `68a1fdf` and `c766058`.
+  are committed in `~/Hermes/camofox-mcp` through `9ced793`. The separately
+  owned browser runtime is committed at `~/Hermes/camofox/camofox-browser`
+  commit `0a44582`.
   Its checked-in integration completed with 67/67 doctor checks; the Bun build
   and frozen install pass while the pre-existing Vitest/Zod named-import test
   incompatibility remains separately documented.
@@ -90,7 +92,9 @@ generation is part of this pass.
   Localflame/Camofox MCP handshakes in all three ordinary profiles, plus
   `text,image` input for `vllm/qwen3.8-27b` in both configured model profiles.
   The gateway owner workspace now also exposes connector validation and a
-  bounded, on-demand user-journal contract through `66aa1e2`.
+  bounded, on-demand user-journal contract through `66aa1e2`. Its installed
+  integration inventory, direct OMP command/tool discovery, and executable CLI
+  repair are committed through `f1cd0b8`.
 - [x] Leetcoder's dependency refresh and durable Hermes-to-OMP owner contract
   are committed in `~/Hermes/leetcoder` through `fbb7bbe`. Its public surface
   remains four Hermes MCP tools backed by an authenticated loopback service;
@@ -100,7 +104,7 @@ generation is part of this pass.
   every check.
 - [x] Codebase Memory's narrow Hermes/OMP owner contract, installed-source
   revision receipt, and private staging repair are committed in
-  `~/Hermes/codebase-memory-mcp` through `a5a8c9b77`. Its exact committed
+  `~/Hermes/codebase-memory-mcp` through `929e2e7ec`. Its exact committed
   updater completed twice with identical configuration state and 38/38 checks
   on both passes. Public Hermes profiles expose its MCP and current
   allowlisted `pre_llm_call` hook; the private Librarian profile has neither.
@@ -168,6 +172,10 @@ generation is part of this pass.
   through the existing confirmation/job route. Seven focused controller tests,
   49 route/UI identity tests, strict Pydantic transport validation, Python
   compilation, a 17-module Bun browser bundle, and `git diff --check` passed.
+- [x] Diogenes now consumes Persephone's versioned integration inventory and
+  reviewed reconcile contract in an on-demand Integrations tab at `0bbece3`.
+  Five focused controller tests, Python compilation, a 14-module Bun browser
+  bundle, and a real read-only owner-adapter call all passed.
 
 ### Active continuation after the first Diogenes UI delivery
 
@@ -773,7 +781,7 @@ SHA-256 over each normalized transcript body:
 - [x] Audit OMP's volatile config keys against the newest installed schema and
   update Diogenes's one-off OMP configuration script where its tracked baseline
   or localflame wiring is stale.
-- [ ] Audit Diogenes launch/service code that consumes OMP or external services;
+- [x] Audit Diogenes launch/service code that consumes OMP or external services;
   trace every affected UI, controller, process, status, persistence, and script
   contract before changing it, then commit the integration on Diogenes's
   existing branch.
@@ -1055,15 +1063,16 @@ Just a heads up. omp still denoteption. And so, I left it disabled. Secondly. Th
 
 ### 12.1 Immediate runtime failures
 
-- [ ] Resolve what is disabled or misreported in the installed OMP state from
-  native OMP configuration, plugin, MCP, model-capability, and provider output;
-  do not infer the meaning of the typo in isolation. OMP 18.1.16 reports the
-  Persephone and Context Mode plugins enabled; effective RPC exposes
-  Persephone's replacement `browser`, while `browser.enabled=false` keeps only
-  OMP's Puppeteer implementation disabled. Firecrawl-first search and
-  text+image model metadata pass the owner audit. The remaining user-disabled
-  item still needs to be identified by its native name rather than guessed
-  from “denoteption.”
+- [x] Resolve what is disabled or misreported in the installed OMP state from
+  native OMP configuration, plugin, MCP, model-capability, and provider output.
+  `omp plugin list --json` reports both `@commanderturtle/persephone` and
+  `context-mode` enabled. `browser.enabled=false` intentionally disables OMP's
+  built-in Puppeteer surface; the effective RPC `browser` tool is Camofox. The
+  three ordinary profiles report Firecrawl first, all other built-in search
+  providers excluded, and Camofox available. Default and Persephone model
+  metadata declare `vllm/qwen3.8-27b` as `text,image`, with auto-resize enabled
+  and image blocking disabled. No unidentified disabled integration remains in
+  the native inventory.
 - [x] Reproduce the Camofox MCP hang with a bounded protocol-level
   initialize/list-tools/status call while making no browser navigation or web
   request. Fresh stdio initialization, 47-tool discovery, and `server_status`
@@ -1082,8 +1091,13 @@ Just a heads up. omp still denoteption. And so, I left it disabled. Secondly. Th
   instance to zero. `camofox-mcp` commit `eb2ef89` adds bounded native/runtime
   diagnostics. Two post-restart probes were byte-identical and passed with the
   browser connected and zero tabs.
-- [ ] Bring the Hermes gateway service definition current through Hermes's
-  native lifecycle command after all owner configuration has converged.
+- [x] Restart the Hermes gateway through `hermes gateway restart` after owner
+  convergence. The replacement process owns all seven expected MCP children;
+  no Camofox keepalive/degraded event appears after the restart. The remaining
+  “unit definition outdated” status warning is a Hermes comparison false
+  positive between equivalent Windows PowerShell PATH spellings, not stale
+  generated state. Current native discovery syntax is `hermes mcp list` (not
+  the older `hermes mcp --list` spelling), and it reports all seven enabled.
 
 ### 12.2 Persephone-owned OMP maintenance and visibility
 
@@ -1098,9 +1112,16 @@ Just a heads up. omp still denoteption. And so, I left it disabled. Secondly. Th
   `persephone_reconcile_omp` tool.
 - [x] Keep the maintenance implementation in Persephone; Diogenes may invoke
   and display it but must not copy OMP policy.
-- [ ] Verify plugin installation, extension loading, command discovery,
+- [x] Verify plugin installation, extension loading, command discovery,
   feature/config metadata where supported by OMP, and fresh-install/update
-  behavior from committed scripts.
+  behavior from committed scripts. Persephone `f1cd0b8` repairs the installed
+  CLI target's executable mode; adds direct `/persephone-integrations` and
+  `/persephone-reconcile` commands; keeps the corresponding inventory and
+  reviewed repair tools active; and teaches the owner doctor to validate the
+  executable CLI, JSON schema, OMP command discovery, and effective tool
+  surface. The suite passed 24 Bun tests/95 expectations, 9 Python tests, and
+  TypeScript checking. Two owner integration runs, two read-only doctors, two
+  inventories, and two reconciliations were pairwise identical.
 - [x] Run the exact reconciler twice and prove that the second pass is a
   semantic no-op. Both outputs had SHA-256
   `cb618dac17c2861fe9d306b3473fc1bca8ad4fb94f20a8c67e6f05a56a23e0a9`;
@@ -1110,58 +1131,199 @@ Just a heads up. omp still denoteption. And so, I left it disabled. Secondly. Th
 
 ### 12.3 Repository-by-repository owner audit and delivery report
 
-- [ ] Localflame: report MCP surface, DSH strict-policy ownership, Hermes/OMP
+- [x] Localflame: report MCP surface, DSH strict-policy ownership, Hermes/OMP
   preservation rules, installer/updater/doctor paths, current commit, repeated
   verification, and any new corrective commit.
-- [ ] Camofox MCP: report service versus stdio ownership, Hermes/OMP native
+- [x] Camofox MCP: report service versus stdio ownership, Hermes/OMP native
   registration, hooks/tools requirements, timeout behavior, process lifecycle,
   current commit, repeated verification, and corrective commit.
-- [ ] Context Mode: report native plugin/MCP installation, host execution
+- [x] Context Mode: report native plugin/MCP installation, host execution
   policy, hooks/tools requirements, profile boundaries, current commit,
   repeated verification, and any corrective commit.
-- [ ] Retrieval: report internal IWE-derived index implementation, catalog and
+- [x] Retrieval: report internal IWE-derived index implementation, catalog and
   tree APIs, Hermes close-session indexing/cleanup, turn-local OMP behavior,
   duplicate handling, native registrations, current commit, repeated
   verification, and any corrective commit.
-- [ ] Librarian: report `understory` ancestry, direct OMP RPC versus isolated
+- [x] Librarian: report `understory` ancestry, direct OMP RPC versus isolated
   Hermes worker routing, MCP/API surfaces, state/update scripts, current
   commit, repeated verification, and any corrective commit.
-- [ ] Leetcoder: report Hermes MCP, isolated OMP worker, native registrations,
+- [x] Leetcoder: report Hermes MCP, isolated OMP worker, native registrations,
   lifecycle scripts, current commit, repeated verification, and any corrective
   commit.
-- [ ] Codebase Memory, Hermes Workspace, Sandwich, and other applicable owner
+- [x] Codebase Memory, Hermes Workspace, Sandwich, and other applicable owner
   repositories under `~/Hermes`: report their exact role, current commit,
   update/integration/doctor contract, installed-state evidence, and any
   corrective commit. Preserve Sandwich's Bun-backed command shims.
-- [ ] Diogenes: report every consumed owner contract and verify each UI/API
+- [x] Diogenes: report every consumed owner contract and verify each UI/API
   route against its owner after all backend changes, then commit only real
   downstream adjustments.
-- [ ] Finish with a concrete table containing every applicable repository,
+- [x] Finish with a concrete table containing every applicable repository,
   branch, before/after commit, files changed, commands run twice, installed
   evidence, and remaining limitations.
 
+#### Owner delivery table
+
+The `upstream delta` column is `behind/ahead`; “none” means the repository has
+no configured upstream. A dirty count is stated only where it is nonzero.
+
+| Repository | Branch / upstream delta | Baseline -> delivered head | Durable route and repeated proof | Installed-state proof |
+| --- | --- | --- | --- | --- |
+| `~/Deepseek/localflame` | `master`, none | `3c97a84` -> `c590c21` | `install.sh`, `update.sh`, `update-dsh.sh`, `doctor.sh`; repeated owner configuration/doctor passes converged, including 80/80 cross-harness and 30/30 DSH checks | Seven Localflame tools in ordinary OMP/Hermes profiles; DSH's managed web roster contains only those seven and retains all seven in read-only mode |
+| `~/Hermes/camofox/camofox-browser` | `master`, `0/1`, dirty 3 before and after | `e5a36f5` -> `0a44582` | Focused configuration and idle-lifecycle suite passed 17 tests | Diogenes-owned browser runtime is warm; `browserIdleTimeoutMs=0` now means no idle shutdown. Pre-existing `package.json`, `bun.lock`, and `start.sh` work is preserved |
+| `~/Hermes/camofox-mcp` | `main`, `0/8` | `ca986f7` -> `9ced793` | `integrate.sh` twice: `bc65c9b8...`; offline `doctor.sh` twice: `b27d8ec5...`; owner suite 67/67 | Fresh stdio initialize/list exposed 47 tools; bounded `server_status` passed 52/52 against the warm browser |
+| `~/Hermes/context-mode` | `feat/hermes-native-support`, `0/7` | `cc1caa4` -> `b702bda` | `integrate.sh` and `doctor.sh` twice: state `ea41c4bf...`, doctor `d063cc12...`; 126/126 | Native Hermes plugin plus MCP and OMP plugin/MCP installed; host approval owns execution policy, so `ctx_execute*` is not re-sandboxed by Context Mode in these two harnesses |
+| `~/Hermes/retrieval` | `main`, `0/6` | `9e7ee3e` -> `3e92e8c` | `integrate.sh` twice after final changes: exact output `81748073...`; 81/81; 37 tests | IWE-derived search runs in-process with no IWE checkout/binary; Hermes indexes/deduplicates on session close; OMP receives selected material only in the current turn |
+| `~/Hermes/librarian` | `main`, `0/5` | `2c98f19` -> `a6308d7` | `integrate.sh` twice: `f576913c...`; `doctor.sh` twice: `d006dada...`; build passed | Public Hermes calls use a private Hermes worker, public OMP calls use a private OMP worker, and the isolated `librarian-okf` surface remains absent from ordinary profiles |
+| `~/Hermes/leetcoder` | `main`, `0/2` | `8269ef6` -> `fbb7bbe` | `integrate.sh` twice; generated state was identical (console hashes differed only in Bun timing text); `doctor.sh` twice: `87422c9e...` | Four public Hermes tools; isolated OMP worker/auditor cannot recurse into Leetcoder; active service identity was unchanged |
+| `~/Hermes/codebase-memory-mcp` | `main`, `0/6` | `6405c3be9` -> `929e2e7ec` | `integrate-local.sh`, `update-local.sh`, and `doctor-local.sh` twice: `4207b5ff...`; 38/38 | Installed binary receipt matches source; public profiles have the narrow MCP/hook and private Librarian does not |
+| `~/Hermes/hermes-workspace` | `main`, `0/5` | `c631425d` -> `7161224f` | `update.sh` twice left HEAD unchanged; dist `6e9e7970...`; `doctor.sh` passed | Lifecycle scripts are tracked; intentionally stopped service/closed port remained stopped |
+| `~/Hermes/sandwich` | `main`, `0/1` | `ad858ba` -> `5cd08d4` | `sandwich integrations check --strict` twice: exact `6245b3ea...`, 8 installed/0 skipped/0 failed | Owner walker delegates to Localflame, Context Mode, Camofox, Codebase Memory, Librarian, Leetcoder, Retrieval, and Persephone; Bun-backed Node shims remain intact, including `npx -> bun x --bun` |
+| `~/Hermes/persephone` | `main`, `0/20` | owner-workspace series -> `f1cd0b8` | `scripts/integrate.sh` twice `5d5e2882...`; read-only doctor twice `ed3550d4...`; inventory twice `392b5188...`; reconcile twice `cb618dac...`; 24 Bun tests/95 expects, 9 Python tests, TypeScript | Executable `persephone` CLI; direct OMP commands and tools; six owner integrations, seven OMP profiles, and 18/18 reconciled OMP checks visible from one versioned inventory |
+| `~/Odysseus/Diogenes` | `dev`, `0/11` | `f6c87a1` -> `0bbece3` | Owner-backed focused suites, Python compilation, browser bundles, and direct read-only adapters passed; latest integration slice passed 5 tests and a 14-module bundle | Retrieval, Librarian, Persephone, RoboOMP, and owner-integration workspaces consume their owners' versioned CLI/API contracts; Diogenes carries no duplicate OMP repair policy |
+
+The abbreviated repeat hashes above are expanded by the specific checklist
+items in Sections 1-11. Every owner repository in this table is clean except
+the explicitly preserved three-file Camofox browser worktree. That dirt was
+present before the lifecycle commit and was not overwritten.
+
+#### Exact tracked delivery map
+
+These are the tracked paths changed by the integration commits summarized
+above. Merge-only upstream paths are omitted; every listed path is owned by the
+repository named here.
+
+- Localflame: `.env.example`, `.gitattributes`, `ATTRIBUTION.md`, `README.md`,
+  `SKILL.md`, `TODO.md`, `bin/localflame.js`, `bun.lock`,
+  `docs/INTEGRATION-AUDIT.md`, `dsh-web-firecrawl/lib/index.js`,
+  `dsh-web-firecrawl/package.json`, `install.sh`, `package.json`,
+  `scripts/configure.mjs`, `scripts/doctor.mjs`, `server.json`,
+  `src/firecrawl.js`, `src/resources.js`, `src/server.js`, and `update.sh`.
+- Camofox browser: `README.md`, `camofox.config.json`, `lib/config.js`,
+  `server.js`, `tests/unit/config.test.js`, and
+  `tests/unit/idleShutdown.test.js`.
+- Camofox MCP: `README.md`, `bun.lock`, `doctor.sh`, `integrate.sh`,
+  `package.json`, `scripts/configure-harnesses.mjs`,
+  `scripts/doctor-harnesses.mjs`, and `update.sh`.
+- Context Mode: `README.md`, `bun.lock`, `cli.bundle.mjs`, `doctor.sh`,
+  `hooks/security.bundle.mjs`, `integrate.sh`, the two files under
+  `integrations/hermes-plugin/`, `package.json`, the four harness/version
+  scripts under `scripts/`, `server.bundle.mjs`, `src/adapters/omp/plugin.ts`,
+  `src/server.ts`, `tests/adapters/hermes.test.ts`,
+  `tests/core/server.test.ts`, and `update.sh`.
+- Retrieval: `.env.example`, `NOTICE.md`, `README.md`,
+  `THIRD_PARTY_LICENSES/IWE-APACHE-2.0.txt`, `doctor.sh`,
+  `hooks/session-close.sh`, `integrate.sh`,
+  `integrations/omp/retrieval-session-close.ts`, `pyproject.toml`,
+  `scripts/remove-legacy-iwe.sh`, `setup.sh`, the Retrieval skill files,
+  `sources.example.toml`, all modules under `src/hermes_retrieval/`, the six
+  focused test modules, `update.sh`, and `uv.lock`.
+- Librarian: `README.md`, `bun.lock`, `doctor.sh`, `integrate.sh`,
+  `package.json`, the dream-agent core implementation/tests, browse/dream API
+  modules, `scripts/setup.ts`, both Librarian skill packages, and `update.sh`.
+- Leetcoder: `README.md`, `bun.lock`, `doctor.sh`, `install.sh`,
+  `integrate.sh`, `package.json`, `scripts/setup.ts`, `src/cli.ts`, and
+  `update.sh`.
+- Codebase Memory: `README.md`, `docs/LOCAL-HARNESSES.md`,
+  `doctor-local.sh`, `install-local.sh`, `integrate-local.sh`,
+  `scripts/local-harnesses.ts`, and `update-local.sh`.
+- Hermes Workspace: `README.md`, `dashboard-start.sh`,
+  `dashboard-status.sh`, `dashboard-stop.sh`, `doctor.sh`, `run.sh`,
+  `start-stack.sh`, `status.sh`, `stop-stack.sh`, `stop.sh`, `update.sh`, and
+  the two repaired mobile navigation components.
+- Sandwich: `README.md`, `bin/sandwich`, `manifest.json`, `package.json`,
+  `scripts/manage-integrations.sh`, `scripts/update-hermes.sh`, and
+  `tests/compat.sh`.
+- Persephone: `.gitignore`, `README.md`, `bun.lock`, its four architecture and
+  audit documents, all RoboOMP integration manifests plus
+  `workspace_agent.py`/`workspace_inspect.py`, `package.json`,
+  `persephone.config.example.json`, the owner install/reconcile/RoboOMP scripts,
+  `src/cli.ts`, `src/config.ts`, `src/daemon.ts`, `src/database.ts`,
+  `src/doctor.ts`, `src/extension.ts`, `src/integrate.ts`,
+  `src/integration-inventory.ts`, `src/omp-reconcile.ts`,
+  `src/robomp-workspace.ts`, `src/service.ts`, `src/types.ts`,
+  `src/workspace.ts`, and the four focused test modules.
+- Diogenes: `README.md`, the Hermes stack/runtime JSON files,
+  `ompsettings.sh`, `routes/ulysses_routes.py`, the eight owner/dependency
+  Python adapters, `static/app.js`, `static/index.html`, the four workspace JS
+  modules, `static/style.css`, `static/sw.js`, and the nine focused test
+  modules.
+
+#### Complete `~/Hermes` classification
+
+No commit was manufactured for a repository that is merely an input corpus or
+an upstream dependency.
+
+| Path | Observed state | Classification / action |
+| --- | --- | --- |
+| `Anthropic-Cybersecurity-Skills` | `main@673da1f`, synced, clean | Passive skill source; indexed by Retrieval, no integration source change |
+| `agent-skills` | `main@2471e3f`, synced, clean | Passive skill source; indexed by Retrieval, no integration source change |
+| `humanizer` | `main@523374d`, synced, clean | Passive skill source; no harness contract change |
+| `make-interfaces-feel-better` | `main@5f3c3c`, synced, clean | Passive interface reference; no runtime ownership |
+| `firecrawl/skills` | `main@7ad4373`, synced, clean | Passive Firecrawl skills source |
+| `firecrawl/cli` | `main@6c50c5d`, behind 6, clean | Upstream dependency; deliberately not folded into Localflame ownership |
+| `firecrawl/firecrawl` | `main@692d6b7`, behind 317, dirty 12 | Existing production/user work including YouTube/package/compose/underbelly changes; inspected but untouched |
+| `camofox/` and `firecrawl/` | container directories | Their nested Git repositories are listed separately above |
+| `SEARXNG`, `bifrost`, `n8n`, `patches`, `reference-library`, `signal-cli`, `skill-library` | non-repository operational/state directories | Classified, not made into artificial repositories; Retrieval owns only its manifest/index state inside the applicable libraries |
+| `current-mcp.txt`, `persephone-update.bundle` | operational artifact / handoff bundle | Not source repositories and not edited |
+
 ### 12.4 GitCito direct derivation audit
 
-- [ ] Locate the exact GitCito source revision and license used as the
-  reference.
-- [ ] Map its repository discovery, selected-context normalization, fuzzy
+- [x] Locate the exact GitCito source revision and license used as the
+  reference. The code-level audit used GitCito `v4.7.0` at
+  `0bab066640ea4d73f4f7e5a580644031f125c1f3`, licensed MIT, from an exact
+  detached checkout under `~/.cache/gitcito-direct-audit`.
+- [x] Map its repository discovery, selected-context normalization, fuzzy
   navigation, grounding/citation, diff browsing, review action, and pending
-  operation implementations to the Persephone and Diogenes equivalents.
-- [ ] Port the applicable proven methods directly into the owner/UI code with
+  operation implementations to the Persephone and Diogenes equivalents. The
+  audited upstream files were `src/main/repoChat.ts`,
+  `src/main/grounding.ts`, `src/renderer/src/lib/repoChatContext.ts`,
+  `src/renderer/src/components/ActionWidgets.tsx`, and
+  `src/renderer/src/components/CommandPalette.tsx`.
+- [x] Port the applicable proven methods directly into the owner/UI code with
   source attribution where the license requires it. Do not add GitCito as a
-  runtime dependency and do not copy its brand or theme.
-- [ ] Replace any merely conceptual approximation from the first RoboOMP pass
-  where a stronger GitCito implementation was requested.
-- [ ] Verify the derived behavior from both the GitCito source/test and the
+  runtime dependency and do not copy its brand or theme. Persephone
+  `1bd58fb` ports the bounded diff-hunk/evidence-ID grounding shape into
+  `integrations/robomp/workspace_agent.py`; Diogenes `09ead0a` ports the hunk
+  splitter, evidence navigation, and subsequence/contiguous/word-boundary/gap
+  fuzzy score into `static/js/roboompWorkspace.js`. Both carry revision-pinned
+  attribution comments.
+- [x] Replace any merely conceptual approximation from the first RoboOMP pass
+  where a stronger GitCito implementation was requested. Selected-file
+  filtering, hunk navigation, opaque evidence IDs, and reviewable action cards
+  now use direct source-derived mechanics. GitCito's repository-discovery code
+  was intentionally not ported because RoboOMP accepts only owner-allowlisted
+  issue worktrees from its DB/API contract.
+- [x] Verify the derived behavior from both the GitCito source/test and the
   receiving repository's call site/test, then commit the owner and downstream
-  changes separately.
+  changes separately. Owner and UI changes are separate commits
+  (`1bd58fb` and `09ead0a`), and both receiving repositories' focused suites
+  and bundles passed without a GitCito runtime dependency.
 
 ### 12.5 Completion gate
 
-- [ ] Do not call this project complete from one subsystem's handoff.
-- [ ] Keep this section current with observed runtime failures, work actually
+- [x] Do not call this project complete from one subsystem's handoff. This
+  closeout covers every applicable owner repository, installed harness state,
+  the consuming Diogenes routes, and the complete `~/Hermes` inventory.
+- [x] Keep this section current with observed runtime failures, work actually
   performed, commit IDs, repeated-run evidence, and outstanding work.
-- [ ] Do not issue a live Firecrawl request, browser task, or model generation
+- [x] Do not issue a live Firecrawl request, browser task, or model generation
   during the verification pass.
-- [ ] Leave every touched repository clean and provide the full owner-by-owner
-  report rather than a vague aggregate summary.
+- [x] Leave every touched repository clean and provide the full owner-by-owner
+  report rather than a vague aggregate summary. All owner repositories are
+  clean except the three explicitly recorded pre-existing Camofox browser
+  paths. The unrelated dirty Firecrawl production tree was not changed.
+
+### 12.6 Recorded limitations, not hidden failures
+
+- The Hermes gateway status command continues to warn that its unit definition
+  is outdated because it compares two equivalent Windows PowerShell PATH
+  spellings. The native restart succeeded and fresh journal output has no MCP
+  degradation.
+- Camofox browser has three preserved pre-existing worktree paths. The runtime
+  fix itself is committed separately and its focused tests pass.
+- The broad Diogenes suite still has the pre-existing Colibri plan expectation
+  and four pre-existing MCP import-collection errors documented earlier in this
+  ledger; none intersects the owner integrations changed here.
+- No Firecrawl request, page navigation, model start, or generation was used as
+  proof. Verification stopped at configuration, stdio/RPC handshake, service
+  status, static builds, focused tests, and read-only owner adapters.
