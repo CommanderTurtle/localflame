@@ -151,6 +151,23 @@ generation is part of this pass.
   Diogenes `89d4ac4` pass 21 Bun tests plus TypeScript checking, 52 focused
   Python tests, and a browser bundle; repeated workspace/log reads were
   semantically identical after removing timestamps.
+- [x] Persephone's issue-scoped RoboOMP repository assistant is committed
+  through `b681bb4` (`ed91c23`, `2de9f65`, `b681bb4`). It owns the separate OMP
+  RPC session, strict request/response schemas, bounded selected Git evidence,
+  repository source citations, tool activity, and typed action proposals. OMP
+  receives only `read`, `grep`, and `glob` in `always-ask` mode; the browser
+  receives no shell, filesystem handle, Git credential, or container command.
+  The owner suite passes 10 Bun workspace tests, 2 inspect tests, 5 assistant
+  tests, TypeScript checking, Python compilation, and `git diff --check` without
+  a model call.
+- [x] Diogenes's RoboOMP ADE is committed at `913d637`. The issue-scoped
+  Assistant view provides rich Markdown/Mermaid answers, per-issue history,
+  selected issue/diff/file/commit/PR/run/log/artifact context, validated source
+  excerpts, fuzzy navigation over loaded repository state, copy controls, tool
+  activity, and review cards for owner proposals. Every proposal continues
+  through the existing confirmation/job route. Seven focused controller tests,
+  49 route/UI identity tests, strict Pydantic transport validation, Python
+  compilation, a 17-module Bun browser bundle, and `git diff --check` passed.
 
 ### Active continuation after the first Diogenes UI delivery
 
@@ -162,15 +179,17 @@ generation is part of this pass.
 - [x] RoboOMP's Diogenes workspace has repository/issue browsing, current
   worktree status, red/green diffs, branch and commit history, tool/event/log
   timelines, release runs, configuration, lifecycle, triage, cleanup, audit,
-  timers, and version synchronization. Its owner contract still needs an audit
-  for explicit pull-request/review/handoff operations. The reviewed host
+  timers, and version synchronization. Its owner contract was re-audited for
+  explicit pull-request/review/handoff operations. The reviewed host
   worktree/PR handoff is complete at Persephone `3928ba8` and Diogenes
   `d02fa59`; unsupported controls were not invented in the browser.
-- [ ] Extend that RoboOMP workspace from its completed owner/control baseline
+- [x] Extend that RoboOMP workspace from its completed owner/control baseline
   into the full Diogenes-only ADE: use Gitcito's code as an audited interaction
   reference, expose the complete RoboOMP-authorized tool surface, and add
   model-assisted questions/actions over selected diffs, commits, issues,
-  reviews, and artifacts without creating an independent web service.
+  reviews, and artifacts without creating an independent web service. The
+  owner contract is complete through Persephone `b681bb4`; the Diogenes
+  interface is complete at `913d637`.
 - [x] Re-run final cross-repository convergence after those owner contracts.
   The complete owner updater finished with 8 installed, 0 skipped, and 0
   failed after the durable Persephone cache ignore and Codebase Memory
@@ -225,8 +244,8 @@ generation is part of this pass.
   Librarian's versioned loopback API, Persephone's owner CLI, and RoboOMP's
   Persephone-owned Git workspace through separate responsive workspaces.
   Browser code stores only window/layout state; credentials remain server-side
-  or write-only. Persephone's gateway operator breadth is complete; the major
-  remaining interface expansion is the RoboOMP ADE recorded above.
+  or write-only. Persephone's gateway operator breadth and the Diogenes-only
+  RoboOMP ADE are complete.
 - Sandwich's Bun-backed `node`, `npm`, `npx`, `pnpm`, and `yarn` shims are
   intact; `npx` resolves to `bun x --bun`. Its checked-in owner orchestrator now
   provides the post-update reconciliation path for Localflame, Retrieval,
@@ -518,15 +537,15 @@ Again, interesting approach might be adding the config to persephone, rather tha
 | 202018 | Section 9: session-close deduplication/indexing and clean upstream skill baselines | Complete; exact three-router allowlist installed |
 | 202805 | Sections 3-6 and 11: Localflame name, both harnesses, DSH exclusivity, native listing, gateway restart, zero-knowledge scripts | Complete through `1cbd3e1`; native gateway restart and registry capture passed |
 | 202930 | Sections 6, 7, 10.1, and 11: scripts make mutations, are independently runnable and repeatable, remove stale/duplicate state, and receive two-source verification | Active |
-| 203275 | Section 10: rich Diogenes-only Retrieval/Librarian/Persephone/RoboOMP workspaces using their CLI/MCP backends | Retrieval, Librarian, and Persephone complete; RoboOMP ADE remains active |
+| 203275 | Section 10: rich Diogenes-only Retrieval/Librarian/Persephone/RoboOMP workspaces using their CLI/MCP backends | Complete; RoboOMP assistant owner `b681bb4`, Diogenes ADE `913d637` |
 | 204258 | Superseding web-provider policy and Persistent routing skills above | Complete |
 | 204423 / 204484 | Current execution state, this verbatim record, and this mapping | Complete and maintained from the local transcript |
-| 205375 | Sections 4, 7, 9, and 10: audit Hermes hook/tool/MCP standards, classify callable backends from source, and keep Persephone on its gateway/network contract | Native help and Context Mode/Camofox ownership complete; Persephone gateway UI complete; RoboOMP ADE remains |
+| 205375 | Sections 4, 7, 9, and 10: audit Hermes hook/tool/MCP standards, classify callable backends from source, and keep Persephone on its gateway/network contract | Complete; Persephone remains the process/owner boundary and Diogenes consumes its versioned JSON contracts |
 | Current OMP audit | Section 3: Localflame-backed search, Camofox browser routing, vision/base64 capability, MCP visibility, unrestricted Context Mode execution, and durable post-update reapplication | Complete through Context Mode `b702bda`, Persephone `cb36532`, and Diogenes delegate `48ec1f2` |
 | Current + 1 | Section 3: direct OMP Retrieval and Librarian MCP/RPC availability without Hermes detours | Complete through Retrieval `3e92e8c`, Librarian `e2abd26`, and the installed OMP owner doctors |
 | Current + 2 | Section 3: turn-local Retrieval results without adding retrieved packages to OMP's skill trees | Complete through Retrieval `3e92e8c` |
 | Current + 3 | Section 3: preserve OMP's entire default skill baseline while keeping Retrieval results turn-local | Recorded as a non-destructive constraint |
-| Current + 4 | Section 10.5: Gitcito-informed, Diogenes-only RoboOMP ADE with model-assisted Git questions and the complete authorized owner surface | Backend/control baseline complete; richer ADE active |
+| Current + 4 | Section 10.5: Gitcito-informed, Diogenes-only RoboOMP ADE with model-assisted Git questions and the complete authorized owner surface | Complete at Persephone `b681bb4` and Diogenes `913d637` |
 | Current + 5 | Sections 3, 7, 10.4, and 11: Persephone owns an idempotent OMP post-update reconcile/doctor contract; Diogenes only delegates; hidden web search, Camofox browser, and image/base64 capability drift is repaired only when detected | Complete at Persephone `cb36532` and Diogenes `48ec1f2`; gateway diagnostics completed at Persephone `66aa1e2` and Diogenes `89d4ac4` |
 
 ### Exact transcript audit
@@ -550,8 +569,8 @@ Again, interesting approach might be adding the config to persephone, rather tha
 - [x] Appended the OMP default-skill clarification verbatim as `Current + 3`;
   section 3 now forbids clearing or replacing that baseline.
 - [x] Appended the RoboOMP ADE clarification verbatim as `Current + 4` and
-  reopened the richer Diogenes-only interaction work without undoing the
-  completed owner/control baseline.
+  completed the richer Diogenes-only interaction work without undoing the
+  owner/control baseline.
 - [x] Appended the OMP ownership clarification verbatim as `Current + 5` and
   moved the durable runtime-repair source from Diogenes to Persephone. Any
   retained Diogenes entrypoint is now a compatibility delegate only.
@@ -802,6 +821,7 @@ two independent local sources or one local source plus official documentation.
 | OMP post-update reconciliation | installed OMP `18.1.16` config/model/extension source plus native help | two no-write committed reconciler passes, RPC `get_state`, effective model catalog, and Localflame/Camofox MCP handshakes in all ordinary profiles | passed at Persephone `cb36532`; 20 tests and TypeScript check passed, no model/web request issued |
 | Diogenes OMP compatibility delegation | committed 36-line `ompsettings.sh` wrapper and README ownership wording | shell syntax/help checks, clean repository state, and two output-identical wrapper runs containing only `unchanged` records | passed at Diogenes `48ec1f2`; no OMP policy remains in Diogenes |
 | Persephone gateway workspace | Hermes `0.21.1` native setup source plus Persephone connector/runtime source | owner-generated validation, bounded journal contract, 21 Bun tests, TypeScript check, 52 Diogenes tests, browser bundle, and repeated normalized reads | passed at Persephone `66aa1e2` and Diogenes `89d4ac4`; logs remain on-demand and approvals reuse native conversation commands |
+| RoboOMP repository assistant/ADE | installed OMP `18.1.16` approval schema and native help plus audited GitCito `0bab066640ea4d73f4f7e5a580644031f125c1f3` interaction source | owner request/schema/tool tests, selected Git evidence tests, focused Diogenes controller/route/UI tests, strict transport validation, Python compilation, browser bundle, and mapped owner-action audit | passed at Persephone `b681bb4` and Diogenes `913d637`; no model call, shell exposure, direct Git mutation, or standalone web service |
 | Leetcoder ownership | checked-in Hermes-only MCP installer | identical second-pass hashes, unchanged service PID/start time, and runtime doctor | passed twice at `fbb7bbe` |
 | Codebase Memory ownership | checked-in Hermes/OMP reconciler plus native Hermes registries | installed-source receipt, private staging, current targeted hook consent, and 38-check doctor | passed twice through `a5a8c9b77` |
 | Retrieval delivery and lifecycle ownership | checked-in exact-consent Hermes reconciler plus turn-local OMP contract | native Hermes hook listings, OMP MCP markers, absence of OMP projection/extension state, byte-identical second-pass config, and owner doctor | 37 tests and 81/81 checks passed twice at `3e92e8c`; second-pass configuration hashes were identical |
@@ -958,20 +978,27 @@ documented local APIs and should not duplicate their storage or agent loops.
   operation.
 - [x] Preserve the existing credential proxy, webhook verification, SQLite
   queue, isolated issue worktrees, and proposal-only scheduled audit behavior.
-- [ ] Audit Gitcito's source as a code-level reference for repository browsing,
+- [x] Audit Gitcito's source as a code-level reference for repository browsing,
   diff navigation, staging/review affordances, and dense Git status—not as a
-  runtime dependency or a copied brand/theme.
-- [ ] Add a model interaction pane backed by the existing RoboOMP/OMP owner
+  runtime dependency or a copied brand/theme. The audit used GitCito commit
+  `0bab066640ea4d73f4f7e5a580644031f125c1f3`; only pinned context,
+  source-linked answers, fuzzy navigation, and review-only action cards were
+  adopted.
+- [x] Add a model interaction pane backed by the existing RoboOMP/OMP owner
   contract so a user can ask focused questions about the selected diff,
   commit, issue, pull request, run, log, or artifact and can review any proposed
-  action before execution.
-- [ ] Make the Diogenes window a complete isolated ADE for the authorized
+  action before execution. Persephone owns the separate issue session and
+  evidence at `b681bb4`; Diogenes consumes it at `913d637`.
+- [x] Make the Diogenes window a complete isolated ADE for the authorized
   RoboOMP surface: browse, inspect, query, plan, execute, review, and hand off
   without exposing arbitrary host commands or adding a standalone RoboOMP web
-  service.
-- [ ] Re-audit the original RoboOMP use cases and owner CLI after the model pane
+  service. Model proposals enter the existing typed plan/confirmation/job
+  route; the browser gets versioned JSON only.
+- [x] Re-audit the original RoboOMP use cases and owner CLI after the model pane
   is wired; every supported operation should be reachable or explicitly shown
-  as unavailable from the owner rather than approximated in browser code.
+  as unavailable from the owner rather than approximated in browser code. The
+  UI maps every declared lifecycle and mutation action; `host.shell`,
+  `git.stage`, `git.commit`, and `git.force` are owner-declared unavailable.
 
 ## 11. Cross-repository delivery order
 
@@ -1003,7 +1030,8 @@ documented local APIs and should not duplicate their storage or agent loops.
   contracts above have stable, independently committed sources. Retrieval,
   Librarian, Persephone, and RoboOMP were committed through `d02fa59` after
   their owner contracts; the Persephone connector/runtime pass followed at
-  Diogenes `89d4ac4`. The remaining large UI item is the RoboOMP ADE.
+  Diogenes `89d4ac4`, and the final RoboOMP ADE followed its owner assistant at
+  Diogenes `913d637`.
 - [x] Run each owning repository's update/integrate script twice, compare
   semantic state after both runs, and run each read-only doctor.
 - [x] Confirm `hermes mcp list`, all intended Hermes profile configs, OMP's
