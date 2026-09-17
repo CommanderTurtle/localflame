@@ -3,6 +3,16 @@
 *.swp
 *~
 
+# local environment (zero-auth: no keys required, but never commit these)
+.env
+.env.*
+!.env.example
+
 # misc build artifacts (none expected for this pure-JS plugin)
 node_modules/
 *.log
+
+# leftover backups from install.sh / manual patching
+*.localflame.bak
+
+TODO.md

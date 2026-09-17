@@ -1,359 +1,209 @@
-# localflame
+# Localflame
 
-A tiny, self-hosted [Firecrawl](https://firecrawl.dev) web **search + fetch**
-provider for the **DeepSeek Harness** (a.k.a. `dsh`, the `dsh-web` GUI served
-by `@deepseek-ai/dsh-web-app`). It routes the harness's native `web_search` /
-`web_fetch` tools at your own unauthenticated Firecrawl instance instead of the
-cloud-only provider DSH ships with.
+Localflame is a Bun-native, Firecrawl-only MCP toolkit for OMP, Hermes Agent,
+and DeepSeek Harness. It replaces the old DSH-private provider with one stdio
+server and the same lossless, model-addressable result structure used by the
+[`llm`](https://github.com/CommanderTurtle/llm) browser harness.
 
-```
-~/Deepseek/localflame
-├── dsh-web-firecrawl/          # the provider plugin (npm module)
-│   ├── package.json
-│   └── lib/index.js
-├── install.sh                  # one-shot, idempotent installer
-├── LICENSE                     # GNU AGPL v3 (canonical)
-└── README.md
-```
+There is no model, browser backend, database, remote package runner, or second
+agent loop. Search and scrape requests go only to the configured Firecrawl v2
+service. A self-hosted endpoint at `http://127.0.0.1:3002` is the zero-auth
+default; `FIRECRAWL_API_KEY` is optional for compatible authenticated hosts.
 
-**What you get:** after `./install.sh` + a DSH restart, the agent can actually
-`web_search` and `web_fetch` against `http://localhost:3002` (or wherever your
-Firecrawl lives) with **zero auth**.
+## Why it exists
 
----
+A large scrape should not become one enormous tool message. Localflame cleans
+the Markdown, splits it at natural boundaries, verifies that joining the
+sections reproduces the stored document, and retains the result in memory. The
+first call returns a compact outline and section 1. Later calls can search the
+resource index or open exact sections.
 
-## Quick start
+The store is process-local and bounded by both resource count and UTF-8 bytes.
+Restarting the MCP process clears it. No page content is written to disk.
+
+## MCP tools
+
+- `firecrawl_search` — Firecrawl v2 web/news/image search, with scraped Markdown
+  enabled by default.
+- `firecrawl_scrape` — Markdown-first scrape of a known public URL.
+- `firecrawl_find` — exact-phrase-first search, falling back to intersection of
+  normalized query words.
+- `firecrawl_read` — exact one-based sections or a contiguous section range.
+- `firecrawl_outline` — paged section metadata for very large resources.
+- `firecrawl_images` — image URLs, alt text, source URL, and section location.
+- `firecrawl_resources` — compact inventory of retained resources.
+
+Sections receive at most two useful tags: `code`, `table`, and
+`html_gibberish`. The final tag helps an agent avoid spending context on noisy
+markup unless it is relevant.
+
+## Install
+
+Requirements are Bun and a configured client. On this workstation, Sandwich
+provides Bun plus its `node`, `npm`, `npx`, and related compatibility shims;
+`npx` therefore exists and resolves to `bun x --bun`.
 
 ```bash
-# 1. Make sure a self-hosted Firecrawl is running; the default target is http://localhost:3002
-curl -s http://localhost:3002/     # -> {"message":"Firecrawl API", ...}
-
-# 2. Run the installer (idempotent; safe to re-run)
+git clone https://github.com/CommanderTurtle/localflame.git ~/Deepseek/localflame
 cd ~/Deepseek/localflame
 ./install.sh
-#    --dry-run  → preview without touching anything
-#    env: DSH_HOME, DSH_PROFILE, LOCALFLAME_BASE_URL
-
-# 3. Restart DeepSeek Harness
-dsh --profile web                 # (stop the old one first)
-
-# 4. Verify with the agent: run web_search and web_fetch
 ```
 
-The installer does exactly two things:
+The installer is repeatable. It performs a frozen Bun install, adds the
+`localflame` executable, merges client configuration, installs a small routing
+skill in ordinary Hermes and OMP profiles, and runs a static doctor. It does
+not call Firecrawl or a model. The fuller operating guide remains available to
+Retrieval as a cold source; DSH receives its own full skill copy.
 
-1. Copies `dsh-web-firecrawl/` → `$DSH_HOME/profiles/web/node_modules/@local/dsh-web-firecrawl/`.
-2. Appends a patch overlay to `$DSH_HOME/profiles/web/cordis.patch.yml` that:
-   - sets `web.searchProvider` / `web.fetchProvider` to `firecrawl-local`,
-   - inserts the `@local/dsh-web-firecrawl` plugin row (under `- insert:`),
-   - turns on `tool-web.fetch: true`.
-
-## Installer detail
+Select clients explicitly when needed:
 
 ```bash
-./install.sh [--dry-run]
-# env:
-#   DSH_HOME             default ~/.dsh
-#   DSH_PROFILE          default web
-#   LOCALFLAME_BASE_URL  default http://localhost:3002
+./install.sh --target omp
+./install.sh --target hermes
+./install.sh --target dsh
+./install.sh --target dsh --dsh-profile web
+./install.sh --target omp --target hermes
+./install.sh --dry-run --target all
 ```
 
-It is **idempotent**: a marker comment (`# localflame: self-hosted firecrawl web
-provider`) keeps it from appending the overlay twice, and it backs up any
-existing `cordis.patch.yml` to `cordis.patch.yml.localflame.bak` before
-touching it.
-
-> If DSH ever prunes the profile's `node_modules` (e.g. a `pnpm install`), add
-> the package as a `file:` dependency instead, then `pnpm install` in the
-> profile dir:
-> ```json
-> "dependencies": { "@local/dsh-web-firecrawl": "file:/abs/path/to/dsh-web-firecrawl" }
-> ```
-
-## Uninstall
+Use a different self-hosted endpoint with either form:
 
 ```bash
-# restore the pre-localflame patch
-cd "$HOME/.dsh/profiles/web"        # or $DSH_PROFILE
-git checkout cordis.patch.yml       # if the profile is itself versioned
-# otherwise: cp cordis.patch.yml.localflame.bak cordis.patch.yml
-rm -rf "$HOME/.dsh/profiles/web/node_modules/@local/dsh-web-firecrawl"
-dsh --profile web                    # restart
+LOCALFLAME_BASE_URL=http://127.0.0.1:3002 ./install.sh
+./install.sh --firecrawl-url http://192.168.1.10:3002
 ```
 
----
+### OMP
 
-## Why this exists (background)
+Localflame uses OMP's `config` command for registered settings and merges the
+stdio server into the user `mcp.json`. It also updates existing OMP profiles
+that already carry the ordinary `retrieval` or `camofox` external-tool stack.
+Empty auditor/scout profiles and Librarian's private worker stay isolated. OMP
+has an interactive `/mcp` command
+but no standalone non-interactive `omp mcp` subcommand; the MCP file is
+therefore its documented automation boundary. Existing MCP servers are
+preserved. OMP receives a small `localflame` routing skill beside the existing
+Retrieval and Librarian routers.
 
-Stock DeepSeek Harness ships **only one** web-search provider:
-`@deepseek-ai/dsh-web-search-deepseek` (id `deepseek-official`), which is
-**cloud-only** — it calls DeepSeek's Anthropic-compatible `/messages` endpoint
-with `DEEPSEEK_API_KEY` and a native `web_search` server tool. There is **no**
-shipped Firecrawl search provider, and no fetch backend (`dsh-web-fetch-http`
-isn't even installed). So unless you happen to run a paid cloud key, the web
-tools were effectively disabled: `tool-web` ships with `fetch: false`, and the
-search provider needs a key.
+Localflame does not prescribe OMP's native `web_search` or `fetch` settings.
+For installations touched by the earlier exclusive-provider release, the next
+run resets only those two Localflame-owned settings through `omp config` once,
+records the migration, and leaves subsequent user choices alone. Its MCP
+timeout is `0`, the OMP no-timeout value.
 
-If you run your own Firecrawl (`~/.config/firecrawl-cli`, a Docker container, a
-self-hosted build on `:3002`, etc.), it accepts requests with **no
-`Authorization` header**. localflame surfaces that self-hosted instance as a
-proper DSH web provider.
+### Hermes Agent
 
----
+Localflame uses `hermes config set` for the default agent and every existing
+ordinary named profile, producing the same MCP mappings shown by
+`hermes mcp list`. A profile containing the private `librarian-okf` MCP remains
+isolated and receives no general web tools.
+`hermes mcp add` is intentionally not used
+by unattended setup because it starts and probes the server, then asks an
+interactive tool-selection question. Hermes receives the same small
+Localflame routing skill while the complete guide remains a Retrieval source.
 
-## How DSH plugins / web providers work (the low-level model)
+Hermes's native web toolset and configured providers are preserved. For
+profiles touched by the earlier exclusive-provider release, the next run
+removes only Localflame's added `web` disable and Camofox `web_search`
+exclusion through `hermes config`, records that migration, and does not revisit
+provider choices. The Localflame MCP request timeout is 86,400 seconds because
+Hermes treats zero as immediate expiry; idle and process-lifetime limits remain
+disabled.
 
-This is the part we reverse-engineered by reading the installed code
-(`@deepseek-ai/*` under `/home/alienl/.bun/install/global/node_modules/`) and
-comparing against how **Hermes** (`~/.hermes`) and **OMP/pi-coding-agent**
-(`~/.omp`, `@oh-my-pi/pi-coding-agent`) wire Firecrawl on this same machine.
+### DeepSeek Harness
 
-### 1. The `ctx.web` seam
+DSH is not patched in place. Every configure/update pass copies the complete
+currently installed preset roster into
+`~/.dsh/.localflame-agent-presets`, removes `tool-web` from every copy, and adds
+the official `@deepseek-ai/dsh-mcp-client` to every copy. Each selected boot
+profile is then restricted to that regenerated root and has the host `web`,
+DeepSeek search, HTTP fetch, and `tool-web` rows disabled. Switching among
+Standard, PTC, Minimal, and Cordis therefore cannot restore a second web path.
+The default target is every installed DSH boot profile.
 
-DSH exposes web access as a **service seam** (`ctx.web`), not a hardcoded
-function. Two kinds of backend register into it:
+The skill is installed under `~/.dsh/skills`. Every Localflame MCP operation is
+declared read-only, so all seven remain available under DSH's `read-only`
+permission preset even while its filesystem and shell policies stay
+restricted. The finite MCP timeout is DSH's largest safe JavaScript timer.
 
-- **Search** → `ctx.web.registerSearchProvider(provider)`
-- **Fetch** → `ctx.web.registerFetchProvider(provider)`
-
-A provider is any object with:
-
-```ts
-interface WebSearchProvider {
-  id: string;
-  available(): boolean;                       // cheap local check; MUST NOT hit the network
-  search(req: WebSearchRequest, signal?: AbortSignal): Promise<WebSearchResult>;
-}
-// WebSearchResult = { content?, sources: WebSearchSource[], truncated: boolean }
-interface WebFetchProvider {
-  id: string;
-  available(): boolean;
-  fetch(req: WebFetchRequest, signal?: AbortSignal): Promise<WebFetchResult>;
-}
-// WebFetchResult = { url, statusCode, body: {kind:'html'|'text', content}, truncated }
-```
-
-### 2. Provider selection
-
-Which provider runs is chosen by config `web.searchProvider` / `web.fetchProvider`
-(or env `$DSH_WEB_SEARCH_PROVIDER` / `$DSH_WEB_FETCH_PROVIDER`). If unset, the
-seam auto-selects the single registered usable provider. Failures map to typed
-`WebError` codes (`WEB_PROVIDER_CONFIGURED_MISSING`, `WEB_PROVIDER_AMBIGUOUS`,
-etc.). The model-facing tools `web_search` / `web_fetch` live in
-`dsh-tool-web`, which just formats the seam's result — it never owns provider
-selection or network access.
-
-### 3. Plugins register providers
-
-New backends are shipped as **Cordis plugins**: an npm module that exports the
-same contract as `dsh-web-search-deepseek`:
-
-```js
-export const name = "web-firecrawl-local";
-export const inject = ["web"];
-export function apply(ctx, config) {
-  ctx.web.registerSearchProvider({ id: "firecrawl-local", available: ..., search: ... });
-  ctx.web.registerFetchProvider({ id: "firecrawl-local", available: ..., fetch: ... });
-}
-```
-
-### 4. Profiles and patch overlays
-
-A `dsh` **profile** is a directory (`~/.dsh/profiles/<name>`, e.g. `web`) with a
-`package.json` listing `dsh.profile.bundles` (here `@deepseek-ai/dsh-base` +
-`@deepseek-ai/dsh-web-app`). The loader composes a config entry tree from:
-
-1. each bundle's `cordis.patch.yml` (the shipped default rows), then
-2. the profile's own `cordis.patch.yml`, then
-3. any `--patch` overlays.
-
-The patch files are **top-level YAML arrays** of loader entries. Key rule
-(relevant to the debugging below): **a top-level row is an *override*** — the
-composer looks up that row's `id` in the existing tree and skips it (warn
-"entry % not found") if it isn't already there. To *add a brand-new* entry you
-must use `- insert:`.
-
-This is why the stock bundle patches use `- insert:` for all their new rows
-(`code-runtime`, `webserver`, `web-startup`, …) and only plain `- id:` rows to
-override existing base entries.
-
-### 5. How bare package names resolve
-
-The loader imports each row's `name` from `node_modules` using the profile
-directory as its resolution anchor (`ctx.baseUrl`), with a flat fallback at
-`$DSH_HOME/profiles/node_modules`. So a local package placed under
-`$DSH_HOME/profiles/<name>/node_modules/@local/dsh-web-firecrawl` is resolved
-the same way an in-box `@deepseek-ai/...` plugin is. (That's what `install.sh`
-does.)
-
-### 6. Reference: how Hermes & OMP did it
-
-- **Hermes** (`~/.hermes/hermes-agent/plugins/web/firecrawl/provider.py`):
-  a `FirecrawlWebSearchProvider` with a `_KeylessFirecrawlClient` that POSTs to
-  `/v2/search` and `/v2/scrape` with **no** `Authorization` header. Config reads
-  `FIRECRAWL_API_KEY` / `FIRECRAWL_API_URL`, and `web.use_gateway` selects a
-  managed gateway when both are present.
-- **OMP / pi-coding-agent**
-  (`@oh-my-pi/pi-coding-agent/src/web/search/providers/firecrawl.ts`):
-  `FirecrawlProvider` resolves the endpoint from `FIRECRAWL_BASE_URL` /
-  `FIRECRAWL_API_URL`, and in **keyless mode** omits the header entirely.
-
-localflame follows the same pattern but as a native DSH provider.
-
----
-
-## Debugging tear-down (how we found the path)
-
-For the record — the exact journey, including the two gotchas that could
-silently fail.
-
-### Symptom
-
-`web_search` returned:
-
-```
-Error: Firecrawl search failed (HTTP 401): Unauthorized: Invalid token
-```
-
-The before-state was a hand-added, **cloud-only** Firecrawl provider pointing at
-`api.firecrawl.dev` with a bad key — while a healthy **zero-auth** local
-instance already sat on `:3002`:
+The DSH-only policy can also be regenerated directly:
 
 ```bash
-curl -s http://127.0.0.1:3002/          # {"message":"Firecrawl API",...}
-curl -s -X POST http://127.0.0.1:3002/v2/search  -H 'Content-Type: application/json' -d '{"query":"github","limit":1}'   # real results, no auth
-curl -s -X POST http://127.0.0.1:3002/v2/scrape -H 'Content-Type: application/json' -d '{"url":"https://example.com","formats":["markdown"]}'   # real markdown
+bun run dsh:destroy-web
 ```
 
-### What we discovered reading the installed sources
+That command invokes the same checked-in configure path as the installer. It
+does not edit the global DSH package and is safe to rerun after an upgrade.
 
-1. **Only the DeepSeek cloud search provider ships.** `ls @deepseek-ai/dsh-web-*`
-   → only `dsh-web-search-deepseek` (`id deepseek-official`, cloud-only). No
-   Firecrawl provider, no fetch backend.
-2. **`dsh-base/cordis.patch.yml` sets the defaults:**
-   ```yaml
-   - id: web                  # searchProvider: deepseek-official
-   - id: web-search-deepseek  # apiKeyEnv: DEEPSEEK_API_KEY
-   - id: tool-web             # fetch: false  <-- fetch is OFF by default
-   ```
-3. **`web-fetch-http` isn't even installed** → fetch had no provider at all.
-
-So the real work was: add a Firecrawl search *and* fetch provider, select it,
-and turn on `tool-web.fetch`.
-
-### Gotcha #1 — the patch shape (the big one)
-
-First attempt put the plugin as a plain top-level row:
-
-```yaml
-- id: web-firecrawl-local        # ❌ WRONG for a brand-new entry
-  name: '@local/dsh-web-firecrawl'
-```
-
-After a restart, `web_search` returned:
-
-```
-Error: configured web provider "firecrawl-local" is not registered
-```
-
-Which is the *smoking gun*: the `web` override **had** applied (the seam learned
-`searchProvider: firecrawl-local`) but the plugin row **never mounted** — so no
-provider registered under that id.
-
-Reading `applyEntryPatches` in
-`@deepseek-ai/dsh-app-boot/lib/index.js`:
-
-```js
-const target = entryMap.get(id);
-if (!target) { warn("patch: entry % not found", id); continue; }  // <-- skipped!
-```
-
-So **top-level rows only override existing entries**; a new id is silently
-dropped. The fix is `- insert:`:
-
-```yaml
-- insert:
-    - id: web-firecrawl-local
-      name: '@local/dsh-web-firecrawl'
-      config:
-        baseURL: 'http://localhost:3002'
-```
-
-Additionally, the final overlay's `web` / `tool-web` rows stay top-level
-(they *are* overrides of existing ids).
-
-### Gotcha #2 — provider package resolves/imports but wasn't mounted
-
-We confirmed the plugin resolved as a bare module from the profile dir and
-imported cleanly (exporting `{ apply, inject, name }`):
+To update the Bun-global DSH package and immediately rebuild that policy in one
+repeatable pass:
 
 ```bash
-cd ~/.dsh/profiles/web
-node --input-type=module -e "import('@local/dsh-web-firecrawl').then(m=>console.log(Object.keys(m)))"  # [ 'apply', 'inject', 'name' ]
+./update-dsh.sh
 ```
 
-That was necessary but not sufficient — the code was right, the wiring was the
-problem (see Gotcha #1).
+The command uses `@deepseek-ai/dsh@latest` by default, verifies the installed
+`js-yaml` constructor contract that DSH boot requires, regenerates every
+managed preset, checks composed web-profile configuration, and runs the DSH
+doctor. Set `DSH_PACKAGE_SPEC=@deepseek-ai/dsh@next` only when deliberately
+testing the publisher's next tag.
 
-### The working end state
-
-- `~/.dsh/profiles/web/node_modules/@local/dsh-web-firecrawl/{package.json,lib/index.js}`
-- `~/.dsh/profiles/web/cordis.patch.yml`:
-
-```yaml
-- id: web
-  config:
-    searchProvider: firecrawl-local
-    fetchProvider: firecrawl-local
-
-- insert:
-    - id: web-firecrawl-local
-      name: '@local/dsh-web-firecrawl'
-      config:
-        baseURL: 'http://localhost:3002'
-
-- id: tool-web
-  config:
-    fetch: true
-    searchTimeoutMs: 60000
-```
-
-After a restart, both tools worked against `:3002` end-to-end.
-
----
-
-## Verifying it works
-
-After installing and restarting, ask the agent (or run the tool directly) to:
-
-1. `web_search` for something — you should get real sources with URLs.
-2. `web_fetch` a URL — you should get markdown back.
-
-Sanity-check the underlying backend anytime:
+## Update and repair
 
 ```bash
-curl -s http://127.0.0.1:3002/        # is Firecrawl up?
-curl -s -X POST http://127.0.0.1:3002/v2/search -H 'Content-Type: application/json' -d '{"query":"ds","limit":2}'
+cd ~/Deepseek/localflame
+./update.sh
 ```
 
----
+The updater refuses tracked local changes, fast-forwards the current branch,
+performs a frozen Bun install, and regenerates all selected integrations. Use
+the same target flags accepted by `install.sh`.
 
-## Requirements & limitations
+After a harness upgrade, rerunning `./install.sh --target <client>` repairs only
+Localflame-owned state. `~/Hermes/sandwich/scripts/update-hermes.sh` also
+reapplies the Hermes target after a successful Hermes update when Localflame is
+installed at its standard path.
 
-- DSH (`@deepseek-ai/dsh`) installed with a `web` profile.
-- A self-hosted, network-reachable Firecrawl accepting unauthenticated requests
-  (default `http://localhost:3002`).
-- AGPL-3.0 — see [`LICENSE`](./LICENSE).
+Static inspection is available separately:
 
-## Where the numbers come from
+```bash
+./doctor.sh --target all
+./doctor.sh --target dsh --dsh-profile all --json
+```
 
-- DSH packages read: `/home/alienl/.bun/install/global/node_modules/@deepseek-ai/`
-- Hermes plugin: `~/.hermes/hermes-agent/plugins/web/firecrawl/provider.py`
-- OMP provider: `@oh-my-pi/pi-coding-agent/src/web/search/providers/firecrawl.ts`
-- Docs: [firecrawl.dev](https://firecrawl.dev)
+The doctor checks executable paths, configuration shape, provider-policy
+migration state, persistent routing skills, the complete regenerated DSH
+preset roster, and read-only tool annotations. It makes no network request.
 
----
+## Uninstall owned entries
+
+```bash
+bun scripts/configure.mjs uninstall --target all
+```
+
+This removes the Localflame MCP entries, routing skills, DSH managed preset
+root, strict DSH patch block, and unchanged DSH skill copy. Modified skill
+copies are retained. It does not delete Firecrawl, other MCP servers, or
+unrelated harness settings. Hermes and OMP provider choices are left alone;
+removing the DSH block exposes whatever profile policy existed before it.
+
+## Environment
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `FIRECRAWL_API_URL` | `http://127.0.0.1:3002` | Runtime Firecrawl base; `/v2` is normalized automatically. |
+| `FIRECRAWL_API_KEY` | empty | Optional bearer token. |
+| `LOCALFLAME_MAX_RESOURCES` | `64` | In-memory resource-count bound. |
+| `LOCALFLAME_MAX_RESOURCE_BYTES` | `67108864` | In-memory UTF-8 content bound. |
+| `OMP_HOME` | `~/.omp/agent` | OMP agent configuration directory. |
+| `HERMES_HOME` | `~/.hermes` | Hermes configuration root. |
+| `DSH_HOME` | `~/.dsh` | DSH configuration root. |
+| `DSH_PROFILE` | `all` | DSH boot profile receiving the strict policy, or every profile. |
+
+See [`docs/INTEGRATION-AUDIT.md`](docs/INTEGRATION-AUDIT.md) for the source and
+client contracts checked during the MCP migration.
 
 ## License
 
-GNU Affero General Public License v3.0 or later. See [LICENSE](./LICENSE).
+AGPL-3.0-or-later. See [`ATTRIBUTION.md`](ATTRIBUTION.md) for adapted sources
+and retained notices.

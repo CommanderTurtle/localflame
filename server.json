@@ -1,0 +1,60 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "localflame",
+  "description": "Firecrawl v2 search and scrape through a compact, lossless, section-addressable MCP surface.",
+  "repository": {
+    "url": "https://github.com/CommanderTurtle/localflame",
+    "source": "github"
+  },
+  "version_detail": {
+    "version": "1.0.0",
+    "release_date": "2026-09-11",
+    "is_stable": true
+  },
+  "packages": [
+    {
+      "registry_name": "npm",
+      "name": "@commanderturtle/localflame",
+      "version": "1.0.0",
+      "runtime": "node",
+      "runtime_arguments": [],
+      "package_arguments": [],
+      "environment_variables": [
+        {
+          "name": "FIRECRAWL_API_URL",
+          "description": "Firecrawl base URL; /v2 is normalized automatically.",
+          "required": false,
+          "default": "http://127.0.0.1:3002"
+        },
+        {
+          "name": "FIRECRAWL_API_KEY",
+          "description": "Optional bearer token for an authenticated compatible endpoint.",
+          "required": false
+        },
+        {
+          "name": "LOCALFLAME_MAX_RESOURCES",
+          "description": "Maximum Firecrawl results retained by one MCP process.",
+          "required": false,
+          "default": "64"
+        },
+        {
+          "name": "LOCALFLAME_MAX_RESOURCE_BYTES",
+          "description": "Maximum UTF-8 content bytes retained by one MCP process.",
+          "required": false,
+          "default": "67108864"
+        }
+      ]
+    }
+  ],
+  "tools": [
+    { "name": "firecrawl_search", "description": "Search through Firecrawl v2 and retain full results as ordered sections." },
+    { "name": "firecrawl_scrape", "description": "Scrape a URL through Firecrawl v2 and retain its complete normalized result." },
+    { "name": "firecrawl_read", "description": "Read exact sections from a retained result." },
+    { "name": "firecrawl_find", "description": "Find exact phrases or intersecting words in retained result sections." },
+    { "name": "firecrawl_outline", "description": "Page through compact metadata for a retained result." },
+    { "name": "firecrawl_images", "description": "List image references already found in retained result sections." },
+    { "name": "firecrawl_resources", "description": "List results retained by the current MCP process." }
+  ],
+  "categories": ["web-search", "web-scraping"],
+  "tags": ["firecrawl", "search", "scrape", "local", "sectioned-results"]
+}

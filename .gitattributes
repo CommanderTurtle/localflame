@@ -1,0 +1,9 @@
+* text=auto
+*.js text eol=lf
+*.mjs text eol=lf
+*.sh text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+TODO.md whitespace=-blank-at-eol
